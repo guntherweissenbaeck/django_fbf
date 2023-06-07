@@ -7,7 +7,7 @@
 - [postgres](https://www.postgresql.org/)
 
 ## CSS
-- [bootstrap](https://getbootstrap.com/)
+- [bootstrap-litera](https://bootswatch.com/litera/)
 - [bootswatch](https://bootswatch.com)
 
 ## Container
