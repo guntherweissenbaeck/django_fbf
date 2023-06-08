@@ -1,6 +1,7 @@
 from django.db import models
 from django.conf import settings
 from uuid import uuid4
+from rescuer.models import Rescuer
 
 
 class FallenBird(models.Model):
@@ -10,6 +11,7 @@ class FallenBird(models.Model):
     place = models.CharField(max_length=256)
     created = models.DateTimeField(auto_now_add=True)
     updated = models.DateTimeField(auto_now=True)
+    rescuer = models.ForeignKey(Rescuer, on_delete=models.CASCADE)
     user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
 
     def __str__(self):
