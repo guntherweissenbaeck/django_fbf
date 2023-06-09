@@ -1,4 +1,4 @@
-{load static}
+{% load static %}
 <!DOCTYPE html>
 <html lang="en">
   <head>
@@ -14,7 +14,7 @@
     <link rel="stylesheet" href="{% static 'css/bootstrap.min.css' %}">
 
     {% comment %} possible dynamic header {% endcomment %}
-    <title>{% block head_title %}lv&middot;rb{% endblock %}</title>
+    <title>{% block head_title %}Fallen Birdy{% endblock %}</title>
 
     {% comment %} custom header {% endcomment %}
     {% block header %} {% endblock header %}

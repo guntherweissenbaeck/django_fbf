@@ -7,10 +7,9 @@ def bird_create(request):
 
 
 def bird_all(request):
-    birds_all = FallenBird.objects.all()
-    for bird in birds_all:
-        print(bird)
-    return HttpResponse("Show all Birds")
+    birds = FallenBird.objects.all()
+    context = {'birds': birds}
+    return render(request, 'fbf/birds_all.html', context)
 
 
 def bird_recover_all(request):
