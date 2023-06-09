@@ -1,25 +1,27 @@
 {% extends "base.html" %}
 {% load static %}
 {% block content %}
-    <h3>Übersicht aller Vögel in Behandlung</h3>
-    <table class="table table-striped table-hover" id="t__bids_all">
-  <thead>
-    <tr>
-      <th>Vogel</th>
-      <th>Fundort</th>
-      <th>angelegt am</th>
-      <th>gefunden von</th>
-    </tr>
-  </thead>
-  <tbody>
-    {% for bird in birds  %}
-    <tr>
-        <td><a href="{% url 'bird_single' bird.id %}">{{bird.bird}}</a></td>
-        <td>{{bird.place}}</td>
-        <td>{{bird.created}}</td>
-        <td>{{bird.rescuer}}</td>
-    </tr>
-    {% endfor %}
-  </tbody>
-    </table>
+  <h3>Übersicht aller Vögel in Behandlung</h3>
+  <table class="table table-striped table-hover" id="t__bids_all">
+    <thead>
+      <tr>
+        <th>Vogel</th>
+        <th>Fundort</th>
+        <th>angelegt am</th>
+        <th>gefunden von</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for bird in birds %}
+        <tr>
+          <td>
+            <a href="{% url 'bird_single' bird.id %}">{{ bird.bird }}</a>
+          </td>
+          <td>{{ bird.place }}</td>
+          <td>{{ bird.created }}</td>
+          <td>{{ bird.rescuer }}</td>
+        </tr>
+      {% endfor %}
+    </tbody>
+  </table>
 {% endblock content %}
