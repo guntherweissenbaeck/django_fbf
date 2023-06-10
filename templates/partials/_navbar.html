@@ -1,1 +1,27 @@
-navbar
+{% load static %}
+<nav class="navbar navbar-expand-lg navbar-dark bg-primary sticky-top">
+    <div class="container">
+        <img src="{% static 'img/logo.png' %}" alt="logo" width="35" height="35" />
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarColor01"
+            aria-controls="navbarColor01" aria-expanded="false" aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+
+
+        <div class="collapse navbar-collapse">
+            <ul class="navbar-nav">
+                <li class="nav-item">
+                    <a class="nav-link {% if '/bird/all' in request.path %} active {% endif %}"
+                        href="{% url 'bird_all' %}">Vögel in Behandlung</a>
+                </li>
+            </ul>
+            <ul class="navbar-nav">
+                <li class="nav-item">
+                    <a class="nav-link {% if '/rescuer/all' in request.path %} active {% endif %}"
+                        href="{% url 'rescuer_all' %}">Finder</a>
+                </li>
+            </ul>
+        </div>
+    </div>
+</nav>
+<br />
