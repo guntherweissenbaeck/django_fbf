@@ -8,8 +8,8 @@ def bird_create(request):
 
 def bird_all(request):
     birds = FallenBird.objects.all()
-    context = {'birds': birds}
-    return render(request, 'fbf/birds_all.html', context)
+    context = {"birds": birds}
+    return render(request, "fbf/birds_all.html", context)
 
 
 def bird_recover_all(request):
@@ -17,7 +17,9 @@ def bird_recover_all(request):
 
 
 def bird_single(request, id):
-    return HttpResponse(f"Show bird with ID {id}")
+    bird = FallenBird.objects.get(id=id)
+    context = {"bird": bird}
+    return render(request, "fbf/birds_single.html", context)
 
 
 def bird_delete(request, id):
