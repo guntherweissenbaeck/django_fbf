@@ -19,5 +19,6 @@ from django.urls import path, include
 
 urlpatterns = [
     path("bird/", include("fbf.urls")),
+    path("rescuer/", include("rescuer.urls")),
     path("admin/", admin.site.urls),
 ]
