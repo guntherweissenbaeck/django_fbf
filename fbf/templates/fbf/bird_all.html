@@ -8,7 +8,7 @@
       <th>Vogel</th>
       <th>Finder</th>
       <th>Fundort</th>
-      <th>angelegt am</th>
+      <th>gefunden am</th>
     </tr>
   </thead>
   <tbody>
@@ -21,7 +21,7 @@
         <a href="{% url 'rescuer_single' bird.rescuer_id %}">{{ bird.rescuer }}</a>
       </td>
       <td>{{ bird.place }}</td>
-      <td>{{ bird.created }}</td>
+      <td>{{ bird.date_found }}</td>
     </tr>
     {% endfor %}
   </tbody>
