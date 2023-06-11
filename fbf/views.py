@@ -1,22 +1,57 @@
-from django.shortcuts import render, HttpResponse, redirect
-from .models import FallenBird
+from django.contrib.auth.decorators import login_required
+from django.shortcuts import HttpResponse, redirect, render
+
+from rescuer.models import Rescuer
+
 from .forms import BirdForm
+from .models import FallenBird
 
 
+@login_required(login_url="account_login")
 def bird_create(request):
-    return HttpResponse("Create a bird")
+    # Rescuer for modal usage
+    # rescuer_modal = Rescuer.objects.all().filter(user=request.user)
+    form = BirdForm()
+    rescuer_id = request.session.get("rescuer_id")
+    # rescuer = Rescuer.objects.get(id=rescuer_id, user=request.user)
+    rescuer = Rescuer.objects.get(id=rescuer_id)
+
+    # just show only related rescuers in select field of the form
+    if request.method == "POST":
+        form = BirdForm(request.POST or None, request.FILES or None)
+        if form.is_valid():
+            fs = form.save(commit=False)
+            # fs.user = request.user
+            fs.rescuer_id = rescuer_id
+            fs.save()
+            request.session["rescuer_id"] = None
+            return redirect("bird_all")
+    context = {"form": form, "rescuer": rescuer}
+    return render(request, "fbf/bird_create.html")
 
 
+@login_required(login_url="account_login")
 def bird_all(request):
     birds = FallenBird.objects.all()
-    context = {"birds": birds}
+    rescuer_modal = Rescuer.objects.all()
+    context = {"birds": birds, "rescuer_modal": rescuer_modal}
+    # Post came from the modal form
+    if request.method == "POST":
+        rescuer_id = request._post["rescuer_id"]
+        if rescuer_id != "new_rescuer":
+            request.session["rescuer_id"] = rescuer_id
+            return redirect("bird_create")
+        else:
+            return redirect("rescuer_create")
     return render(request, "fbf/bird_all.html", context)
 
 
+@login_required(login_url="account_login")
 def bird_recover_all(request):
     return HttpResponse("Show all recovered Birds")
 
 
+@login_required(login_url="account_login")
 def bird_single(request, id):
     bird = FallenBird.objects.get(id=id)
     form = BirdForm(request.POST or None, request.FILES or None, instance=bird)
@@ -28,6 +63,7 @@ def bird_single(request, id):
     return render(request, "fbf/bird_single.html", context)
 
 
+@login_required(login_url="account_login")
 def bird_delete(request, id):
     bird = FallenBird.objects.get(id=id)
     if request.method == "POST":
@@ -37,5 +73,6 @@ def bird_delete(request, id):
     return render(request, "fbf/bird_delete.html", context)
 
 
+@login_required(login_url="account_login")
 def bird_recover(request, id):
     return HttpResponse(f"Show recover with ID {id}")

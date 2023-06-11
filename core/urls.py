@@ -18,7 +18,13 @@ from django.contrib import admin
 from django.urls import path, include
 
 urlpatterns = [
+    # Dynamic sites
     path("bird/", include("fbf.urls")),
     path("rescuer/", include("rescuer.urls")),
+    # Admin
     path("admin/", admin.site.urls),
+    # Allauth
+    path("accounts/", include("allauth.urls")),
+    # Static sites
+    path("", include("sites.urls")),
 ]
