@@ -10,24 +10,25 @@ from .models import FallenBird
 @login_required(login_url="account_login")
 def bird_create(request):
     # Rescuer for modal usage
-    # rescuer_modal = Rescuer.objects.all().filter(user=request.user)
     form = BirdForm()
     rescuer_id = request.session.get("rescuer_id")
-    # rescuer = Rescuer.objects.get(id=rescuer_id, user=request.user)
-    rescuer = Rescuer.objects.get(id=rescuer_id)
+    rescuer = Rescuer.objects.get(id=rescuer_id, user=request.user)
 
     # just show only related rescuers in select field of the form
     if request.method == "POST":
         form = BirdForm(request.POST or None, request.FILES or None)
+        rescuer_id = request.session.get('rescuer_id')
+        rescuer = Rescuer.objects.get(id=rescuer_id, user=request.user)
+
         if form.is_valid():
             fs = form.save(commit=False)
-            # fs.user = request.user
+            fs.user = request.user
             fs.rescuer_id = rescuer_id
             fs.save()
             request.session["rescuer_id"] = None
             return redirect("bird_all")
     context = {"form": form, "rescuer": rescuer}
-    return render(request, "fbf/bird_create.html")
+    return render(request, "fbf/bird_create.html", context)
 
 
 @login_required(login_url="account_login")
