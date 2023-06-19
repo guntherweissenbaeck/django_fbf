@@ -12,8 +12,9 @@ class FallenBird(models.Model):
     created = models.DateTimeField(auto_now_add=True)
     updated = models.DateTimeField(auto_now=True)
     rescuer = models.ForeignKey(Rescuer, on_delete=models.CASCADE)
-
-    user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
+    user = models.ForeignKey(
+        settings.AUTH_USER_MODEL,
+        on_delete=models.CASCADE)
 
     def __str__(self):
         return self.place

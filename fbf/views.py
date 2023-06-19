@@ -1,10 +1,9 @@
 from django.contrib.auth.decorators import login_required
 from django.shortcuts import HttpResponse, redirect, render
 
-from rescuer.models import Rescuer
-
 from .forms import BirdForm
 from .models import FallenBird
+from rescuer.models import Rescuer
 
 
 @login_required(login_url="account_login")
