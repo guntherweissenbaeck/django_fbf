@@ -1,5 +1,6 @@
-from django.shortcuts import render
+from django.shortcuts import render, redirect
 
+from .forms import RescuerForm
 from .models import Rescuer
 
 
@@ -16,4 +17,21 @@ def rescuer_single(request, id):
 
 
 def rescuer_create(request):
-    return render(request, "rescuer/rescuer_create.html")
+    form = RescuerForm()
+    if request.method == 'POST':
+        form = RescuerForm(request.POST or None)
+        if form.is_valid():
+            fs = form.save(commit=False)
+            fs.user = request.user
+            fs.save()
+
+            # set customer id in session cookie
+            # (uuid has to be cast to a string)
+            rescuer_id = str(fs.pk)
+            request.session['rescuer_id'] = rescuer_id
+
+            return redirect('bird_create')
+    context = {
+        'form': form
+    }
+    return render(request, 'rescuer/rescuer_create.html', context)
