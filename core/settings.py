@@ -48,14 +48,14 @@ INSTALLED_APPS = [
     # Crispy forms, modals and bootstrap5
     # -----------------------------------
     "bootstrap_modal_forms",
-    "crispy_forms",
     "crispy_bootstrap5",
+    "crispy_forms",
     # -----------------------------------
     # My Apps
     # -----------------------------------
-    "sites",
     "fbf",
     "rescuer",
+    "sites",
 ]
 
 MIDDLEWARE = [
@@ -89,7 +89,7 @@ TEMPLATES = [
 AUTHENTICATION_BACKENDS = [
     # Needed to login by username in Django admin, regardless of `allauth`
     "django.contrib.auth.backends.ModelBackend",
-    # allauth specific authentication methods, such as login by e-mail
+    # Allauth specific authentication methods, such as login by e-mail
     "allauth.account.auth_backends.AuthenticationBackend",
 ]
 
@@ -149,11 +149,11 @@ STATICFILES_DIRS = [BASE_DIR / "static"]
 
 DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
 
-# crispy forms
+# Crispy forms
 CRISPY_ALLOWED_TEMPLATE_PACKS = "bootstrap5"
 CRISPY_TEMPLATE_PACK = "bootstrap5"
 
-# allauth
+# Allauth
 SITE_ID = 1
 ACCOUNT_AUTHENTICATION_METHOD = "username_email"
 ACCOUNT_EMAIL_REQUIRED = True
@@ -164,7 +164,7 @@ ACCOUNT_LOGIN_ON_EMAIL_CONFIRMATION = True
 ACCOUNT_LOGOUT_REDIRECT_URL = "/"
 ACCOUNT_LOGOUT_ON_GET = True
 ACCOUNT_SESSION_REMEMBER = True
-ACCOUNT_USERNAME_BLACKLIST = ["gw", "admin", "god"]
+ACCOUNT_USERNAME_BLACKLIST = ["admin", "god"]
 ACCOUNT_USERNAME_MIN_LENGTH = 3
 ACCOUNT_UNIQUE_EMAIL = True
 LOGIN_REDIRECT_URL = "/bird/all"
