@@ -16,4 +16,4 @@ def rescuer_single(request, id):
 
 
 def rescuer_create(request):
-    return render(request, "rescuer/rescuuer_create.html")
+    return render(request, "rescuer/rescuer_create.html")

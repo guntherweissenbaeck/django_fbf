@@ -18,11 +18,11 @@ class BirdForm(forms.ModelForm):
             "bird",
             "date_found",
             "place",
-            "rescuer",
+            #  "rescuer",
         ]
         labels = {
             "bird": _("Vogel"),
             "date_found": _("Datum des Fundes"),
             "place": _("Fundort"),
-            "rescuer": _("Finder"),
+            #  "rescuer": _("Finder"),
         }
