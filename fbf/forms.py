@@ -10,7 +10,8 @@ class DateInput(forms.DateInput):
 
 class BirdAddForm(forms.ModelForm):
     class Meta:
-        widgets = {"date_found": DateInput()}
+        widgets = {
+            "date_found": DateInput()}
         model = FallenBird
         fields = ["bird", "date_found", "place", ]
         labels = {"bird": _("Vogel"), "date_found": _(
@@ -19,7 +20,7 @@ class BirdAddForm(forms.ModelForm):
 
 class BirdEditForm(forms.ModelForm):
     class Meta:
-        widgets = {"date_found": DateInput()}
+        widgets = {"date_found": DateInput(format="%Y-%m-%d")}
         model = FallenBird
         fields = [
             "bird",
