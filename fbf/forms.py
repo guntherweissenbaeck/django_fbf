@@ -1,5 +1,3 @@
-from datetime import date
-
 from django import forms
 from django.utils.translation import gettext_lazy as _
 
@@ -10,7 +8,16 @@ class DateInput(forms.DateInput):
     input_type = "date"
 
 
-class BirdForm(forms.ModelForm):
+class BirdAddForm(forms.ModelForm):
+    class Meta:
+        widgets = {"date_found": DateInput()}
+        model = FallenBird
+        fields = ["bird", "date_found", "place", ]
+        labels = {"bird": _("Vogel"), "date_found": _(
+            "Datum des Fundes"), "place": _("Fundort")}
+
+
+class BirdEditForm(forms.ModelForm):
     class Meta:
         widgets = {"date_found": DateInput()}
         model = FallenBird
@@ -18,11 +25,11 @@ class BirdForm(forms.ModelForm):
             "bird",
             "date_found",
             "place",
-            #  "rescuer",
+            "rescuer",
         ]
         labels = {
             "bird": _("Vogel"),
             "date_found": _("Datum des Fundes"),
             "place": _("Fundort"),
-            #  "rescuer": _("Finder"),
+            "rescuer": _("Retter"),
         }

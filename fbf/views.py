@@ -1,7 +1,7 @@
 from django.contrib.auth.decorators import login_required
 from django.shortcuts import HttpResponse, redirect, render
 
-from .forms import BirdForm
+from .forms import BirdAddForm, BirdEditForm
 from .models import FallenBird
 from rescuer.models import Rescuer
 
@@ -9,13 +9,13 @@ from rescuer.models import Rescuer
 @login_required(login_url="account_login")
 def bird_create(request):
     # Rescuer for modal usage
-    form = BirdForm()
+    form = BirdAddForm()
     rescuer_id = request.session.get("rescuer_id")
     rescuer = Rescuer.objects.get(id=rescuer_id, user=request.user)
 
     # just show only related rescuers in select field of the form
     if request.method == "POST":
-        form = BirdForm(request.POST or None, request.FILES or None)
+        form = BirdAddForm(request.POST or None, request.FILES or None)
         rescuer_id = request.session.get('rescuer_id')
         rescuer = Rescuer.objects.get(id=rescuer_id, user=request.user)
 
@@ -54,7 +54,10 @@ def bird_recover_all(request):
 @login_required(login_url="account_login")
 def bird_single(request, id):
     bird = FallenBird.objects.get(id=id)
-    form = BirdForm(request.POST or None, request.FILES or None, instance=bird)
+    form = BirdEditForm(
+        request.POST or None,
+        request.FILES or None,
+        instance=bird)
     if request.method == "POST":
         if form.is_valid():
             form.save()
