@@ -7,8 +7,8 @@ from .models import Rescuer
 
 @login_required(login_url="account_login")
 def rescuer_all(request):
-    rescuer = Rescuer.objects.all()
-    context = {"rescuer": rescuer}
+    rescuers = Rescuer.objects.all()
+    context = {"rescuers": rescuers}
     return render(request, "rescuer/rescuer_all.html", context)
 
 
