@@ -10,12 +10,18 @@ class DateInput(forms.DateInput):
 
 class BirdAddForm(forms.ModelForm):
     class Meta:
-        widgets = {
-            "date_found": DateInput()}
+        widgets = {"date_found": DateInput()}
         model = FallenBird
-        fields = ["bird", "date_found", "place", ]
-        labels = {"bird": _("Vogel"), "date_found": _(
-            "Datum des Fundes"), "place": _("Fundort")}
+        fields = [
+            "bird",
+            "date_found",
+            "place",
+        ]
+        labels = {
+            "bird": _("Vogel"),
+            "date_found": _("Datum des Fundes"),
+            "place": _("Fundort"),
+        }
 
 
 class BirdEditForm(forms.ModelForm):

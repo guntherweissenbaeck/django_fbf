@@ -5,12 +5,12 @@ from .models import Rescuer
 
 
 class DateInput(forms.DateInput):
-    input_type = 'date'
+    input_type = "date"
 
 
 class RescuerForm(forms.ModelForm):
     class Meta:
-        widgets = {'date_of_birth': DateInput()}
+        widgets = {"date_of_birth": DateInput()}
         model = Rescuer
         fields = [
             "gender",
@@ -22,16 +22,17 @@ class RescuerForm(forms.ModelForm):
             "city",
             "state",
             "date_of_birth",
-            "email"]
+            "email",
+        ]
         labels = {
-            'gender': _('Geschlecht'),
-            'first_name': _('Vorname'),
-            'last_name': _('Nachname'),
-            'date_of_birth': _('Geburtstag'),
-            'street': _('Straße'),
-            'street_number': _('Hausnummer'),
-            'zip_code': _('Postleitzahl'),
-            'city': _('Stadt'),
-            'state': _('Land'),
-            'email': _('Email'),
+            "gender": _("Geschlecht"),
+            "first_name": _("Vorname"),
+            "last_name": _("Nachname"),
+            "date_of_birth": _("Geburtstag"),
+            "street": _("Straße"),
+            "street_number": _("Hausnummer"),
+            "zip_code": _("Postleitzahl"),
+            "city": _("Stadt"),
+            "state": _("Land"),
+            "email": _("Email"),
         }

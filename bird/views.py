@@ -16,7 +16,7 @@ def bird_create(request):
     # just show only related rescuers in select field of the form
     if request.method == "POST":
         form = BirdAddForm(request.POST or None, request.FILES or None)
-        rescuer_id = request.session.get('rescuer_id')
+        rescuer_id = request.session.get("rescuer_id")
         rescuer = Rescuer.objects.get(id=rescuer_id, user=request.user)
 
         if form.is_valid():
@@ -54,10 +54,7 @@ def bird_recover_all(request):
 @login_required(login_url="account_login")
 def bird_single(request, id):
     bird = FallenBird.objects.get(id=id)
-    form = BirdEditForm(
-        request.POST or None,
-        request.FILES or None,
-        instance=bird)
+    form = BirdEditForm(request.POST or None, request.FILES or None, instance=bird)
     if request.method == "POST":
         if form.is_valid():
             form.save()
