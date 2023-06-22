@@ -1,14 +1,14 @@
 # The Fallen Birdy Form
 
-## Webframework
-- [django(4.2)](https://www.djangoproject.com/)
+## Add Test Data
+To add testdata, use the fixture function of django:
 
-## Database
-- [postgres](https://www.postgresql.org/)
+```bash
+python3 manage.py loaddata fixtures/data.json
+```
 
-## CSS
-- [bootstrap-litera](https://bootswatch.com/litera/)
-- [bootswatch](https://bootswatch.com)
+## Test Account
+The test account you can use:
 
-## Container
-- [docker](https://www.docker.com/)
+- user: gw
+- password: abcdef
