@@ -27,7 +27,7 @@ def bird_create(request):
             request.session["rescuer_id"] = None
             return redirect("bird_all")
     context = {"form": form, "rescuer": rescuer}
-    return render(request, "fbf/bird_create.html", context)
+    return render(request, "bird/bird_create.html", context)
 
 
 @login_required(login_url="account_login")
@@ -43,7 +43,7 @@ def bird_all(request):
             return redirect("bird_create")
         else:
             return redirect("rescuer_create")
-    return render(request, "fbf/bird_all.html", context)
+    return render(request, "bird/bird_all.html", context)
 
 
 @login_required(login_url="account_login")
@@ -63,7 +63,7 @@ def bird_single(request, id):
             form.save()
             return redirect("bird_all")
     context = {"form": form, "bird": bird}
-    return render(request, "fbf/bird_single.html", context)
+    return render(request, "bird/bird_single.html", context)
 
 
 @login_required(login_url="account_login")
@@ -73,7 +73,7 @@ def bird_delete(request, id):
         bird.delete()
         return redirect("bird_all")
     context = {"bird": bird}
-    return render(request, "fbf/bird_delete.html", context)
+    return render(request, "bird/bird_delete.html", context)
 
 
 @login_required(login_url="account_login")

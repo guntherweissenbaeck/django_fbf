@@ -19,7 +19,7 @@ from django.urls import path, include
 
 urlpatterns = [
     # Dynamic sites
-    path("bird/", include("fbf.urls")),
+    path("bird/", include("bird.urls")),
     path("rescuer/", include("rescuer.urls")),
     # Admin
     path("admin/", admin.site.urls),
