@@ -10,7 +10,7 @@ class DateInput(forms.DateInput):
 
 class RescuerForm(forms.ModelForm):
     class Meta:
-        widgets = {"date_of_birth": DateInput()}
+        widgets = {"date_of_birth": DateInput(format="%Y-%m-%d")}
         model = Rescuer
         fields = [
             "gender",
