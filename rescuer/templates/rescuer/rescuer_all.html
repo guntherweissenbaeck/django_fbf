@@ -2,7 +2,7 @@
 {% load static %}
 {% block header %}
 <!-- Datatable CSS -->
-<link  rel="stylesheet" href="https://cdn.datatables.net/1.11.3/css/dataTables.bootstrap5.min.css"/>
+<link  rel="stylesheet" href="https://cdn.datatables.net/1.13.4/css/dataTables.bootstrap5.min.css"/>
 <link rel="stylesheet" href="https://cdn.datatables.net/responsive/2.2.9/css/responsive.bootstrap5.min.css">
 
 <!-- jQuery -->
@@ -20,6 +20,8 @@
       language: {
         url: 'https://cdn.datatables.net/plug-ins/1.11.3/i18n/de_de.json',
       },
+      paging: false,
+      info: false,
       responsive: true,
       columnDefs: [
           { responsivePriority: 1, targets: 0 },
@@ -38,7 +40,7 @@
     <a href="{% url 'rescuer_create' %}" class="btn btn-primary">Einen neuen Retter anlegen</a>
 </p>
 
-<table class="table table-striped table-hover" id="t__rescuer_all">
+<table class="table table-striped table-hover display responsive nowrap" width="100%" id="t__rescuer_all">
     <thead>
       <tr>
         <th>Name</th>

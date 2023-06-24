@@ -1,0 +1,29 @@
+{% extends 'base.html' %} 
+{% load crispy_forms_tags %}
+{% block content %}
+<div class="row">
+  <div class="col-lg-7">
+    <h3>Adressänderung des Retters</h3>
+    <form method="post" class="form-horizontal">
+      <fieldset>
+      {% csrf_token %}
+      <div class="row">
+        <div class="col-12">{{ form.gender|as_crispy_field }}</div>
+        <div class="col-6">{{ form.first_name|as_crispy_field }}</div>
+        <div class="col-6">{{ form.last_name|as_crispy_field }}</div>
+        <div class="col-8">{{ form.email|as_crispy_field }}</div>
+        <div class="col-4">{{ form.date_of_birth|as_crispy_field }}</div>
+        <div class="col-8">{{ form.street|as_crispy_field }}</div>
+        <div class="col-4">{{ form.street_number|as_crispy_field }}</div>
+        <div class="col-8">{{ form.city|as_crispy_field }}</div>
+        <div class="col-4">{{ form.zip_code|as_crispy_field }}</div>
+        <div class="col-12">{{ form.state|as_crispy_field }}</div>
+      </div>
+      <a href="{% url 'rescuer_all' %}" class="btn btn-secondary">Abbruch</a>
+      <button class="btn btn-primary" type="submit">Speichern</button>
+    </fieldset>
+    </form    
+  </div>
+</div>
+
+{% endblock content %}
