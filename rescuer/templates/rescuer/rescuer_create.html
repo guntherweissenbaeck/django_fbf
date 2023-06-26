@@ -7,16 +7,14 @@
         <form method="post" class="form-horizontal">
             {% csrf_token %}
             <div class="row">
-                <div class="col-md-12 col-lg-12">{{ form.gender|as_crispy_field }}</div>
                 <div class="col-md-12 col-lg-6">{{ form.first_name|as_crispy_field }}</div>
                 <div class="col-md-12 col-lg-6">{{ form.last_name|as_crispy_field }}</div>
-                <div class="col-md-12 col-lg-8">{{ form.email|as_crispy_field }}</div>
-                <div class="col-md-12 col-lg-4">{{ form.date_of_birth|as_crispy_field }}</div>
                 <div class="col-md-12 col-lg-8">{{ form.street|as_crispy_field }}</div>
                 <div class="col-md-12 col-lg-4">{{ form.street_number|as_crispy_field }}</div>
                 <div class="col-md-12 col-lg-8">{{ form.city|as_crispy_field }}</div>
                 <div class="col-md-12 col-lg-4">{{ form.zip_code|as_crispy_field }}</div>
-                <div class="col-md-12 col-lg-12">{{ form.state|as_crispy_field }}</div>
+                <div class="col-md-12 col-lg-6">{{ form.email|as_crispy_field }}</div>
+                <div class="col-md-12 col-lg-6">{{ form.phone|as_crispy_field }}</div>
             </div>
             <a href="{% url 'bird_all' %}" class="btn btn-danger">Abbruch</a>
             <button class="btn btn-primary" type="submit">Speichern</button>

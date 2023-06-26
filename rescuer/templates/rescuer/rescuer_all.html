@@ -48,6 +48,8 @@
         <th>Straße</th>
         <th>PLZ</th>
         <th>Ort</th>
+        <th>Email</th>
+        <th>Phone</th>
       </tr>
     </thead>
     <tbody>
@@ -60,6 +62,8 @@
         <td>{{ rescuer.street }} {{ rescuer.street_number }}</td>
         <td>{{ rescuer.zip_code }}</td>
         <td>{{ rescuer.city }}</td>
+        <td>{{ rescuer.email }}</td>
+        <td>{{ rescuer.phone }}</td>
       </tr>
       {% endfor %}
     </tbody>

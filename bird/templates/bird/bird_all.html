@@ -48,9 +48,9 @@
           <label for="rescuer" class="form-label mt-3">Wählen Sie einen <strong>bereits angelegten</strong>
             Retter aus oder legen Sie einen <strong>neuen</strong> Retter an:</label>
           <select id="rescuer" class="form-select" name="rescuer_id">
-            {% for rescuer in rescuer_modal %}
             <option value="new_rescuer"><strong>neuen
                 Retter anlegen</strong></option>
+            {% for rescuer in rescuer_modal %}
             <option value={{rescuer.id}}>
               {{rescuer.first_name}} {{rescuer.last_name}},
               {{rescuer.street}} {{rescuer.street_number}},
