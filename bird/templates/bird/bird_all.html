@@ -49,14 +49,14 @@
             Retter aus oder legen Sie einen <strong>neuen</strong> Retter an:</label>
           <select id="rescuer" class="form-select" name="rescuer_id">
             {% for rescuer in rescuer_modal %}
+            <option value="new_rescuer"><strong>neuen
+                Retter anlegen</strong></option>
             <option value={{rescuer.id}}>
               {{rescuer.first_name}} {{rescuer.last_name}},
               {{rescuer.street}} {{rescuer.street_number}},
               {{rescuer.city}}
             </option>
             {% endfor %}
-            <option value="new_rescuer"><strong>neuen
-                Retter anlegen</strong></option>
           </select>
         </div>
         <div class="modal-footer">
