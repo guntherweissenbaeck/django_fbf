@@ -2,11 +2,18 @@ from uuid import uuid4
 
 from django.conf import settings
 from django.db import models
-
 from djmoney.models.fields import MoneyField
 
-from rescuer.models import Rescuer
 from aviary.models import Aviary
+from rescuer.models import Rescuer
+
+
+#  STATUS = [
+#  ("In Behandlung", "In Behandlung"),
+#  ("In Auswilderung", "In Auswilderung"),
+#  ("Ausgewildert", "Ausgewildert"),
+#  ("Verstorben", "Verstorben"),
+#  ]
 
 
 class FallenBird(models.Model):
@@ -17,12 +24,16 @@ class FallenBird(models.Model):
     created = models.DateTimeField(auto_now_add=True)
     updated = models.DateTimeField(auto_now=True)
     diagnostic_finding = models.CharField(max_length=256)
-    cost_sum = MoneyField( max_digits=4, decimal_places=2,
-                          default_currency='EUR')
-    rescuer = models.ForeignKey(Rescuer, on_delete=models.CASCADE)
-    user = models.ForeignKey( settings.AUTH_USER_MODEL,
-                             on_delete=models.CASCADE)
-    aviary = models.ForeignKey(Aviary, on_delete=models.CASCADE)
+    cost_sum = MoneyField(
+        max_digits=4, decimal_places=2, default_currency='EUR')
+    rescuer = models.ForeignKey(
+        Rescuer, on_delete=models.SET_NULL, blank=True, null=True)
+    user = models.ForeignKey(
+        settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
+    aviary = models.ForeignKey(
+        Aviary, on_delete=models.SET_NULL, blank=True, null=True)
+    status = models.ForeignKey(
+        "BirdStatus", on_delete=models.SET_NULL, blank=True, null=True)
 
     def __str__(self):
         return self.place
@@ -34,3 +45,11 @@ class Bird(models.Model):
 
     def __str__(self):
         return self.name
+
+
+class BirdStatus(models.Model):
+    id = models.UUIDField(primary_key=True, default=uuid4, editable=False)
+    description = models.CharField(max_length=256)
+
+    def __str__(self):
+        return self.description

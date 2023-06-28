@@ -18,5 +18,5 @@ python3 manage.py loaddata fixtures/data.json
 ## Test Account
 The test account you can use:
 
-- user: gw
+- user: admin
 - password: abcdef

@@ -1,6 +1,6 @@
 from django.contrib import admin
 
-from .models import Bird, FallenBird
+from .models import Bird, FallenBird, BirdStatus
 
 
 @admin.register(FallenBird)
@@ -18,3 +18,8 @@ class FallenBirdAdmin(admin.ModelAdmin):
 @admin.register(Bird)
 class BirdAdmin(admin.ModelAdmin):
     list_display = ["name"]
+
+
+@admin.register(BirdStatus)
+class BirdStatusAdmin(admin.ModelAdmin):
+    list_display = ["description"]
