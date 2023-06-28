@@ -2,7 +2,6 @@ from uuid import uuid4
 
 from django.conf import settings
 from django.db import models
-from djmoney.models.fields import MoneyField
 
 from aviary.models import Aviary
 from rescuer.models import Rescuer
@@ -24,8 +23,7 @@ class FallenBird(models.Model):
     created = models.DateTimeField(auto_now_add=True)
     updated = models.DateTimeField(auto_now=True)
     diagnostic_finding = models.CharField(max_length=256)
-    cost_sum = MoneyField(
-        max_digits=4, decimal_places=2, default_currency='EUR')
+    cost_sum = models.DecimalField(max_digits=4, decimal_places=2)
     rescuer = models.ForeignKey(
         Rescuer, on_delete=models.SET_NULL, blank=True, null=True)
     user = models.ForeignKey(
