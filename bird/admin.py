@@ -4,7 +4,7 @@ from .models import Bird, FallenBird
 
 
 @admin.register(FallenBird)
-class ContractAdmin(admin.ModelAdmin):
+class FallenBirdAdmin(admin.ModelAdmin):
     list_display = [
         "bird",
         "date_found",
@@ -16,5 +16,5 @@ class ContractAdmin(admin.ModelAdmin):
 
 
 @admin.register(Bird)
-class ContractAdmin(admin.ModelAdmin):
+class BirdAdmin(admin.ModelAdmin):
     list_display = ["name"]
