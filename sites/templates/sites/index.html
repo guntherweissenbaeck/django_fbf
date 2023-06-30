@@ -1,22 +1,4 @@
 {% extends 'base.html' %} {% block content %}
-<style>
-#wfvmainsquare{
-    width: 100px;
-    height: 100px;
-    background-color: #0068b4;
-    rotate: 70deg;
-    margin: 3%;
-    border: 3px solid #b1b2b3;
-}
-.wfvwhitesquare{
-    width: 20%;
-    height: 50%;
-    background-color: white;
-    position: absolute;
-    margin-left: 15%;
-}
-
-</style>
 <div class="row">
     <h1 style="margin-bottom: 5px;">FallenBirdy</h1>
     <div>
@@ -26,7 +8,8 @@
         </div>
     </div>
     <div style="margin-bottom: 5px;">
-        Offizielle App der Wildvogelhilfe Jena, eine Organisation des <a href="https://www.nabu-jena.de">NABU Jena</a>
+        Offizielle App der Wildvogelhilfe Jena, eine Organisation des <a
+            href="https://www.nabu-jena.de" target="_blank">NABU Jena</a>
     </div>
     <p>
         Bitte <a href="{% url 'account_login' %}">hier</a> anmelden

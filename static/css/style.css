@@ -5,3 +5,22 @@
 .footer {
     font-size: small;
 }
+
+#wfvmainsquare{
+    width: 100px;
+    height: 100px;
+    background-color: #0068b4;
+    rotate: 70deg;
+    margin: 3%;
+    border: 3px solid #b1b2b3;
+}
+
+.wfvwhitesquare{
+    width: 20%;
+    height: 50%;
+    background-color: white;
+    position: absolute;
+    margin-left: 15%;
+}
+
+
