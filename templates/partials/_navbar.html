@@ -20,6 +20,10 @@
                     <a class="nav-link {% if '/rescuer/all' in request.path %} active {% endif %}"
                         href="{% url 'rescuer_all' %}">alle Retter</a>
                 </li>
+                <li class="nav-item">
+                    <a class="nav-link {% if '/aviary/all' in request.path %} active {% endif %}"
+                        href="{% url 'aviary_all' %}">alle Volieren</a>
+                </li>
                 {% endif %}
             </ul>
 

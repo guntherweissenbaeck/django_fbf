@@ -21,6 +21,7 @@ urlpatterns = [
     # Dynamic sites
     path("bird/", include("bird.urls")),
     path("rescuer/", include("rescuer.urls")),
+    path("aviary/", include("aviary.urls")),
     # Admin
     path("admin/", admin.site.urls),
     # Allauth
