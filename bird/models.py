@@ -25,9 +25,7 @@ class FallenBird(models.Model):
         Rescuer, on_delete=models.SET_NULL, blank=True, null=True
     )
     user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
-    status = models.ForeignKey(
-        "BirdStatus", on_delete=models.SET_NULL, blank=True, null=True
-    )
+    status = models.ForeignKey("BirdStatus", on_delete=models.CASCADE)
     aviary = models.ForeignKey(Aviary, on_delete=models.SET_NULL, blank=True, null=True)
 
     class Meta:
