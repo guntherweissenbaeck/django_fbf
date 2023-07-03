@@ -4,3 +4,4 @@ django-bootstrap-datepicker-plus>=4.0
 django-bootstrap-modal-forms>=2
 django-crispy-forms>=1
 crispy-bootstrap5>=0.6
+names>=0.3.0
