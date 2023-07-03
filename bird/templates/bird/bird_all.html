@@ -1,35 +1,72 @@
 {% extends "base.html" %}
 {% load static %}
+{% block header %}
+<!-- Datatable CSS -->
+<link  rel="stylesheet" href="https://cdn.datatables.net/1.13.4/css/dataTables.bootstrap5.min.css"/>
+<link rel="stylesheet" href="https://cdn.datatables.net/responsive/2.2.9/css/responsive.bootstrap5.min.css">
+
+<!-- jQuery -->
+<script src="https://code.jquery.com/jquery-3.5.1.js"></script>
+
+<!-- Datatable jQuery -->
+<script src="https://cdn.datatables.net/1.11.3/js/jquery.dataTables.min.js"></script>
+<script src="https://cdn.datatables.net/1.11.3/js/dataTables.bootstrap5.min.js"></script>
+<script src="https://cdn.datatables.net/responsive/2.2.9/js/dataTables.responsive.min.js"></script>
+<script src="https://cdn.datatables.net/responsive/2.2.9/js/responsive.bootstrap5.min.js"></script>
+
+<script>
+  $(document).ready(function () {
+    $('#t__bird_all').DataTable({
+      language: {
+        url: 'https://cdn.datatables.net/plug-ins/1.11.3/i18n/de_de.json',
+      },
+      paging: false,
+      info: false,
+      responsive: true,
+      columnDefs: [
+          { responsivePriority: 1, targets: 0 },
+      ]
+    })
+  })
+</script>
+
+{% endblock header %}
 {% block content %}
 <h3>Übersicht aller Patienten in Behandlung</h3>
 <p>
-  Die Übersicht aller in Behandlung befindlichen Vögel umfasst <strong>nicht</strong> die entlassenen Patienten.
+  Übersicht aller in Behandlung befindlichen Vögel.
 </p>
 <p>
   <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#addPatientModal">einen Patienten
     anlegen
   </button>
 </p>
-<table class="table table-striped table-hover" id="t__bird_all">
+<table class="table table-striped table-hover display responsive nowrap" id="t__bird_all">
   <thead>
     <tr>
+      <th>Patienten Alias</th>
       <th>Vogel</th>
       <th>Retter</th>
       <th>Fundort</th>
       <th>gefunden am</th>
+      <th>Status</th>
+      <th>Voliere</th>
+      <th>Kosten</th>
     </tr>
   </thead>
   <tbody>
     {% for bird in birds %}
     <tr>
-      <td>
-        <a href="{% url 'bird_single' bird.id %}">{{ bird.bird }}</a>
-      </td>
+      <td><a href="{% url 'bird_single' bird.id %}">{{ bird.bird_identifier }}</a></td>
+      <td>{{ bird.bird }}</td>
       <td>
         <a href="{% url 'rescuer_single' bird.rescuer_id %}">{{ bird.rescuer }}</a>
       </td>
       <td>{{ bird.place }}</td>
       <td>{{ bird.date_found }}</td>
+      <td>{{ bird.status }}</td>
+      <td>{{ bird.aviary }}</td>
+      <td>{{ bird.cost_sum }} €</td>
     </tr>
     {% endfor %}
   </tbody>
