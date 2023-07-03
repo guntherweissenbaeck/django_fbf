@@ -1,19 +1,10 @@
 {% extends 'base.html' %} {% block content %}
-<div class="row">
-    <h1 style="margin-bottom: 5px;">FallenBirdy</h1>
+<div class="row" style="text-align: center;">
     <div>
-        <div id="wfvmainsquare">
-            <div class="wfvwhitesquare"></div>
-            <div class="wfvwhitesquare" style="rotate: 90deg;"></div>
-        </div>
+        <h1 style="margin-bottom: 5px;">FallenBirdy</h1>
+        <img src="../../../static/img/wvhLogo12001200300x.png" alt="Logo Wildvogelhilfe Jena" class="logowvh">
+        <a href="{% url 'account_login' %}" id="loginMain">Einloggen</a>
     </div>
-    <div style="margin-bottom: 5px;">
-        Offizielle App der Wildvogelhilfe Jena, eine Organisation des <a
-            href="https://www.nabu-jena.de" target="_blank">NABU Jena</a>
-    </div>
-    <p>
-        Bitte <a href="{% url 'account_login' %}">hier</a> anmelden
-    </p>
 </div>
 
 {% endblock content %}
