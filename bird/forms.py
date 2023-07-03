@@ -16,14 +16,19 @@ class BirdAddForm(forms.ModelForm):
         }
         model = FallenBird
         fields = [
+            "bird_identifier",
             "bird",
             "date_found",
             "place",
+            "status",
+
         ]
         labels = {
+            "bird_identifier": _("Kennung"),
             "bird": _("Vogel"),
             "date_found": _("Datum des Fundes"),
             "place": _("Fundort"),
+            "status": _("Status"),
         }
 
 
@@ -32,14 +37,21 @@ class BirdEditForm(forms.ModelForm):
         widgets = {"date_found": DateInput(format="%Y-%m-%d")}
         model = FallenBird
         fields = [
+            "bird_identifier",
             "bird",
             "date_found",
             "place",
+            "status",
+            "aviary",
+            "cost_sum",
             "rescuer",
         ]
         labels = {
             "bird": _("Vogel"),
             "date_found": _("Datum des Fundes"),
             "place": _("Fundort"),
+            "status": _("Status"),
+            "aviary": _("Voliere"),
+            "cost_sum": _("Kosten der Behandlung [Euro]"),
             "rescuer": _("Retter"),
         }
