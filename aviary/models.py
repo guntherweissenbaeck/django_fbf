@@ -7,7 +7,8 @@ from django.utils.translation import gettext_lazy as _
 class Aviary(models.Model):
     id = models.UUIDField(primary_key=True, default=uuid4, editable=False)
     description = models.CharField(
-        max_length=256, verbose_name=_("Beschreibung"))
+        max_length=256, verbose_name=_("Beschreibung"), unique=True
+    )
     condition = models.CharField(max_length=256, verbose_name=_("Zustand"))
     last_ward_round = models.DateField(verbose_name=_("letzte Visite"))
 
