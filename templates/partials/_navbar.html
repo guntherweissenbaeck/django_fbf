@@ -31,6 +31,10 @@
                 {% if user.is_authenticated %}
                 <li class="nav-item">
                     <a class="nav-link {% if '/accounts/email/' in request.path %} active {% endif %}"
+                        href="{% url 'account_email' %}">Hilfe</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link {% if '/accounts/email/' in request.path %} active {% endif %}"
                         href="{% url 'account_email' %}">Profile</a>
                 </li>
                 <li class="class-item">
