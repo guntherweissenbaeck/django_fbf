@@ -22,4 +22,4 @@ class BirdAdmin(admin.ModelAdmin):
 
 @admin.register(BirdStatus)
 class BirdStatusAdmin(admin.ModelAdmin):
-    list_display = ["description"]
+    list_display = ["id","description"]

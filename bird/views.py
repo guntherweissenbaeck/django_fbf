@@ -1,3 +1,4 @@
+import names
 from django.contrib.auth.decorators import login_required
 from django.shortcuts import HttpResponse, redirect, render
 
@@ -8,12 +9,12 @@ from rescuer.models import Rescuer
 
 @login_required(login_url="account_login")
 def bird_create(request):
+    form = BirdAddForm(initial={"bird_identifier": names.get_full_name()})
     # Rescuer for modal usage
-    form = BirdAddForm()
     rescuer_id = request.session.get("rescuer_id")
     rescuer = Rescuer.objects.get(id=rescuer_id, user=request.user)
 
-    # just show only related rescuers in select field of the form
+    # Just show only related rescuers in select field of the form.
     if request.method == "POST":
         form = BirdAddForm(request.POST or None, request.FILES or None)
         rescuer_id = request.session.get("rescuer_id")
@@ -35,7 +36,7 @@ def bird_all(request):
     birds = FallenBird.objects.all()
     rescuer_modal = Rescuer.objects.all()
     context = {"birds": birds, "rescuer_modal": rescuer_modal}
-    # Post came from the modal form
+    # Post came from the modal form.
     if request.method == "POST":
         rescuer_id = request._post["rescuer_id"]
         if rescuer_id != "new_rescuer":
@@ -57,7 +58,10 @@ def bird_single(request, id):
     form = BirdEditForm(request.POST or None, request.FILES or None, instance=bird)
     if request.method == "POST":
         if form.is_valid():
-            form.save()
+            fs = form.save(commit=False)
+            if fs.status.description!="In Auswilderung":
+                fs.aviary = None
+            fs.save()
             return redirect("bird_all")
     context = {"form": form, "bird": bird}
     return render(request, "bird/bird_single.html", context)
