@@ -9,3 +9,10 @@ def aviary_all(request):
     aviaries = Aviary.objects.all()
     context = {"aviaries": aviaries}
     return render(request, "aviary/aviary_all.html", context)
+
+
+@login_required(login_url="account_login")
+def aviary_single(request, id):
+    aviary = Aviary.objects.get(id=id)
+    context = {"aviary": aviary}
+    return render(request, "aviary/aviary_single.html", context)

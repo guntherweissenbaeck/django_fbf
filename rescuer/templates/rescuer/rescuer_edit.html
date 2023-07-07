@@ -1,4 +1,4 @@
-{% extends 'base.html' %} 
+{% extends 'base.html' %}
 {% load crispy_forms_tags %}
 {% block content %}
 <div class="row">
@@ -6,21 +6,35 @@
     <h3>Adressänderung des Retters</h3>
     <form method="post" class="form-horizontal">
       <fieldset>
-      {% csrf_token %}
-      <div class="row">
-        <div class="col-6">{{ form.first_name|as_crispy_field }}</div>
-        <div class="col-6">{{ form.last_name|as_crispy_field }}</div>
-        <div class="col-8">{{ form.email|as_crispy_field }}</div>
-        <div class="col-8">{{ form.phone|as_crispy_field }}</div>
-        <div class="col-8">{{ form.street|as_crispy_field }}</div>
-        <div class="col-4">{{ form.street_number|as_crispy_field }}</div>
-        <div class="col-8">{{ form.city|as_crispy_field }}</div>
-        <div class="col-4">{{ form.zip_code|as_crispy_field }}</div>
-      </div>
-      <a href="{% url 'rescuer_all' %}" class="btn btn-secondary">Abbruch</a>
-      <button class="btn btn-primary" type="submit">Speichern</button>
-    </fieldset>
-  </form>  
+        {% csrf_token %}
+        <div class="row">
+          <div class="col-6">{{ form.first_name|as_crispy_field }}</div>
+          <div class="col-6">{{ form.last_name|as_crispy_field }}</div>
+          <div class="col-6">{{ form.email|as_crispy_field }}</div>
+          <div class="col-6">{{ form.phone|as_crispy_field }}</div>
+          <div class="col-8">{{ form.street|as_crispy_field }}</div>
+          <div class="col-4">{{ form.street_number|as_crispy_field }}</div>
+          <div class="col-8">{{ form.city|as_crispy_field }}</div>
+          <div class="col-4">{{ form.zip_code|as_crispy_field }}</div>
+        </div>
+        <a href="{% url 'rescuer_all' %}" class="btn btn-secondary">Abbruch</a>
+        <button class="btn btn-primary" type="submit">Speichern</button>
+      </fieldset>
+    </form>
+  </div>
+  <div class="col-lg-5">
+    <h4>Eins</h4>
+    <p>Lorem ipsum dolor sit, amet consectetur adipisicing elit. Provident rem voluptates, facere voluptatum laudantium
+      voluptate possimus porro. Ab veritatis impedit esse architecto sit dolores, tempore officia! Nemo magni voluptate
+      officiis?</p>
+    <h4>Zwei</h4>
+    <p>Lorem ipsum dolor sit, amet consectetur adipisicing elit. Provident rem voluptates, facere voluptatum laudantium
+      voluptate possimus porro. Ab veritatis impedit esse architecto sit dolores, tempore officia! Nemo magni voluptate
+      officiis?</p>
+    <h4>Drei</h4>
+    <p>Lorem ipsum dolor sit, amet consectetur adipisicing elit. Provident rem voluptates, facere voluptatum laudantium
+      voluptate possimus porro. Ab veritatis impedit esse architecto sit dolores, tempore officia! Nemo magni voluptate
+      officiis?</p>
   </div>
 </div>
 
