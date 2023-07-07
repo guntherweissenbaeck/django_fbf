@@ -17,7 +17,7 @@ class FallenBirdAdmin(admin.ModelAdmin):
 
 @admin.register(Bird)
 class BirdAdmin(admin.ModelAdmin):
-    list_display = ["name"]
+    list_display = ["name", "description"]
 
 
 @admin.register(BirdStatus)

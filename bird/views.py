@@ -4,7 +4,7 @@ from django.shortcuts import HttpResponse, redirect, render
 from rescuer.models import Rescuer
 
 from .forms import BirdAddForm, BirdEditForm
-from .models import FallenBird
+from .models import FallenBird, Bird
 
 
 @login_required(login_url="account_login")
@@ -32,6 +32,13 @@ def bird_create(request):
 
 
 @login_required(login_url="account_login")
+def bird_help(request):
+    birds = Bird.objects.all()
+    context = {"birds": birds}
+    return render(request, "bird/bird_help.html", context)
+
+
+@login_required(login_url="account_login")
 def bird_all(request):
     birds = FallenBird.objects.all()
     rescuer_modal = Rescuer.objects.all()
@@ -55,11 +62,14 @@ def bird_recover_all(request):
 @login_required(login_url="account_login")
 def bird_single(request, id):
     bird = FallenBird.objects.get(id=id)
-    form = BirdEditForm(request.POST or None, request.FILES or None, instance=bird)
+    form = BirdEditForm(
+        request.POST or None,
+        request.FILES or None,
+        instance=bird)
     if request.method == "POST":
         if form.is_valid():
             fs = form.save(commit=False)
-            if fs.status.description!="In Auswilderung":
+            if fs.status.description != "In Auswilderung":
                 fs.aviary = None
             fs.save()
             return redirect("bird_all")
