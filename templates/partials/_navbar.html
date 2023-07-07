@@ -32,8 +32,8 @@
             <ul class="navbar-nav pull-right">
                 {% if user.is_authenticated %}
                 <li class="nav-item">
-                    <a class="nav-link {% if '/accounts/email/' in request.path %} active {% endif %}"
-                        href="{% url 'account_email' %}">Hilfe</a>
+                    <a class="nav-link {% if '/bird/help/' in request.path %} active {% endif %}"
+                        href="{% url 'bird_help' %}">Hilfe</a>
                 </li>
                 <li class="nav-item">
                     <a class="nav-link {% if '/accounts/email/' in request.path %} active {% endif %}"

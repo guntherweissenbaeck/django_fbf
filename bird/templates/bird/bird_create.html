@@ -8,11 +8,11 @@
 <div class="row">
   <div class="col-lg-8 mb-3">
     <form method="post" enctype="multipart/form-data">
-        {% csrf_token %}
-        {{ form|crispy }}
-        <a href="{% url 'bird_all' %}" class="btn btn-danger">Abbruch</a>
-        <button class="btn btn-primary" type="submit">Patient anlegen</button>
-        <div class="mt-3"><small>* Pflichtfeld</small></div>
+      {% csrf_token %}
+      {{ form|crispy }}
+      <a href="{% url 'bird_all' %}" class="btn btn-danger">Abbruch</a>
+      <button class="btn btn-primary" type="submit">Patient anlegen</button>
+      <div class="mt-3"><small>* Pflichtfeld</small></div>
     </form>
   </div>
 
