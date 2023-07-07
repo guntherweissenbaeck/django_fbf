@@ -1,6 +1,7 @@
+from datetime import date
+
 from django import forms
 from django.utils.translation import gettext_lazy as _
-from datetime import date
 
 from .models import FallenBird
 
@@ -11,18 +12,9 @@ class DateInput(forms.DateInput):
 
 class BirdAddForm(forms.ModelForm):
     class Meta:
-        widgets = {
-            "date_found": DateInput(format="%Y-%m-%d", attrs={"value": date.today})
-        }
+        widgets = {"date_found": DateInput(format="%Y-%m-%d", attrs={"value": date.today})}
         model = FallenBird
-        fields = [
-            "bird_identifier",
-            "bird",
-            "date_found",
-            "place",
-            "status",
-
-        ]
+        fields = ["bird_identifier","bird","date_found","place","status", ]
         labels = {
             "bird_identifier": _("Kennung"),
             "bird": _("Vogel"),
