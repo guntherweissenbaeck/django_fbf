@@ -46,7 +46,7 @@
     <tr>
       <th>Patienten Alias</th>
       <th>Vogel</th>
-      <th>Retter</th>
+      <th>Finder</th>
       <th>Fundort</th>
       <th>gefunden am</th>
       <th>Status</th>
@@ -77,16 +77,16 @@
   <div class="modal-dialog">
     <div class="modal-content">
       <div class="modal-header bg-primary">
-        <h5 class="modal-title text-white" id="addRescuerModalLabel">(neuen) Retter zuweisen</h5>
+        <h5 class="modal-title text-white" id="addRescuerModalLabel">(neuen) Finder zuweisen</h5>
       </div>
       <form method="post">
         {% csrf_token %}
         <div class="modal-body">
           <label for="rescuer" class="form-label mt-3">Wählen Sie einen <strong>bereits angelegten</strong>
-            Retter aus oder legen Sie einen <strong>neuen</strong> Retter an:</label>
+            Finder aus oder legen Sie einen <strong>neuen</strong> Finder an:</label>
           <select id="rescuer" class="form-select" name="rescuer_id">
             <option value="new_rescuer"><strong>neuen
-                Retter anlegen</strong></option>
+                Finder anlegen</strong></option>
             {% for rescuer in rescuer_modal %}
             <option value={{rescuer.id}}>
               {{rescuer.first_name}} {{rescuer.last_name}},
