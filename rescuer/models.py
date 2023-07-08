@@ -13,7 +13,6 @@ class Rescuer(models.Model):
     street_number = models.CharField(max_length=20)
     city = models.CharField(max_length=200)
     zip_code = models.CharField(max_length=200)
-    email = models.EmailField(max_length=200)
     phone = models.CharField(max_length=200)
     user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
 

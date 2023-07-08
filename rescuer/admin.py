@@ -12,7 +12,6 @@ class CustomerAdmin(admin.ModelAdmin):
         "street",
         "street_number",
         "city",
-        "email",
         "phone",
         "user",
     ]

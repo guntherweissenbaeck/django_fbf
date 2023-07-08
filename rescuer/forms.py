@@ -18,7 +18,6 @@ class RescuerForm(forms.ModelForm):
             "street_number",
             "zip_code",
             "city",
-            "email",
             "phone",
         ]
         labels = {
@@ -28,6 +27,5 @@ class RescuerForm(forms.ModelForm):
             "street_number": _("Hausnummer"),
             "zip_code": _("Postleitzahl"),
             "city": _("Stadt"),
-            "email": _("Email"),
             "phone": _("Telefon"),
         }
