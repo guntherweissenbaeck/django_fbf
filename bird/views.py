@@ -9,7 +9,7 @@ from .models import FallenBird, Bird
 
 @login_required(login_url="account_login")
 def bird_create(request):
-    form = BirdAddForm(initial={"bird_identifier": names.get_full_name()})
+    form = BirdAddForm(initial={"bird_identifier": names.get_first_name()})
     # Rescuer for modal usage
     rescuer_id = request.session.get("rescuer_id")
     rescuer = Rescuer.objects.get(id=rescuer_id, user=request.user)
