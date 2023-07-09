@@ -3,7 +3,7 @@ from uuid import uuid4
 from django.db import models
 from django.utils.translation import gettext_lazy as _
 
-AVIARY_CHOICE = [("Offen","Offen"), ("Geschlossen", "Geschlossen"), ("Gesperrt", "Geshlossem")]
+AVIARY_CHOICE = [("Offen","Offen"), ("Geschlossen", "Geschlossen"), ("Gesperrt", "Gesperrt")]
 
 class Aviary(models.Model):
     id = models.UUIDField(primary_key=True, default=uuid4, editable=False)
