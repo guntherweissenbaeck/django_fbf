@@ -43,7 +43,7 @@ class BirdEditForm(forms.ModelForm):
             "place",
             "status",
             "aviary",
-            "cost_sum",
+            # "cost_sum",
             #  "rescuer",
         ]
         labels = {
@@ -52,6 +52,6 @@ class BirdEditForm(forms.ModelForm):
             "place": _("Fundort"),
             "status": _("Status"),
             "aviary": _("Voliere"),
-            "cost_sum": _("Kosten der Behandlung [Euro]"),
+            # "cost_sum": _("Kosten der Behandlung [Euro]"),
             #  "rescuer": _("Retter"),
         }

@@ -66,7 +66,7 @@
       <td>{{ bird.date_found }}</td>
       <td>{{ bird.status }}</td>
       <td>{{ bird.aviary|default_if_none:"" }}</td>
-      <td>{{ bird.cost_sum }} €</td>
+      <td>{{ bird.costs }}</td>
     </tr>
     {% endfor %}
   </tbody>

@@ -1,4 +1,5 @@
 from uuid import uuid4
+from datetime import date
 
 from aviary.models import Aviary
 from django.conf import settings
@@ -6,6 +7,8 @@ from django.db import models
 from django.utils.translation import gettext_lazy as _
 from rescuer.models import Rescuer
 
+def costs_default():
+    return [{"date": date.today().strftime("%Y-%m-%d"), "cost_entry": "0.00"}]
 
 class FallenBird(models.Model):
     id = models.UUIDField(primary_key=True, default=uuid4, editable=False)
@@ -18,7 +21,7 @@ class FallenBird(models.Model):
     created = models.DateTimeField(auto_now_add=True, verbose_name=_("angelegt am"))
     updated = models.DateTimeField(auto_now=True, verbose_name=_("geändert am"))
     diagnostic_finding = models.CharField(max_length=256)
-    cost_sum = models.DecimalField(max_digits=5, decimal_places=2, default=0.00)
+    costs = models.JSONField("Costs", default=costs_default)
     rescuer = models.ForeignKey(
         Rescuer, on_delete=models.SET_NULL, blank=True, null=True
     )

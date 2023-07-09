@@ -41,6 +41,15 @@ def bird_help(request):
 @login_required(login_url="account_login")
 def bird_all(request):
     birds = FallenBird.objects.all()
+    # Sum all costs per bird from json    
+    for bird in birds:
+        costs_per_bird = float()
+        for item in bird.costs:
+            costs_per_bird += float(item['cost_entry'])
+            if costs_per_bird == 0.0:
+                costs_per_bird = ""
+        bird.costs = costs_per_bird
+            
     rescuer_modal = Rescuer.objects.all()
     context = {"birds": birds, "rescuer_modal": rescuer_modal}
     # Post came from the modal form.
