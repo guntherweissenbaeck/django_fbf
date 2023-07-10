@@ -2,6 +2,7 @@
 {% load static %}
 {% load crispy_forms_tags %}
 {% block content %}
+
 <h3>Patient <strong>{{ bird.bird_identifier }}</strong> bearbeiten </h3>
 <p>Finder des Patienten: <strong> <a href="{% url 'rescuer_single' bird.rescuer_id %}">{{ bird.rescuer }}</a></strong></p>
 <div class="row">
@@ -66,6 +67,6 @@
     </div>
 </div>
 
-<script src="{% static 'js/bird.js' %}"></script
+<script src="{% static 'js/bird.js' %}"></script>
 
 {% endblock content %}
