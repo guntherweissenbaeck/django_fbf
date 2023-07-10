@@ -173,3 +173,7 @@ ACCOUNT_USERNAME_BLACKLIST = ["admin", "god"]
 ACCOUNT_USERNAME_MIN_LENGTH = 3
 ACCOUNT_UNIQUE_EMAIL = True
 LOGIN_REDIRECT_URL = "/bird/all"
+
+# Email
+EMAIL_BACKEND = "django.core.mail.backends.console.EmailBackend"
+
