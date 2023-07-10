@@ -4,7 +4,7 @@
 {% block content %}
 
 <h3>Patient anlegen</h3>
-<p>(Finder: {{rescuer.first_name}} {{rescuer.last_name}})</p>
+<p>(Retter: {{rescuer.first_name}} {{rescuer.last_name}})</p>
 <div class="row">
   <div class="col-lg-8 mb-3">
     <form method="post" enctype="multipart/form-data">
@@ -42,4 +42,7 @@
     </p>
   </div>
 </div>
+
+<script src="{% static 'js/find_circumstances.js' %}"></script>
+
 {% endblock content %}
