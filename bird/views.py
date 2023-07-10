@@ -17,10 +17,16 @@ def bird_create(request):
     # Just show only related rescuers in select field of the form.
     if request.method == "POST":
         form = BirdAddForm(request.POST or None, request.FILES or None)
+        # circumstances = Circumstance.objects.all()
         rescuer_id = request.session.get("rescuer_id")
         rescuer = Rescuer.objects.get(id=rescuer_id, user=request.user)
 
         if form.is_valid():
+            # if form.cleaned_data["find_circumstances_new"]:
+            #     circumstance = form.cleaned_data["find_circumstances_new"]
+            #     if Circumstance.objects.filter(description=circumstance).exists():
+            #         print("is in circumstances")
+
             fs = form.save(commit=False)
             fs.user = request.user
             fs.rescuer_id = rescuer_id
@@ -41,15 +47,15 @@ def bird_help(request):
 @login_required(login_url="account_login")
 def bird_all(request):
     birds = FallenBird.objects.all()
-    # Sum all costs per bird from json    
+    # Sum all costs per bird from json
     for bird in birds:
         costs_per_bird = float()
         for item in bird.costs:
-            costs_per_bird += float(item['cost_entry'])
+            costs_per_bird += float(item["cost_entry"])
             if costs_per_bird == 0.0:
                 costs_per_bird = ""
         bird.costs = costs_per_bird
-            
+
     rescuer_modal = Rescuer.objects.all()
     context = {"birds": birds, "rescuer_modal": rescuer_modal}
     # Post came from the modal form.
@@ -71,10 +77,7 @@ def bird_recover_all(request):
 @login_required(login_url="account_login")
 def bird_single(request, id):
     bird = FallenBird.objects.get(id=id)
-    form = BirdEditForm(
-        request.POST or None,
-        request.FILES or None,
-        instance=bird)
+    form = BirdEditForm(request.POST or None, request.FILES or None, instance=bird)
     if request.method == "POST":
         if form.is_valid():
             fs = form.save(commit=False)
