@@ -1,14 +1,17 @@
-from uuid import uuid4
 from datetime import date
+from uuid import uuid4
 
-from aviary.models import Aviary
 from django.conf import settings
 from django.db import models
 from django.utils.translation import gettext_lazy as _
+
+from aviary.models import Aviary
 from rescuer.models import Rescuer
+
 
 def costs_default():
     return [{"date": date.today().strftime("%Y-%m-%d"), "cost_entry": "0.00"}]
+
 
 class FallenBird(models.Model):
     id = models.UUIDField(primary_key=True, default=uuid4, editable=False)
@@ -20,6 +23,7 @@ class FallenBird(models.Model):
     place = models.CharField(max_length=256, verbose_name=_("Ort des Fundes"))
     created = models.DateTimeField(auto_now_add=True, verbose_name=_("angelegt am"))
     updated = models.DateTimeField(auto_now=True, verbose_name=_("geändert am"))
+    find_circumstances = models.ForeignKey("Circumstance", on_delete=models.CASCADE)
     diagnostic_finding = models.CharField(max_length=256)
     costs = models.JSONField("Costs", default=costs_default)
     rescuer = models.ForeignKey(
@@ -59,4 +63,26 @@ class BirdStatus(models.Model):
         verbose_name_plural = _("Patientenstatus")
 
     def __str__(self):
+        return self.description
+
+
+# CHOICE_FIND_CIRCUMSTANCES = [
+#     ("Neu", "Neu"),
+#     ("Scheibenschlag", "Scheibenschlag"),
+#     ("Angriff Hund/Katze", "Angriff Hund/Katze"),
+#     ("Entkräftet", "Entkräftet"),
+#     ("Verkehrsunfall", "Verkehrsunfall"),
+#     ("unbekannt", "unbekannt"),
+# ]
+
+
+class Circumstance(models.Model):
+    id = models.BigAutoField(primary_key=True)
+    description = models.CharField(max_length=256)
+
+    class Meta:
+        verbose_name = _("Fundumstand")
+        verbose_name_plural = _("Fundumstände")
+
+    def __str__(self) -> str:
         return self.description
