@@ -3,6 +3,7 @@ from uuid import uuid4
 
 from django.conf import settings
 from django.db import models
+from django.utils.translation import gettext_lazy as _
 
 
 class Rescuer(models.Model):
@@ -15,6 +16,10 @@ class Rescuer(models.Model):
     zip_code = models.CharField(max_length=200)
     phone = models.CharField(max_length=200)
     user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
+
+    class Meta:
+        verbose_name = _("Finder")
+        verbose_name_plural = _("Finder")
 
     def __str__(self) -> str:
         return self.first_name + " " + self.last_name
