@@ -16,9 +16,9 @@ class BirdAdmin(admin.ModelAdmin):
 
 @admin.register(BirdStatus)
 class BirdStatusAdmin(admin.ModelAdmin):
-    list_display = ["id", "description"]
+    list_display = ["description"]
 
 
 @admin.register(Circumstance)
 class CircumstanceAdmin(admin.ModelAdmin):
-    list_display = ["id", "description"]
+    list_display = ["description"]
