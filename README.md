@@ -80,84 +80,28 @@ DEFAULT_FROM_EMAIL=os.getenv('DEFAULT_FROM_EMAIL')
 CSRF_TRUSTED_ORIGINS=[os.getenv('CSRF_TRUSTED_ORIGINS')]
 ```
 
-### Docker Stack
-```docker
-# docker-compose.yaml
-version: '3.7'
+## How to use this project?
 
-services:
-  django_gunicorn:
-    build:
-      context: .
-    env_file:
-      - .env
-    volumes:
-      - static:/static
-      - ./django_project:/app
-    restart: always
-    container_name: lvr_django
+### Development
 
-  nginx:
-    build: ./nginx
-    volumes:
-      - static:/static
-    depends_on:
-      - django_gunicorn
-    restart: always
-    container_name: lvr_nginx
-    labels:
-      - "traefik.enable=true"
-      - "traefik.http.routers.whoami-http.entrypoints=web"
-      - "traefik.http.routers.whoami-http.rule=Host(`${APP_URL}`)"
-      - "traefik.http.routers.whoami.rule=Host(`${APP_URL}`)"
-      - "traefik.http.routers.whoami.tls.certresolver=default"
-      - "traefik.http.routers.whoami.tls=true"
-    networks:
-      - traefik_proxy
-      - default
+Build the images and spin up the containers:
 
-networks:
-  traefik_proxy:
-    external:
-      name: traefik_proxy
-
-volumes:
-  static:
+```sh
+$ docker-compose up -d --build
 ```
 
-### Dockerfile
-```
-# Dockerfile
-FROM python:3.10-alpine
+Test it out:
 
-RUN apk add --update --no-cache postgresql-client jpeg-dev
-RUN apk add --update --no-cache --virtual .tmp-build-deps \
-      gcc libffi-dev libc-dev linux-headers postgresql-dev \
-      musl-dev zlib zlib-dev
+1. [http://django.localhost:8008/](http://django.localhost:8008/)
+1. [http://django.localhost:8081/](http://django.localhost:8081/)
 
-RUN pip install --upgrade pip
+### Production
 
-COPY ./requirements.txt .
-RUN pip install -r requirements.txt
+Update the domain in *docker-compose.prod.yml*, and add your email to *traefik.prod.toml*.
 
-# This is not installed by default
-RUN pip install tzdata
+Build the images and run the containers:
 
-COPY ./django_project /app
-
-WORKDIR /app
-
-COPY ./entrypoint.sh /
-ENTRYPOINT ["sh", "/entrypoint.sh"]
+```sh
+$ docker-compose -f docker-compose.prod.yml up -d --build
 ```
 
-### Entrypoint Shell Script
-```
-# entrypoint.sh
-#!/bin/sh
-
-python manage.py migrate --no-input
-python manage.py collectstatic --no-input
-
-gunicorn core.wsgi:application --bind 0.0.0.0:8000
-```
