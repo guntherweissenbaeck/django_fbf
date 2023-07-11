@@ -23,7 +23,7 @@ class FallenBird(models.Model):
     updated = models.DateTimeField(auto_now=True, verbose_name=_("geändert am"))
     find_circumstances = models.ForeignKey("Circumstance", on_delete=models.CASCADE)
     diagnostic_finding = models.CharField(max_length=256)
-    costs = models.JSONField("Costs", default=costs_default)
+    costs = models.DecimalField(max_digits=5, decimal_places=2)
     rescuer = models.ForeignKey( Rescuer, on_delete=models.SET_NULL, blank=True, null=True)
     user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
     status = models.ForeignKey("BirdStatus", on_delete=models.CASCADE, default=1)
