@@ -3,14 +3,14 @@ version: '3.8'
 services:
   web:
     build: ./app
-    command: bash -c 'while !</dev/tcp/db/5432; do sleep 1; done; python manage.py runserver 0.0.0.0:8000'
+    command: bash -c 'while !</dev/tcp/db/5432; do sleep 1; done;python manage.py migrate;python manage.py loaddata fixtures/data.json; python manage.py runserver 0.0.0.0:8000'
     volumes:
       - ./app:/app
     expose:
       - 8000
     environment:
       - DEBUG=1
-      - DATABASE_URL=postgresql://django_traefik:django_traefik@db:5432/django_traefik
+      - DATABASE_URL=postgresql://django_fbf:django_fbf@db:5432/django_fbf
     depends_on:
       - db
     labels:
@@ -23,9 +23,9 @@ services:
     expose:
       - 5432
     environment:
-      - POSTGRES_USER=django_traefik
-      - POSTGRES_PASSWORD=django_traefik
-      - POSTGRES_DB=django_traefik
+      - POSTGRES_USER=django_fbf
+      - POSTGRES_PASSWORD=django_fbf
+      - POSTGRES_DB=django_fbf
   traefik:
     image: traefik:v2.9.6
     ports:
