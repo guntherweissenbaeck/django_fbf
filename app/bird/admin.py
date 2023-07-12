@@ -5,7 +5,13 @@ from .models import Bird, FallenBird, BirdStatus, Circumstance
 
 @admin.register(FallenBird)
 class FallenBirdAdmin(admin.ModelAdmin):
-    list_display = ["bird", "date_found", "place", "created", "updated", "user"]
+    list_display = [
+        "bird",
+        "date_found",
+        "place",
+        "created",
+        "updated",
+        "user"]
     list_filter = ("bird", "created", "user")
 
 

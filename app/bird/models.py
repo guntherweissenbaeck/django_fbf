@@ -1,11 +1,10 @@
 from datetime import date
 from uuid import uuid4
 
+from aviary.models import Aviary
 from django.conf import settings
 from django.db import models
 from django.utils.translation import gettext_lazy as _
-
-from aviary.models import Aviary
 from rescuer.models import Rescuer
 
 
@@ -21,13 +20,13 @@ class FallenBird(models.Model):
     place = models.CharField(max_length=256, verbose_name=_("Ort des Fundes"))
     created = models.DateTimeField(auto_now_add=True, verbose_name=_("angelegt am"))
     updated = models.DateTimeField(auto_now=True, verbose_name=_("geändert am"))
-    find_circumstances = models.ForeignKey("Circumstance", on_delete=models.CASCADE)
-    diagnostic_finding = models.CharField(max_length=256)
-    costs = models.DecimalField(max_digits=5, decimal_places=2)
-    rescuer = models.ForeignKey( Rescuer, on_delete=models.SET_NULL, blank=True, null=True)
-    user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
+    find_circumstances = models.ForeignKey("Circumstance", on_delete=models.CASCADE, verbose_name=_("Fundumstände"))
+    diagnostic_finding = models.CharField(max_length=256, verbose_name=_("Diagnose bei Fund"))
+    costs = models.DecimalField(max_digits=5, decimal_places=2, verbose_name=_("Kosten"))
+    rescuer = models.ForeignKey( Rescuer, on_delete=models.SET_NULL, blank=True, null=True, verbose_name=_("Finder"))
+    user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, verbose_name=_("Benutzer"))
     status = models.ForeignKey("BirdStatus", on_delete=models.CASCADE, default=1)
-    aviary = models.ForeignKey(Aviary, on_delete=models.SET_NULL, blank=True, null=True)
+    aviary = models.ForeignKey(Aviary, on_delete=models.SET_NULL, blank=True, null=True, verbose_name=_("Voliere"))
 
     class Meta:
         verbose_name = _("Patient")

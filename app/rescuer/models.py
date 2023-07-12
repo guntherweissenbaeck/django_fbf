@@ -15,7 +15,9 @@ class Rescuer(models.Model):
     city = models.CharField(max_length=200, verbose_name=_("Stadt"))
     zip_code = models.CharField(max_length=200,  verbose_name=_("PLZ"))
     phone = models.CharField(max_length=200,  verbose_name=_("Telefon"))
-    user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
+    user = models.ForeignKey(
+        settings.AUTH_USER_MODEL,
+        on_delete=models.CASCADE)
 
     class Meta:
         verbose_name = _("Finder")
