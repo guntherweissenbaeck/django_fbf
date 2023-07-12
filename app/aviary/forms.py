@@ -19,9 +19,11 @@ class AviaryEditForm(forms.ModelForm):
             "description",
             "condition",
             "last_ward_round",
+            "comment",
         ]
         labels = {
             "description": _("Bezeichnung"),
             "condition": _("Zustand"),
             "last_ward_round": _("Letzte Inspektion"),
+            "commen": _("Bemerkungen"),
         }
