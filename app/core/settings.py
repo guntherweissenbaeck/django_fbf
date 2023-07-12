@@ -19,6 +19,7 @@ SECRET_KEY = ")g-j2v+*dvjtnz)q-3+*y7*lq$el$im8p^wr@2v$g^u99quq50"
 # SECURITY WARNING: don't run with debug turned on in production!
 # DEBUG = True
 DEBUG = env("DEBUG")
+CSRF_TRUSTED_ORIGINS = ['https://*.nabu-jena.de','https://*.127.0.0.1']
 
 
 # ALLOWED_HOSTS = []
