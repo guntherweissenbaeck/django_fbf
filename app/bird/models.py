@@ -29,7 +29,7 @@ class FallenBird(models.Model):
         max_length=256, verbose_name=_("Diagnose bei Fund")
     )
     costs = models.DecimalField(
-        max_digits=5, decimal_places=2, verbose_name=_("Kosten")
+        max_digits=5, decimal_places=2, default="0.00", verbose_name=_("Kosten")
     )
     rescuer = models.ForeignKey(
         Rescuer,
