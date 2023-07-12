@@ -9,5 +9,5 @@ class AviaryAdmin(admin.ModelAdmin):
         "description",
         "condition",
         "last_ward_round",
-        ]
+    ]
     list_filter = ("description", "condition", "last_ward_round")
