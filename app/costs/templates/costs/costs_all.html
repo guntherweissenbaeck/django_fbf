@@ -63,7 +63,7 @@
                 <td> {{item.id_bird}} </td>
                 <td> {{item.costs}} </td>
                 <td> {{item.created}} </td>
-                <td> {{item.comment}} </td>
+                <td> {{item.comment|default_if_none:""}} </td>
                 <td> {{item.user}} </td>
                 <td><a href="{% url 'costs_edit' item.id %}"><i class="fa-sharp fa-solid fa-pen"></i></a></td>
                 <td><a href="{% url 'costs_delete' item.id %}"><i class="fa-sharp fa-solid fa-trash"></i></a></td>

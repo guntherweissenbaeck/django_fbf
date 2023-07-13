@@ -22,7 +22,7 @@ class Costs(models.Model):
         decimal_places=2,
         default="0.00",
         verbose_name=_("Betrag"))
-    created = models.DateTimeField(
+    created = models.DateField(
         verbose_name=_("Gebucht am"))
     comment = models.CharField(
         max_length=512,
