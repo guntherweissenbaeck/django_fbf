@@ -1,10 +1,11 @@
-
 function showBirdEditFields() {
     let statusField = document.getElementById("id_status");
     let statusText = statusField.options[statusField.selectedIndex].text;
     let aviaryField = document.getElementById("div_id_aviary");
     let sentToField = document.getElementById("div_id_sent_to");
 
+    aviaryField.hidden = true
+    sentToField.hidden = true
 
     if (statusText == 'In Auswilderung') {
         aviaryField.hidden = false
