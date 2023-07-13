@@ -1,0 +1,55 @@
+{% extends "base.html" %}
+{% load static %}
+{% load crispy_forms_tags %}
+{% block content %}
+<h3>Buchung löschen</h3>
+<p></p>
+<div class="row">
+    <div class="col-lg-5 mb-3">
+        <form method="post" enctype="multipart/form-data">
+            <fieldset>
+                {% csrf_token %}
+                <div class="card bg-light mb-3" style="max-width: 30rem;">
+                    <div class="card-header">Buchung</div>
+                    <div class="card-body">
+                        <p class="card-text">
+                            <strong>Patient:</strong> {{costs.id_bird}}<br>
+                            <strong>Buchung:</strong> {{costs.costs}}<br>
+                            <strong>Gebucht am:</strong> {{costs.created}}<br>
+                            <strong>Bemerkung:</strong> {{costs.comment|default_if_none:"keine Bemerkung"}}<br>
+                            <strong>Nutzer:</strong> {{costs.user}}<br>
+                        </p>
+                    </div>
+                </div>
+                <button class="btn btn-success" type="abbort">Abbrechen</button>
+                <button class="btn btn-danger" type="submit">Löschen</button>
+            </fieldset>
+        </form>
+    </div>
+
+    <div class="col-lg-5">
+        <h4>
+            Kennung
+        </h4>
+        <p>
+            Lorem ipsum dolor sit, amet consectetur adipisicing elit.
+            Reiciendis, hic enim pariatur, exercitationem, repellat quasi sit
+            temporibus dicta voluptate in voluptates. Alias deserunt sint
+            suscipit explicabo et. Perferendis, dolor praesentium.
+        </p>
+        <h4>
+            Vogel
+        </h4>
+        <p>
+            Lorem ipsum dolor sit, amet consectetur adipisicing elit.
+            Reiciendis, hic enim pariatur, exercitationem, repellat quasi sit
+            temporibus dicta voluptate in voluptates. Alias deserunt sint
+            suscipit explicabo et. Perferendis, dolor praesentium.
+        </p>
+      
+    </div>
+</div>
+
+<script src="{% static 'js/bird.js' %}"></script>
+
+{% endblock content %}

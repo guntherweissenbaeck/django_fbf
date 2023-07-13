@@ -27,7 +27,7 @@ class BirdAddForm(forms.ModelForm):
             "place",
             "find_circumstances",
             "diagnostic_finding",
-            "costs",
+            #  "costs",
             # "find_circumstances_new",
             # "status",
         ]
@@ -38,7 +38,7 @@ class BirdAddForm(forms.ModelForm):
             "place": _("Fundort"),
             "find_circumstances": _("Fundumstände"),
             "diagnostic_finding": _("Diagnose bei Fund"),
-            "costs": _("Kosten"),
+            #  "costs": _("Kosten"),
             # "find_circumstances_new": _("neuer Fundumstand"),
             # "status": _("Status"),
         }
@@ -58,7 +58,7 @@ class BirdEditForm(forms.ModelForm):
             "sent_to",
             "find_circumstances",
             "diagnostic_finding",
-            "costs",
+            #  "costs",
         ]
         labels = {
             "bird": _("Vogel"),
@@ -69,5 +69,5 @@ class BirdEditForm(forms.ModelForm):
             "sent_to": _("Übermittelt nach"),
             "find_circumstances": _("Fundumstände"),
             "diagnostic_finding": _("Diagnose bei Fund"),
-            "costs": _("Kosten"),
+            #  "costs": _("Kosten"),
         }

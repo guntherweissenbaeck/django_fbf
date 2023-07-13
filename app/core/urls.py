@@ -19,9 +19,10 @@ from django.urls import path, include
 
 urlpatterns = [
     # Dynamic sites
-    path("bird/", include("bird.urls")),
-    path("rescuer/", include("rescuer.urls")),
     path("aviary/", include("aviary.urls")),
+    path("bird/", include("bird.urls")),
+    path("costs/", include("costs.urls")),
+    path("rescuer/", include("rescuer.urls")),
     # Admin
     path("admin/", admin.site.urls),
     # Allauth
