@@ -28,9 +28,6 @@ class FallenBird(models.Model):
     diagnostic_finding = models.CharField(
         max_length=256, verbose_name=_("Diagnose bei Fund")
     )
-    #  costs = models.DecimalField(
-        #  max_digits=5, decimal_places=2, default="0.00", verbose_name=_("Kosten")
-    #  )
     rescuer = models.ForeignKey(
         Rescuer,
         on_delete=models.SET_NULL,

@@ -23,7 +23,7 @@ class CostsForm(forms.ModelForm):
         ]
         labels = {
             "id_bird": _("Patient"),
-            "costs": _("Betrag"),
+            "costs": _("Betrag [€]"),
             "comment": _("Bemerkung"),
             "created": _("Gebucht am"),
         }
