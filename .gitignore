@@ -165,4 +165,9 @@ cython_debug/
 
 # VIM Ctags
 tags
+style=""
+
+# Certificate Folder
 traefik-public-certificates
+
+
