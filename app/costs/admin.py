@@ -2,6 +2,7 @@ from django.contrib import admin
 
 from .models import Costs
 
+
 @admin.register(Costs)
 class FallenBirdAdmin(admin.ModelAdmin):
     list_display = [
@@ -10,5 +11,5 @@ class FallenBirdAdmin(admin.ModelAdmin):
         "created",
         "comment",
         "user",
-        ]
+    ]
     list_filter = ("id_bird", "created")
