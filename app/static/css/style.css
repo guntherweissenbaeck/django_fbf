@@ -1,48 +1,46 @@
 h1 {
- margin-bottom: 2rem;
- color: #0068b4;
- font-weight: bold;
+  margin-bottom: 2rem;
+  color: #0068b4;
+  font-weight: bold;
 }
 
 .logowvh {
-    display: block;
-    margin-left: auto;
-    margin-right: auto;
-    max-height: 15rem;
-    aspect-ratio: 1/1;
-    margin-top: 2rem;
-    margin-bottom: 2rem;
+  display: block;
+  margin-left: auto;
+  margin-right: auto;
+  max-height: 15rem;
+  aspect-ratio: 1/1;
+  margin-top: 0.6rem;
+  margin-bottom: 0.6rem;
 }
 
-#loginMain{
-    color: #0068b4;
-    font-weight: bold;
-    font-size: 1.5rem;
-    text-decoration: none;
+#loginMain {
+  color: #0068b4;
+  font-weight: bold;
+  font-size: 1.5rem;
+  text-decoration: none;
 }
 .rounded-pill {
-    margin-left: 5px;
+  margin-left: 5px;
 }
 
 .footer {
-    font-size: small;
+  font-size: small;
 }
 
-#wfvmainsquare{
-    width: 100px;
-    height: 100px;
-    background-color: #0068b4;
-    rotate: 70deg;
-    margin: 3%;
-    border: 3px solid #b1b2b3;
+#wfvmainsquare {
+  width: 100px;
+  height: 100px;
+  background-color: #0068b4;
+  rotate: 70deg;
+  margin: 3%;
+  border: 3px solid #b1b2b3;
 }
 
-.wfvwhitesquare{
-    width: 20%;
-    height: 50%;
-    background-color: white;
-    position: absolute;
-    margin-left: 15%;
+.wfvwhitesquare {
+  width: 20%;
+  height: 50%;
+  background-color: white;
+  position: absolute;
+  margin-left: 15%;
 }
-
-
