@@ -4,7 +4,7 @@
 {% block content %}
 <h3>Voliere <strong>{{ aviary.description }}</strong> bearbeiten </h3>
 <div class="row">
-    <div class="col-lg-5 mb-3">
+    <div class="col-lg-5 mt-3 mb-3">
         <form method="post" enctype="multipart/form-data">
             <fieldset>
                 {% csrf_token %}
@@ -14,7 +14,7 @@
             </fieldset>
         </form>
     </div>
-    <div class="col-lg-1 mb-3"></div>
+    <div class="col-lg-1"></div>
     <div class="col-lg-4">
         <h4>
             Patienten der Voliere
@@ -38,7 +38,4 @@
         </p>
     </div>
 </div>
-
-<script src="{% static 'js/bird.js' %}"></script
-
 {% endblock content %}
