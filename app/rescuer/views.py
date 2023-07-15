@@ -3,6 +3,7 @@ from django.shortcuts import render, redirect
 
 from .forms import RescuerForm
 from .models import Rescuer
+from bird.models import FallenBird
 
 
 @login_required(login_url="account_login")
@@ -15,7 +16,8 @@ def rescuer_all(request):
 @login_required(login_url="account_login")
 def rescuer_single(request, id):
     rescuer = Rescuer.objects.get(id=id)
-    context = {"rescuer": rescuer}
+    birds = FallenBird.objects.filter(rescuer=id)
+    context = {"rescuer": rescuer, "birds": birds}
     return render(request, "rescuer/rescuer_single.html", context)
 
 
