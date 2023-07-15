@@ -44,7 +44,9 @@ def bird_help(request):
 
 @login_required(login_url="account_login")
 def bird_all(request):
-    birds = FallenBird.objects.filter(Q(status="1")|Q(status="2")).annotate(total_costs=Sum('costs__costs'))
+    birds = FallenBird.objects.filter(Q(status="1") | Q(status="2")).annotate(
+        total_costs=Sum("costs__costs")
+    )
     rescuer_modal = Rescuer.objects.all()
     context = {"birds": birds, "rescuer_modal": rescuer_modal}
     # Post came from the modal form.
@@ -66,10 +68,7 @@ def bird_recover_all(request):
 @login_required(login_url="account_login")
 def bird_single(request, id):
     bird = FallenBird.objects.get(id=id)
-    form = BirdEditForm(
-        request.POST or None,
-        request.FILES or None,
-        instance=bird)
+    form = BirdEditForm(request.POST or None, request.FILES or None, instance=bird)
     if request.method == "POST":
         if form.is_valid():
             fs = form.save(commit=False)
