@@ -2,6 +2,7 @@ import names
 from django.db.models import Sum
 from django.contrib.auth.decorators import login_required
 from django.shortcuts import HttpResponse, redirect, render
+from django.db.models import Q
 from rescuer.models import Rescuer
 
 from .forms import BirdAddForm, BirdEditForm
@@ -43,7 +44,7 @@ def bird_help(request):
 
 @login_required(login_url="account_login")
 def bird_all(request):
-    birds = FallenBird.objects.all().annotate(total_costs=Sum('costs__costs'))
+    birds = FallenBird.objects.filter(Q(status="1")|Q(status="2")).annotate(total_costs=Sum('costs__costs'))
     rescuer_modal = Rescuer.objects.all()
     context = {"birds": birds, "rescuer_modal": rescuer_modal}
     # Post came from the modal form.

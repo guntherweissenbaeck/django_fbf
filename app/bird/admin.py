@@ -11,8 +11,9 @@ class FallenBirdAdmin(admin.ModelAdmin):
         "place",
         "created",
         "updated",
-        "user"]
-    list_filter = ("bird", "created", "user")
+        "user",
+        "status"]
+    list_filter = ("bird", "created", "user", "status")
 
 
 @admin.register(Bird)
@@ -22,7 +23,7 @@ class BirdAdmin(admin.ModelAdmin):
 
 @admin.register(BirdStatus)
 class BirdStatusAdmin(admin.ModelAdmin):
-    list_display = ["description"]
+    list_display = ["id", "description"]
 
 
 @admin.register(Circumstance)
