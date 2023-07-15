@@ -162,6 +162,7 @@ cython_debug/
 # VSCode
 .vscode/settings.json
 .vscode/launch.json
+app/.vscode/settings.json
 
 # VIM Ctags
 tags
