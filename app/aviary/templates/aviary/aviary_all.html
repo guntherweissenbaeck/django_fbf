@@ -53,7 +53,7 @@
             </td>
             <td>{{ aviary.condition }}</td>
             <td>{{ aviary.last_ward_round }}</td>
-            <td>{{ aviary.comment }}</td>
+            <td>{{ aviary.comment|default_if_none:"" }}</td>
         </tr>
         {% endfor %}
     </tbody>

@@ -14,25 +14,27 @@
             </fieldset>
         </form>
     </div>
-
-    <div class="col-lg-5">
+    <div class="col-lg-1 mb-3"></div>
+    <div class="col-lg-4">
         <h4>
-            Zustand
+            Patienten der Voliere
         </h4>
+        <p>Hier finden Sie die Patienten, die momentan in der Voliere {{ aviary.description }} untergebracht sind.</p>
         <p>
-            Lorem ipsum dolor sit, amet consectetur adipisicing elit.
-            Reiciendis, hic enim pariatur, exercitationem, repellat quasi sit
-            temporibus dicta voluptate in voluptates. Alias deserunt sint
-            suscipit explicabo et. Perferendis, dolor praesentium.
-        </p>
-        <h4>
-            Letzte Inspektion
-        </h4>
-        <p>
-            Lorem ipsum dolor sit, amet consectetur adipisicing elit.
-            Reiciendis, hic enim pariatur, exercitationem, repellat quasi sit
-            temporibus dicta voluptate in voluptates. Alias deserunt sint
-            suscipit explicabo et. Perferendis, dolor praesentium.
+            {% for bird in birds %}
+            <div class="card bg-light mb-3" style="max-width: 30rem;">
+                <div class="card-header"><h5 class="card-title">Patient: {{bird.bird_identifier}}</h5></div>
+                <div class="card-body">
+                    <p class="card-text">
+                        <strong>Vogel:</strong> {{bird.bird}}<br>
+                        <strong>gefunden am:</strong> {{bird.created}}<br>
+                        <strong>Statusänderung am:</strong> {{bird.updated}}<br>
+                        <strong>Fundumstände:</strong> {{bird.find_circumstances}}<br>
+                        <strong>Diagnose:</strong> {{bird.diagnostic_finding}}<br>
+                    </p>
+                </div>
+            </div>
+            {% endfor %}
         </p>
     </div>
 </div>
