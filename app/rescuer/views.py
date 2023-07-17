@@ -1,5 +1,7 @@
 from django.contrib.auth.decorators import login_required
 from django.shortcuts import render, redirect
+from django.db.models import Q
+
 
 from .forms import RescuerForm
 from .models import Rescuer
@@ -16,7 +18,7 @@ def rescuer_all(request):
 @login_required(login_url="account_login")
 def rescuer_single(request, id):
     rescuer = Rescuer.objects.get(id=id)
-    birds = FallenBird.objects.filter(rescuer=id)
+    birds = FallenBird.objects.filter(rescuer=id).filter(Q(status="1") | Q(status="2"))
     context = {"rescuer": rescuer, "birds": birds}
     return render(request, "rescuer/rescuer_single.html", context)
 
