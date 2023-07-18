@@ -59,6 +59,14 @@ def bird_all(request):
             return redirect("rescuer_create")
     return render(request, "bird/bird_all.html", context)
 
+@login_required(login_url="account_login")
+def bird_inactive(request):
+    birds = FallenBird.objects.filter(~Q(status="1") | ~Q(status="2")).annotate(
+        total_costs=Sum("costs__costs")
+    )
+    context = {"birds": birds}
+    return render(request, "bird/bird_inactive.html", context)
+
 
 @login_required(login_url="account_login")
 def bird_recover_all(request):

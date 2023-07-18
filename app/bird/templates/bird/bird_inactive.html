@@ -16,7 +16,7 @@
 
 <script>
   $(document).ready(function () {
-    $('#t__bird_inactive').DataTable({
+    $('#t__bird_all').DataTable({
       language: {
         url: 'https://cdn.datatables.net/plug-ins/1.11.3/i18n/de_de.json',
       },
@@ -32,15 +32,9 @@
 
 {% endblock header %}
 {% block content %}
-<h3>Übersicht aller Patienten in Behandlung</h3>
+<h3>Übersicht aller inaktiven Patienten</h3>
 <p>
-  Übersicht aller in Behandlung befindlichen oder behandelten Vögel. Die nicht
-  mehr in Behandlung befindlichen Patienten finden Sie <a href="{% url 'bird_inactive' %}">hier</a>.
-</p>
-<p>
-  <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#addPatientModal">einen Patienten
-    anlegen
-  </button>
+  Übersicht aller nicht mehr in Behandlung befindlichen oder behandelten Vögel.
 </p>
 <table class="table table-striped table-hover display responsive nowrap" id="t__bird_all">
   <thead>
