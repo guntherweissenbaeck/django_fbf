@@ -1,9 +1,9 @@
-from django.contrib.auth.decorators import login_required
-from django.shortcuts import render, redirect
-
-from .models import Aviary
-from .forms import AviaryEditForm
 from bird.models import FallenBird
+from django.contrib.auth.decorators import login_required
+from django.shortcuts import redirect, render
+
+from .forms import AviaryEditForm
+from .models import Aviary
 
 
 @login_required(login_url="account_login")
