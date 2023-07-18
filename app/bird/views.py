@@ -62,7 +62,7 @@ def bird_all(request):
 
 @login_required(login_url="account_login")
 def bird_inactive(request):
-    birds = FallenBird.objects.filter(~Q(status="1") | ~Q(status="2")).annotate(
+    birds = FallenBird.objects.filter(~Q(status="1") & ~Q(status="2")).annotate(
         total_costs=Sum("costs__costs")
     )
     context = {"birds": birds}
