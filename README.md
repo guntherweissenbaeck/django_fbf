@@ -105,3 +105,5 @@ Build the images and run the containers:
 $ docker-compose -f docker-compose.prod.yml up -d --build
 ```
 
+https://testdriven.io/blog/django-docker-traefik/
+
