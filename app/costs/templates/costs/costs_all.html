@@ -17,8 +17,7 @@
 <script src="https://cdn.datatables.net/responsive/2.2.9/js/dataTables.responsive.min.js"></script>
 <script src="https://cdn.datatables.net/responsive/2.2.9/js/responsive.bootstrap5.min.js"></script>
 
-
-
+<!-- Configure the DataTable. -->
 <script>
     $(document).ready(function () {
         $('#t__costs_all').DataTable({
@@ -34,44 +33,38 @@
         })
     })
 </script>
-
 {% endblock header %}
+
 {% block content %}
 <h3>Übersicht aller Kosten</h3>
-<p>
-    Die Übersicht aller enstandenen Kosten.
-</p>
-<p>
-    <a href="{% url 'costs_create' %}" class="btn btn-primary">Eine Buchung anlegen</a>
-</p>
+<p>Die Übersicht aller enstandenen Kosten.</p>
+<p><a href="{% url 'costs_create' %}" class="btn btn-primary">Eine Buchung anlegen</a></p>
 
-    <table class="table table-striped table-hover display responsive nowrap" width="100%" id="t__costs_all">
-        <thead>
-            <tr>
-                <th>Patient</th>
-                <th>Kosten</th>
-                <th>Gebucht am</th>
-                <th>Bemerkung</th>
-                <th>Benutzer</th>
-                <th></th>
-                <th></th>
-            </tr>
-        </thead>
-        <tbody>
-            {% for item in costs %}
-            <tr>
-                <td> {{item.id_bird|default_if_none:"nicht mehr in WVH"}} </td>
-                <td> {{item.costs}} </td>
-                <td> {{item.created}} </td>
-                <td> {{item.comment|default_if_none:""}} </td>
-                <td> {{item.user}} </td>
-                <td><a href="{% url 'costs_edit' item.id %}"><i class="fa-sharp fa-solid fa-pen"></i></a></td>
-                <td><a href="{% url 'costs_delete' item.id %}"><i class="fa-sharp fa-solid fa-trash"></i></a></td>
-            </tr>
-            {% endfor %}
-        </tbody>
-    </table>
-    
-
-    {% endblock content %}
+<table class="table table-striped table-hover display responsive nowrap" width="100%" id="t__costs_all">
+    <thead>
+        <tr>
+            <th>Patient</th>
+            <th>Kosten</th>
+            <th>Gebucht am</th>
+            <th>Bemerkung</th>
+            <th>Benutzer</th>
+            <th></th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for item in costs %}
+        <tr>
+            <td> {{item.id_bird|default_if_none:"nicht mehr in WVH"}} </td>
+            <td> {{item.costs}} </td>
+            <td> {{item.created}} </td>
+            <td> {{item.comment|default_if_none:""}} </td>
+            <td> {{item.user}} </td>
+            <td><a href="{% url 'costs_edit' item.id %}"><i class="fa-sharp fa-solid fa-pen"></i></a></td>
+            <td><a href="{% url 'costs_delete' item.id %}"><i class="fa-sharp fa-solid fa-trash"></i></a></td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+{% endblock content %}
 
