@@ -12,15 +12,15 @@
   <div class="d-flex justify-content-center mt-5">
     <div class="card shadow-sm p-3 mb-5 bg-body rounded">
       <div class="card-body">
-        {% comment %} <p class="">Willkommen bei der Fallen Birdy App</p> {% endcomment %}
+        <h5>Willkommen bei der Fallen Birdy App</h5>
         <form class="login" method="POST" action="{% url 'account_login' %}">
           {% csrf_token %}           
           {{ form|crispy }} 
           {% if redirect_field_value %}
             <input type="hidden" name="{{ redirect_field_name }}" value="{{ redirect_field_value }}"/>
           {% endif %}
-          <div class="btn-group" data-toggle="buttons">
-            <a class="btn btn-danger btn-block" href="{% url 'account_reset_password' %}">{% trans "Forgot Password?" %}</a>
+          <div class="btn-group" role="group" data-toggle="buttons">
+            <a class="btn btn-danger" href="{% url 'account_reset_password' %}">{% trans "Forgot Password?" %}</a>
             <button class="btn btn-primary" type="submit">{% trans "Sign In" %}</button>
           </div>
         </form>
