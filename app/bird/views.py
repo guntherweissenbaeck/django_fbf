@@ -1,12 +1,11 @@
 import names
-from django.db.models import Sum
 from django.contrib.auth.decorators import login_required
+from django.db.models import Q, Sum
 from django.shortcuts import HttpResponse, redirect, render
-from django.db.models import Q
 from rescuer.models import Rescuer
 
 from .forms import BirdAddForm, BirdEditForm
-from .models import FallenBird, Bird
+from .models import Bird, FallenBird
 
 
 @login_required(login_url="account_login")
