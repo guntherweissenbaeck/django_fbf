@@ -1,7 +1,8 @@
 from django.contrib.auth.decorators import login_required
-from django.shortcuts import render, redirect
-from .models import Costs
+from django.shortcuts import redirect, render
+
 from .forms import CostsForm
+from .models import Costs
 
 
 @login_required(login_url="account_login")

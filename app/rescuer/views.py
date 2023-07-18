@@ -1,11 +1,10 @@
+from bird.models import FallenBird
 from django.contrib.auth.decorators import login_required
-from django.shortcuts import render, redirect
 from django.db.models import Q
-
+from django.shortcuts import redirect, render
 
 from .forms import RescuerForm
 from .models import Rescuer
-from bird.models import FallenBird
 
 
 @login_required(login_url="account_login")
