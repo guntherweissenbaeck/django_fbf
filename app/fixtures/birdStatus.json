@@ -1,0 +1,37 @@
+[
+    {
+        "model": "bird.birdstatus",
+        "pk": 1,
+        "fields": {
+            "description": "In Behandlung"
+        }
+    },
+    {
+        "model": "bird.birdstatus",
+        "pk": 2,
+        "fields": {
+            "description": "In Auswilderung"
+        }
+    },
+    {
+        "model": "bird.birdstatus",
+        "pk": 3,
+        "fields": {
+            "description": "Ausgewildert"
+        }
+    },
+    {
+        "model": "bird.birdstatus",
+        "pk": 4,
+        "fields": {
+            "description": "Übermittelt"
+        }
+    },
+    {
+        "model": "bird.birdstatus",
+        "pk": 5,
+        "fields": {
+            "description": "Verstorben"
+        }
+    }
+]
