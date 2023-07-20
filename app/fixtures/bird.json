@@ -1,0 +1,162 @@
+[
+    {
+        "model": "bird.bird",
+        "pk": "0671ef7a-ab86-4f1d-9741-5994984cb450",
+        "fields": {
+            "name": "Amsel",
+            "description": "Amsel Hilfetext"
+        }
+    },
+    {
+        "model": "bird.bird",
+        "pk": "07103c11-eace-4546-8139-eac9e1397969",
+        "fields": {
+            "name": "Spatz",
+            "description": "Spatz Hilfetext"
+        }
+    },
+    {
+        "model": "bird.bird",
+        "pk": "0c0a8099-1d17-4613-add1-25b5e766d762",
+        "fields": {
+            "name": "Waldohreule",
+            "description": "Sind keine Ohren"
+        }
+    },
+    {
+        "model": "bird.bird",
+        "pk": "42c0611e-3fa7-487c-9989-f351f734f7a4",
+        "fields": {
+            "name": "Türkentaube",
+            "description": "Dreisilbig"
+        }
+    },
+    {
+        "model": "bird.bird",
+        "pk": "486f8d5f-f053-41ff-b22c-35af964eb94f",
+        "fields": {
+            "name": "Rauchschwalbe",
+            "description": "kwt"
+        }
+    },
+    {
+        "model": "bird.bird",
+        "pk": "4b23fd74-d4b1-4a47-8749-912d1c70245d",
+        "fields": {
+            "name": "Mauersegler",
+            "description": "an der Wand"
+        }
+    },
+    {
+        "model": "bird.bird",
+        "pk": "4d2b4e16-3d0c-4b1f-bd6f-228c6c6b85bf",
+        "fields": {
+            "name": "Mönchsgrasmücke",
+            "description": "Klack Klack"
+        }
+    },
+    {
+        "model": "bird.bird",
+        "pk": "4ffc479a-c4df-47a5-b460-ae4390af9f3a",
+        "fields": {
+            "name": "Grünfink",
+            "description": "Ist grün"
+        }
+    },
+    {
+        "model": "bird.bird",
+        "pk": "548df778-4fb6-44ef-a6f2-270b25972001",
+        "fields": {
+            "name": "Grünspecht",
+            "description": "Mecker mecker mecker"
+        }
+    },
+    {
+        "model": "bird.bird",
+        "pk": "645b0f03-d703-4781-885d-374fdc85a45d",
+        "fields": {
+            "name": "Grauspecht",
+            "description": "Schon seltener"
+        }
+    },
+    {
+        "model": "bird.bird",
+        "pk": "a21c407a-ce02-4588-8d1e-0c406f6fb674",
+        "fields": {
+            "name": "Straßentaube",
+            "description": "Nicht für uns"
+        }
+    },
+    {
+        "model": "bird.bird",
+        "pk": "acd4a2cb-c90b-4d23-97ad-c0b9ec8103a4",
+        "fields": {
+            "name": "Schwarzspecht",
+            "description": "Ganz schön groß"
+        }
+    },
+    {
+        "model": "bird.bird",
+        "pk": "c6b37bf6-6199-4a23-a2a3-e5a18b887431",
+        "fields": {
+            "name": "Kernbeißer",
+            "description": "Frisst Kerne"
+        }
+    },
+    {
+        "model": "bird.bird",
+        "pk": "cff89532-9520-4a79-8539-9edb1147f08b",
+        "fields": {
+            "name": "Rotmilan",
+            "description": "Etwas groß"
+        }
+    },
+    {
+        "model": "bird.bird",
+        "pk": "daee2e5c-26e3-4715-b3ca-73c6a20751a9",
+        "fields": {
+            "name": "Turmfalke",
+            "description": "Oben"
+        }
+    },
+    {
+        "model": "bird.bird",
+        "pk": "deff857b-14bc-4aaa-90d2-e180b1f4cc75",
+        "fields": {
+            "name": "Ringeltaube",
+            "description": "Ring"
+        }
+    },
+    {
+        "model": "bird.bird",
+        "pk": "eb85b86b-ca05-4128-8b06-b15379bdbe33",
+        "fields": {
+            "name": "Mehlschwalbe",
+            "description": "kwt"
+        }
+    },
+    {
+        "model": "bird.bird",
+        "pk": "ee525e30-794a-4838-a319-87e1dd7eb530",
+        "fields": {
+            "name": "Buntspecht",
+            "description": "Normal halt"
+        }
+    },
+    {
+        "model": "bird.bird",
+        "pk": "f66f25de-7cbc-4e41-b50b-a199f9cd6deb",
+        "fields": {
+            "name": "Uhu",
+            "description": "Bubu Bubu"
+        }
+    },
+    {
+        "model": "bird.bird",
+        "pk": "fd53a5bf-be28-4187-a53b-b45c18217db0",
+        "fields": {
+            "name": "Waldkauz",
+            "description": "Flausch"
+        }
+    }
+]
