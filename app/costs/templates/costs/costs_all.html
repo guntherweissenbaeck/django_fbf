@@ -63,7 +63,7 @@
         {% for item in costs %}
         <tr>
             <td> {{item.id_bird|default_if_none:"nicht mehr in WVH"}} </td>
-            <td> {{item.costs}} </td>
+            <td> {{item.costs}} &euro;</td>
             <td> {{item.created}} </td>
             <td> {{item.comment|default_if_none:""}} </td>
             <td> {{item.user}} </td>
