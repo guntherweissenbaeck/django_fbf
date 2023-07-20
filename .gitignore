@@ -171,4 +171,5 @@ style=""
 # Certificate Folder
 traefik-public-certificates
 
-
+# Postgres Data
+postgres_data
