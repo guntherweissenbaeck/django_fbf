@@ -10,6 +10,7 @@ from .views import (
 urlpatterns = [
     path("all/", costs_all, name="costs_all"),
     path("create/", costs_create, name="costs_create"),
+    path("create/<id>", costs_create, name="costs_create"),
     path("edit/<id>", costs_edit, name="costs_edit"),
     path("delete/<id>", costs_delete, name="costs_delete"),
 ]
