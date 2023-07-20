@@ -13,7 +13,7 @@ def costs_all(request):
 
 
 @login_required(login_url="account_login")
-def costs_create(request):
+def costs_create(request, id=None):
     if request.method == "POST":
         form = CostsForm(request.POST or None)
         if form.is_valid():
@@ -21,7 +21,10 @@ def costs_create(request):
             fs.user = request.user
             fs.save()
             return redirect("costs_all")
-    form = CostsForm()
+    if id:
+        form = CostsForm(initial={"id_bird":id})
+    else:
+        form = CostsForm()
     context = {"form": form}
     return render(request, "costs/costs_create.html", context)
 
