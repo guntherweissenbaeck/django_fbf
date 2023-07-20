@@ -172,5 +172,12 @@ style=""
 traefik-public-certificates
 
 # Postgres Data
+app/static/admin
+app/static/ckeditor
+app/static/jazzmin
+app/static/js/bootstrap5.modal.forms.js
+app/static/js/bootstrap5.modal.forms.min.js
+app/static/js/jquery.bootstrap.modal.forms.js
+app/static/js/jquery.bootstrap.modal.forms.min.js
+app/static/vendor
 postgres_data
-app/staticfiles
