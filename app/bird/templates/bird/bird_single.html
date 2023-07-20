@@ -4,7 +4,7 @@
 {% block content %}
 
 <h3>Patient <strong>{{ bird.bird_identifier }}</strong> bearbeiten </h3>
-<p>Finder des Patienten: <strong> <a href="{% url 'rescuer_single' bird.rescuer_id %}">{{ bird.rescuer }}</a></strong></p>
+<p>Finder des Patienten: <strong> <a href="{% url 'rescuer_single' bird.rescuer_id %}">{{ bird.rescuer|default_if_none:"" }}</a></strong></p>
 <div class="row">
     <div class="col-lg-5 mb-3">
         <form method="post" enctype="multipart/form-data">
@@ -13,7 +13,7 @@
                 {{form|crispy}}
                 <button class="btn btn-success" type="abbort">Abbrechen</button>
                 <a href="{% url 'bird_delete' bird.id %}" class="btn btn-danger">Löschen</a>
-                <a href="{% url 'costs_create' %}" class="btn btn-warning">Eine Buchung anlegen</a>
+                <a href="{% url 'costs_create' bird.id %}" class="btn btn-warning">Eine Buchung anlegen</a>
                 <button class="btn btn-primary" type="submit">Speichern</button>
             </fieldset>
         </form>
