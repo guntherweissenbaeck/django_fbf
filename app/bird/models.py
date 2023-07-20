@@ -2,6 +2,7 @@ from datetime import date
 from uuid import uuid4
 
 from aviary.models import Aviary
+from ckeditor.fields import RichTextField
 from django.conf import settings
 from django.db import models
 from django.utils.translation import gettext_lazy as _
@@ -59,9 +60,9 @@ class FallenBird(models.Model):
 
 
 class Bird(models.Model):
-    id = models.UUIDField(primary_key=True, default=uuid4, editable=False)
+    id = models.BigAutoField(primary_key=True)
     name = models.CharField(max_length=256, unique=True, verbose_name=_("Bezeichnung"))
-    description = models.CharField(max_length=4096, verbose_name=_("Hilfetext"))
+    description = RichTextField(blank=True, null=True)
 
     class Meta:
         verbose_name = _("Vogel")

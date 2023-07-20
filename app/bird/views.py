@@ -36,9 +36,16 @@ def bird_create(request):
 
 @login_required(login_url="account_login")
 def bird_help(request):
-    birds = Bird.objects.all()
+    birds = Bird.objects.all().order_by("name")
     context = {"birds": birds}
     return render(request, "bird/bird_help.html", context)
+
+
+@login_required(login_url="account_login")
+def bird_help_single(request, id):
+    bird = Bird.objects.all().get(id=id)
+    context = {"bird": bird}
+    return render(request, "bird/bird_help_single.html", context)
 
 
 @login_required(login_url="account_login")

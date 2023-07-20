@@ -4,10 +4,14 @@
 <div class="row">
     <div class="col-lg-8 mb-3">
         <h3>Hilfesammlung</h3>
-        {% for bird in birds %}
-        <h4>{{ bird.name }}</h4>
-        <p>{{ bird.description }}</p>
-        {% endfor %}
+        <ul>
+            {% for bird in birds %}
+            <li>
+                <a href="{% url 'bird_help_single' bird.id %}">{{ bird.name }}</a>
+            </li>
+            {% endfor %}
+
+        </ul>
     </div>
 </div>
 {% endblock content %}
