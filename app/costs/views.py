@@ -22,7 +22,7 @@ def costs_create(request, id=None):
             fs.save()
             return redirect("costs_all")
     if id:
-        form = CostsForm(initial={"id_bird":id})
+        form = CostsForm(initial={"id_bird": id})
     else:
         form = CostsForm()
     context = {"form": form}
