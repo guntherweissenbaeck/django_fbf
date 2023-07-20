@@ -9,20 +9,23 @@ env = environ.Env()
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
 
-
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/4.2/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = ")g-j2v+*dvjtnz)q-3+*y7*lq$el$im8p^wr@2v$g^u99quq50"
+SECRET_KEY = env("SECRET_KEY")
 
 # SECURITY WARNING: don't run with debug turned on in production!
-# DEBUG = True
 DEBUG = env("DEBUG")
-CSRF_TRUSTED_ORIGINS = ["https://*.nabu-jena.de", "https://*.127.0.0.1"]
 
+# CSRF Stuff
+CSRF_COOKIE_SECURE = True
+CSRF_TRUSTED_ORIGINS = (env("CSRF_TRUSTED_ORIGINS"),)
 
-# ALLOWED_HOSTS = []
+# Cookies
+SESSION_COOKIE_SECURE = True
+
+# Allowed Hosts
 ALLOWED_HOSTS = env("DJANGO_ALLOWED_HOSTS", default=[])
 
 # Application definition
@@ -32,6 +35,9 @@ INSTALLED_APPS = [
     # Jazzmin
     # -----------------------------------
     "jazzmin",
+    # -----------------------------------
+    # Django default
+    # -----------------------------------
     "django.contrib.admin",
     "django.contrib.auth",
     "django.contrib.contenttypes",
@@ -50,6 +56,11 @@ INSTALLED_APPS = [
     "bootstrap_modal_forms",
     "crispy_bootstrap5",
     "crispy_forms",
+    # -----------------------------------
+    # CKEditor
+    # -----------------------------------
+    "ckeditor",
+    "ckeditor_uploader",
     # -----------------------------------
     # My Apps
     # -----------------------------------
@@ -103,7 +114,14 @@ WSGI_APPLICATION = "core.wsgi.application"
 # https://docs.djangoproject.com/en/4.2/ref/settings/#databases
 
 DATABASES = {
-    "default": env.db(),
+    "default": {
+        "ENGINE": "django.db.backends.postgresql",
+        "HOST": env("DB_HOST"),
+        "NAME": env("DB_NAME"),
+        "PASSWORD": env("DB_PASSWORD"),
+        "PORT": env("DB_PORT"),
+        "USER": env("DB_USER"),
+    }
 }
 
 
@@ -137,14 +155,25 @@ USE_I18N = True
 
 USE_TZ = True
 
-
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/4.2/howto/static-files/
 
+# STATIC_URL = "/static/"
+# STATIC_ROOT = BASE_DIR / "static"
+# STATICFILES_DIRS = [BASE_DIR / "static"]
+
+# STATIC_URL = "static/"
+# STATICFILES_DIRS = [BASE_DIR / "static"]
+# STATIC_ROOT = BASE_DIR / "staticfiles"
+# STATICFILES_STORAGE = "whitenoise.storage.CompressedManifestStaticFilesStorage"
+
+# Static files (CSS, JavaScript, Images)
+# https://docs.djangoproject.com/en/4.1/howto/static-files/
+
 STATIC_URL = "static/"
 STATICFILES_DIRS = [BASE_DIR / "static"]
-STATIC_ROOT = BASE_DIR / "staticfiles"
-STATICFILES_STORAGE = "whitenoise.storage.CompressedManifestStaticFilesStorage"
+STATIC_ROOT = BASE_DIR / 'staticfiles'
+STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
 
 # Default primary key field type
 # https://docs.djangoproject.com/en/4.2/ref/settings/#default-auto-field
@@ -197,7 +226,13 @@ JAZZMIN_SETTINGS = {
     #  "copyright": "Acme Library Ltd",
     # List of model admins to search from the search bar, search bar omitted if excluded
     # If you want to use a single search field you dont need to use a list, you can use a simple string
-    "search_model": ["auth.User", "auth.Group"],
+    # "search_model": ["bird.User", "auth.Group"],
+    "search_model": [
+        "bird.User",
+        "bird.FallenBird",
+        "rescuer.Rescuer",
+        "aviary.Aviary",
+    ],
     # Field name on user model that contains avatar ImageField/URLField/Charfield or a callable that receives the user
     "user_avatar": None,
     ############
@@ -246,11 +281,18 @@ JAZZMIN_SETTINGS = {
     #  },
     # Custom icons for side menu apps/models See https://fontawesome.com/icons?d=gallery&m=free&v=5.0.0,5.0.1,5.0.10,5.0.11,5.0.12,5.0.13,5.0.2,5.0.3,5.0.4,5.0.5,5.0.6,5.0.7,5.0.8,5.0.9,5.1.0,5.1.1,5.2.0,5.3.0,5.3.1,5.4.0,5.4.1,5.4.2,5.13.0,5.12.0,5.11.2,5.11.1,5.10.0,5.9.0,5.8.2,5.8.1,5.7.2,5.7.1,5.7.0,5.6.3,5.5.0,5.4.2
     # for the full list of 5.13.0 free icon classes
-    #  "icons": {
-    #  "auth": "fas fa-users-cog",
-    #  "auth.user": "fas fa-user",
-    #  "auth.Group": "fas fa-users",
-    #  },
+    "icons": {
+        "auth": "fas fa-users-cog",
+        "auth.user": "fas fa-user",
+        "auth.Group": "fas fa-users",
+        "aviary.Aviary": "fas fa-solid fa-house",
+        "bird.Bird": "fas fa-solid fa-dove",
+        "bird.BirdStatus": "fas fa-solid fa-thermometer",
+        "bird.Circumstance": "fas fa-solid fa-disease",
+        "bird.FallenBird": "fas fa-solid fa-bed",
+        "costs.Costs": "fas fa-solid fa-money-bill",
+        "rescuer.Rescuer": "fas fa-solid fa-user-shield",
+    },
     # Icons that are used when one is not manually specified
     #  "default_icon_parents": "fas fa-chevron-circle-right",
     #  "default_icon_children": "fas fa-circle",
@@ -268,7 +310,7 @@ JAZZMIN_SETTINGS = {
     # Whether to link font from fonts.googleapis.com (use custom_css to supply font otherwise)
     "use_google_fonts_cdn": True,
     # Whether to show the UI customizer on the sidebar
-    "show_ui_builder": True,
+    "show_ui_builder": False,
     ###############
     # Change view #
     ###############
@@ -287,3 +329,12 @@ JAZZMIN_SETTINGS = {
     # Add a language dropdown into the admin
     # "language_chooser": True,
 }
+
+CKEDITOR_BASEPATH = "/staticfiles/ckeditor/ckeditor/"
+CKEDITOR_UPLOAD_PATH = "media"
+
+# Local Settings
+# try:
+#     from .opvars import *
+# except ImportError:
+#     print('No Local Settings Found')

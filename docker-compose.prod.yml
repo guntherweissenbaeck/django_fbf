@@ -9,26 +9,34 @@ services:
     expose:
       - 8000
     environment:
-      - DEBUG=False
-      - DATABASE_URL=postgresql://django_traefik:django_traefik@db:5432/django_traefik
-      - DJANGO_ALLOWED_HOSTS=.nabu-jena.de
+      - "DEBUG=${DEBUG}"
+      - "ALLOWED_HOSTS=${ALLOWED_HOSTS}"
+      - "CSRF_TRUSTED_ORIGINS=${CSRF_TRUSTED_ORIGINS}"
+      - "DB_HOST=${DB_HOST}"
+      - "DB_NAME=${DB_NAME}"
+      - "DB_PASSWORD=${DB_PASSWORD}"
+      - "DB_PORT=${DB_PORT}"
+      - "DB_USER=${DB_USER}"
+      - "DEBUG=${DEBUG}"
+      - "DJANGO_ALLOWED_HOSTS=${DJANGO_ALLOWED_HOSTS}"
+      - "SECRET_KEY=${SECRET_KEY}"
     depends_on:
       - db
     labels:
       - "traefik.enable=true"
-      - "traefik.http.routers.django.rule=Host(`fbf.nabu-jena.de`)"
+      - "traefik.http.routers.django.rule=Host(`${DJANGO_ALLOWED_HOSTS}`)"
       - "traefik.http.routers.django.tls=true"
       - "traefik.http.routers.django.tls.certresolver=letsencrypt"
   db:
     image: postgres:15-alpine
     volumes:
-      - postgres_data_prod:/var/lib/postgresql/data/
+      - ./postgres_data:/var/lib/postgresql/data/
     expose:
       - 5432
     environment:
-      - POSTGRES_USER=django_traefik
-      - POSTGRES_PASSWORD=django_traefik
-      - POSTGRES_DB=django_traefik
+      - "POSTGRES_USER=${DB_USER}"
+      - "POSTGRES_PASSWORD=${DB_PASSWORD}"
+      - "POSTGRES_DB=${DB_NAME}"
   traefik:
     build:
       context: .

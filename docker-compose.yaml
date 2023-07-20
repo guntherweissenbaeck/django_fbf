@@ -3,29 +3,37 @@ version: '3.8'
 services:
   web:
     build: ./app
-    command: bash -c 'while !</dev/tcp/db/5432; do sleep 1; done;python manage.py migrate;python manage.py loaddata fixtures/data.json; python manage.py runserver 0.0.0.0:8000'
+    command: bash -c 'while !</dev/tcp/db/5432; do sleep 1; done; python manage.py makemigrations; python manage.py migrate; python manage.py runserver 0.0.0.0:8000'
     volumes:
       - ./app:/app
     expose:
       - 8000
     environment:
-      - DEBUG=1
-      - DATABASE_URL=postgresql://django_fbf:django_fbf@db:5432/django_fbf
+      - "ALLOWED_HOSTS=${ALLOWED_HOSTS}"
+      - "CSRF_TRUSTED_ORIGINS=${CSRF_TRUSTED_ORIGINS}"
+      - "DB_HOST=${DB_HOST}"
+      - "DB_NAME=${DB_NAME}"
+      - "DB_PASSWORD=${DB_PASSWORD}"
+      - "DB_PORT=${DB_PORT}"
+      - "DB_USER=${DB_USER}"
+      - "DEBUG=${DEBUG}"
+      - "DJANGO_ALLOWED_HOSTS=${DJANGO_ALLOWED_HOSTS}"
+      - "SECRET_KEY=${SECRET_KEY}"
     depends_on:
       - db
     labels:
       - "traefik.enable=true"
-      - "traefik.http.routers.django.rule=Host(`django.localhost`)"
+      - "traefik.http.routers.django.rule=Host(`${DJANGO_ALLOWED_HOSTS}`)"
   db:
     image: postgres:15-alpine
     volumes:
-      - postgres_data:/var/lib/postgresql/data/
+      - ./postgres_data:/var/lib/postgresql/data/
     expose:
       - 5432
     environment:
-      - POSTGRES_USER=django_fbf
-      - POSTGRES_PASSWORD=django_fbf
-      - POSTGRES_DB=django_fbf
+      - "POSTGRES_USER=${DB_USER}"
+      - "POSTGRES_PASSWORD=${DB_PASSWORD}"
+      - "POSTGRES_DB=${DB_NAME}"
   traefik:
     image: traefik:v2.9.6
     ports:
