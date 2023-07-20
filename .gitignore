@@ -173,3 +173,4 @@ traefik-public-certificates
 
 # Postgres Data
 postgres_data
+app/staticfiles
