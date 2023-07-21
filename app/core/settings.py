@@ -16,17 +16,20 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 SECRET_KEY = env("SECRET_KEY")
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = env("DEBUG")
+# DEBUG = env("DEBUG")
+DEBUG = False
 
 # CSRF Stuff
 CSRF_COOKIE_SECURE = True
-CSRF_TRUSTED_ORIGINS = (env("CSRF_TRUSTED_ORIGINS"),)
+# CSRF_TRUSTED_ORIGINS = ["https://*.nabu-jena.de", "https://*.127.0.0.1"]
+CSRF_TRUSTED_ORIGINS = ["https://fbf.nabu-jena.de"]
 
 # Cookies
 SESSION_COOKIE_SECURE = True
 
 # Allowed Hosts
-ALLOWED_HOSTS = env("DJANGO_ALLOWED_HOSTS", default=[])
+# ALLOWED_HOSTS = env("DJANGO_ALLOWED_HOSTS", default=[])
+ALLOWED_HOSTS = ["fbf.nabu-jena.de"]
 
 # Application definition
 
@@ -154,26 +157,6 @@ TIME_ZONE = "Europe/Berlin"
 USE_I18N = True
 
 USE_TZ = True
-
-# Static files (CSS, JavaScript, Images)
-# https://docs.djangoproject.com/en/4.2/howto/static-files/
-
-# STATIC_URL = "/static/"
-# STATIC_ROOT = BASE_DIR / "static"
-# STATICFILES_DIRS = [BASE_DIR / "static"]
-
-# STATIC_URL = "static/"
-# STATICFILES_DIRS = [BASE_DIR / "static"]
-# STATIC_ROOT = BASE_DIR / "staticfiles"
-# STATICFILES_STORAGE = "whitenoise.storage.CompressedManifestStaticFilesStorage"
-
-# Static files (CSS, JavaScript, Images)
-# https://docs.djangoproject.com/en/4.1/howto/static-files/
-
-STATIC_URL = "static/"
-STATICFILES_DIRS = [BASE_DIR / "static"]
-STATIC_ROOT = BASE_DIR / 'staticfiles'
-STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
 
 # Default primary key field type
 # https://docs.djangoproject.com/en/4.2/ref/settings/#default-auto-field
@@ -330,11 +313,12 @@ JAZZMIN_SETTINGS = {
     # "language_chooser": True,
 }
 
-CKEDITOR_BASEPATH = "/staticfiles/ckeditor/ckeditor/"
+CKEDITOR_BASEPATH = "/static/ckeditor/ckeditor/"
 CKEDITOR_UPLOAD_PATH = "media"
 
-# Local Settings
-# try:
-#     from .opvars import *
-# except ImportError:
-#     print('No Local Settings Found')
+# Static files (CSS, JavaScript, Images)
+# https://docs.djangoproject.com/en/4.2/howto/static-files/
+
+STATIC_URL = "static/"
+STATICFILES_DIRS = [BASE_DIR / "static"]
+STATIC_ROOT = BASE_DIR / "staticfiles"
