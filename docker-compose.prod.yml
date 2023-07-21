@@ -5,7 +5,11 @@ services:
     build:
       context: ./app
       dockerfile: Dockerfile.prod
-    command: bash -c 'while !</dev/tcp/db/5432; do sleep 1; done; python manage.py collectstatic; gunicorn --bind 0.0.0.0:8000 core.wsgi'
+    command: > 
+      bash -c 'while !</dev/tcp/db/5432; do sleep 1; done;
+      python manage.py migrate;
+      python manage.py collectstatic --no-input --no-post-process;
+      gunicorn --bind 0.0.0.0:8000 core.wsgi'
     expose:
       - 8000
     environment:
@@ -17,13 +21,12 @@ services:
       - "DB_PORT=${DB_PORT}"
       - "DB_USER=${DB_USER}"
       - "DEBUG=${DEBUG}"
-      - "DJANGO_ALLOWED_HOSTS=${DJANGO_ALLOWED_HOSTS}"
       - "SECRET_KEY=${SECRET_KEY}"
     depends_on:
       - db
     labels:
       - "traefik.enable=true"
-      - "traefik.http.routers.django.rule=Host(`${DJANGO_ALLOWED_HOSTS}`)"
+      - "traefik.http.routers.django.rule=Host(`${ALLOWED_HOSTS}`)"
       - "traefik.http.routers.django.tls=true"
       - "traefik.http.routers.django.tls.certresolver=letsencrypt"
   db:
