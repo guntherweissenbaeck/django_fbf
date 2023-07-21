@@ -2,10 +2,10 @@ import names
 from django.contrib.auth.decorators import login_required
 from django.db.models import Q, Sum
 from django.shortcuts import HttpResponse, redirect, render
-from rescuer.models import Rescuer
 
 from .forms import BirdAddForm, BirdEditForm
 from .models import Bird, FallenBird
+from rescuer.models import Rescuer
 
 
 @login_required(login_url="account_login")
@@ -68,9 +68,9 @@ def bird_all(request):
 
 @login_required(login_url="account_login")
 def bird_inactive(request):
-    birds = FallenBird.objects.filter(~Q(status="1") & ~Q(status="2")).annotate(
-        total_costs=Sum("costs__costs")
-    )
+    birds = FallenBird.objects.filter(
+        ~Q(status="1") & ~Q(status="2")).annotate(
+        total_costs=Sum("costs__costs"))
     context = {"birds": birds}
     return render(request, "bird/bird_inactive.html", context)
 
@@ -83,7 +83,10 @@ def bird_recover_all(request):
 @login_required(login_url="account_login")
 def bird_single(request, id):
     bird = FallenBird.objects.get(id=id)
-    form = BirdEditForm(request.POST or None, request.FILES or None, instance=bird)
+    form = BirdEditForm(
+        request.POST or None,
+        request.FILES or None,
+        instance=bird)
     if request.method == "POST":
         if form.is_valid():
             fs = form.save(commit=False)
