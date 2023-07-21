@@ -11,14 +11,13 @@ class DateInput(forms.DateInput):
 
 
 class BirdAddForm(forms.ModelForm):
-    # find_circumstances_new = forms.CharField(
-    #     widget=forms.HiddenInput(attrs={"class": "textinput form-control mb-3"})
-    # )
 
     class Meta:
         widgets = {
-            "date_found": DateInput(format="%Y-%m-%d", attrs={"value": date.today})
-        }
+            "date_found": DateInput(
+                format="%Y-%m-%d",
+                attrs={
+                    "value": date.today})}
         model = FallenBird
         fields = [
             "bird_identifier",
@@ -27,9 +26,6 @@ class BirdAddForm(forms.ModelForm):
             "place",
             "find_circumstances",
             "diagnostic_finding",
-            #  "costs",
-            # "find_circumstances_new",
-            # "status",
         ]
         labels = {
             "bird_identifier": _("Kennung"),
@@ -38,9 +34,6 @@ class BirdAddForm(forms.ModelForm):
             "place": _("Fundort"),
             "find_circumstances": _("Fundumstände"),
             "diagnostic_finding": _("Diagnose bei Fund"),
-            #  "costs": _("Kosten"),
-            # "find_circumstances_new": _("neuer Fundumstand"),
-            # "status": _("Status"),
         }
 
 
@@ -58,7 +51,6 @@ class BirdEditForm(forms.ModelForm):
             "sent_to",
             "find_circumstances",
             "diagnostic_finding",
-            #  "costs",
         ]
         labels = {
             "bird": _("Vogel"),
@@ -69,5 +61,4 @@ class BirdEditForm(forms.ModelForm):
             "sent_to": _("Übermittelt nach"),
             "find_circumstances": _("Fundumstände"),
             "diagnostic_finding": _("Diagnose bei Fund"),
-            #  "costs": _("Kosten"),
         }
