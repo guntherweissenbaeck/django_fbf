@@ -17,6 +17,12 @@ CHOICE_AGE = [
     ("Adult", "Adult"),
 ]
 
+CHOICE_SEX = [
+    ("Weiblich", "Weiblich"),
+    ("Männlich", "Männlich"),
+    ("Unbekannt", "Unbekannt"),
+]
+
 
 def costs_default():
     return [{"date": date.today().strftime("%Y-%m-%d"), "cost_entry": "0.00"}]
@@ -28,10 +34,9 @@ class FallenBird(models.Model):
     bird = models.ForeignKey(
         "Bird", on_delete=models.CASCADE, verbose_name=_("Patient")
     )
-    age = models.CharField(
-        max_length=15,
-        choices=CHOICE_AGE,
-        verbose_name=_("Alter")
+    age = models.CharField(max_length=15, choices=CHOICE_AGE, verbose_name=_("Alter"))
+    sex = models.CharField(
+        max_length=15, choices=CHOICE_SEX, verbose_name=_("Geschlecht")
     )
     date_found = models.DateField(verbose_name=_("Datum des Fundes"))
     place = models.CharField(max_length=256, verbose_name=_("Ort des Fundes"))

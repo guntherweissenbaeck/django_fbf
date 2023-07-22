@@ -61,6 +61,7 @@
       <th>Voliere</th>
       <th>Kosten</th>
       <th>Alter</th>
+      <th>Geschlecht</th>
     </tr>
   </thead>
   <tbody>
@@ -77,6 +78,7 @@
       <td>{{ bird.aviary|default_if_none:"" }}</td>
       <td>{{ bird.total_costs|default_if_none:"0,00" }} &euro;</td>
       <td>{{ bird.age|default_if_none:"" }}</td>
+      <td>{{ bird.sex }}</td>
     </tr>
     {% endfor %}
   </tbody>

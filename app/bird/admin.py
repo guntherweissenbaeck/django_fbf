@@ -8,12 +8,14 @@ class FallenBirdAdmin(admin.ModelAdmin):
     list_display = [
         "bird",
         "age",
+        "sex",
         "date_found",
         "place",
         "created",
         "updated",
         "user",
-        "status"]
+        "status",
+    ]
     list_filter = ("bird", "created", "user", "status")
 
 

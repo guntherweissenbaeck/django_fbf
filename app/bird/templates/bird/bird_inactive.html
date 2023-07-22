@@ -54,6 +54,7 @@
       <th>Status</th>
       <th>Kosten</th>
       <th>Alter</th>
+      <th>Geschlecht</th>
     </tr>
   </thead>
   <tbody>
@@ -69,41 +70,9 @@
       <td>{{ bird.status }}</td>
       <td>{{ bird.total_costs|default_if_none:"0,00" }} &euro;</td>
       <td>{{ bird.age|default_if_none:"" }} </td>
+      <td>{{ bird.sex }} </td>
     </tr>
     {% endfor %}
   </tbody>
 </table>
-
-<div class="modal fade" id="addPatientModal" tabindex="-1" data-bs-backdrop="static"
-  aria-labelledby="addRescuerModalLabel" aria-hidden="true">
-  <div class="modal-dialog">
-    <div class="modal-content">
-      <div class="modal-header bg-primary">
-        <h5 class="modal-title text-white" id="addRescuerModalLabel">(neuen) Finder zuweisen</h5>
-      </div>
-      <form method="post">
-        {% csrf_token %}
-        <div class="modal-body">
-          <label for="rescuer" class="form-label mt-3">Wählen Sie einen <strong>bereits angelegten</strong>
-            Finder aus oder legen Sie einen <strong>neuen</strong> Finder an:</label>
-          <select id="rescuer" class="form-select" name="rescuer_id">
-            <option value="new_rescuer"><strong>neuen
-                Finder anlegen</strong></option>
-            {% for rescuer in rescuer_modal %}
-            <option value={{rescuer.id}}>
-              {{rescuer.first_name}} {{rescuer.last_name}},
-              {{rescuer.street}} {{rescuer.street_number}},
-              {{rescuer.city}}
-            </option>
-            {% endfor %}
-          </select>
-        </div>
-        <div class="modal-footer">
-          <button type="button" class="btn btn-danger" data-bs-dismiss="modal">Abbruch</button>
-          <button class="btn btn-primary" type="submit">Übernehmen und weiter</button>
-        </div>
-    </div>
-  </div>
-</div>
-</form>
 {% endblock content %}
