@@ -12,7 +12,7 @@
   <div class="d-flex justify-content-center mt-5">
     <div class="card shadow-sm p-3 mb-5 bg-body rounded">
       <div class="card-body">
-        <h5>Willkommen bei der Fallen Birdy Form App</h5>
+        <h5>Willkommen bei der <strong>Fallen Birdy Form</strong> App</h5>
         <form class="login" method="POST" action="{% url 'account_login' %}">
           {% csrf_token %}           
           {{ form|crispy }} 
