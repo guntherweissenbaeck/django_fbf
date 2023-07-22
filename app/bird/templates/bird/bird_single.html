@@ -7,7 +7,7 @@
 <p>Finder des Patienten: <strong> <a href="{% url 'rescuer_single' bird.rescuer_id %}">{{ bird.rescuer|default_if_none:"" }}</a></strong>. 
     Das Alter des Patienten bei Fund wurde mit <strong>{{ bird.age }}</strong> angegeben.</p>
 <div class="row">
-    <div class="col-lg-5 mb-3">
+    <div class="col-lg-6 mb-3">
         <form method="post" enctype="multipart/form-data">
             <fieldset>
                 {% csrf_token %}
