@@ -7,6 +7,7 @@ from .models import Bird, FallenBird, BirdStatus, Circumstance
 class FallenBirdAdmin(admin.ModelAdmin):
     list_display = [
         "bird",
+        "age",
         "date_found",
         "place",
         "created",

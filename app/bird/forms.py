@@ -22,6 +22,7 @@ class BirdAddForm(forms.ModelForm):
         fields = [
             "bird_identifier",
             "bird",
+            "age",
             "date_found",
             "place",
             "find_circumstances",
@@ -30,6 +31,7 @@ class BirdAddForm(forms.ModelForm):
         labels = {
             "bird_identifier": _("Kennung"),
             "bird": _("Vogel"),
+            "age": _("Alter"),
             "date_found": _("Datum des Fundes"),
             "place": _("Fundort"),
             "find_circumstances": _("Fundumstände"),

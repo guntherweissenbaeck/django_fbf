@@ -53,6 +53,7 @@
       <th>Fundort</th>
       <th>Status</th>
       <th>Kosten</th>
+      <th>Alter</th>
     </tr>
   </thead>
   <tbody>
@@ -67,6 +68,7 @@
       <td>{{ bird.place }}</td>
       <td>{{ bird.status }}</td>
       <td>{{ bird.total_costs|default_if_none:"0,00" }} &euro;</td>
+      <td>{{ bird.age|default_if_none:"" }} </td>
     </tr>
     {% endfor %}
   </tbody>

@@ -60,6 +60,7 @@
       <th>Status</th>
       <th>Voliere</th>
       <th>Kosten</th>
+      <th>Alter</th>
     </tr>
   </thead>
   <tbody>
@@ -75,6 +76,7 @@
       <td>{{ bird.status }}</td>
       <td>{{ bird.aviary|default_if_none:"" }}</td>
       <td>{{ bird.total_costs|default_if_none:"0,00" }} &euro;</td>
+      <td>{{ bird.age|default_if_none:"" }}</td>
     </tr>
     {% endfor %}
   </tbody>
