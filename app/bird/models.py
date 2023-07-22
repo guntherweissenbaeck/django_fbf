@@ -30,9 +30,9 @@ def costs_default():
 
 class FallenBird(models.Model):
     id = models.UUIDField(primary_key=True, default=uuid4, editable=False)
-    bird_identifier = models.CharField(max_length=256, verbose_name=_("Kennung"))
+    bird_identifier = models.CharField(max_length=256, verbose_name=_("Patienten Alias"))
     bird = models.ForeignKey(
-        "Bird", on_delete=models.CASCADE, verbose_name=_("Patient")
+        "Bird", on_delete=models.CASCADE, verbose_name=_("Vogel")
     )
     age = models.CharField(max_length=15, choices=CHOICE_AGE, verbose_name=_("Alter"))
     sex = models.CharField(
