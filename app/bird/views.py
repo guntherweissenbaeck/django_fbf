@@ -13,7 +13,7 @@ def bird_create(request):
     form = BirdAddForm(initial={"bird_identifier": names.get_first_name()})
     # Rescuer for modal usage
     rescuer_id = request.session.get("rescuer_id")
-    rescuer = Rescuer.objects.get(id=rescuer_id, user=request.user)
+    rescuer = Rescuer.objects.get(id=rescuer_id)
 
     # Just show only related rescuers in select field of the form.
     if request.method == "POST":
