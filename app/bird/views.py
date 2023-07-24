@@ -21,7 +21,7 @@ def bird_create(request):
 
         # circumstances = Circumstance.objects.all()
         rescuer_id = request.session.get("rescuer_id")
-        rescuer = Rescuer.objects.get(id=rescuer_id, user=request.user)
+        rescuer = Rescuer.objects.get(id=rescuer_id)
 
         if form.is_valid():
             fs = form.save(commit=False)
