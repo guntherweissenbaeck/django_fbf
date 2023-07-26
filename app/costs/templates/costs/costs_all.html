@@ -18,7 +18,7 @@
 <script src="https://cdn.datatables.net/responsive/2.2.9/js/responsive.bootstrap5.min.js"></script>
 
 <!-- Configure the DataTable. -->
-<script>
+<script nonce="{{request.csp_nonce}}">
     $(document).ready(function () {
         let table = $('#t__costs_all').DataTable({
             language: {

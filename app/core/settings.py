@@ -25,12 +25,6 @@ CSRF_TRUSTED_ORIGINS = ["https://fbf.nabu-jena.de"]
 # Cookies
 SESSION_COOKIE_SECURE = True
 
-# DJANGO Content Security Policy
-CSP_DEFAULT_SRC = ("'self'",)
-CSP_STYLE_SRC = ("'self'",)
-CSP_SCRIPT_SRC = ("'self'",)
-CSP_IMG_SRC = ("'self'",)
-CSP_FONT_SRC = ("'self'",)
 
 # HTTPS
 SECURE_HSTS_SECONDS = 0
@@ -92,7 +86,34 @@ MIDDLEWARE = [
     "django.contrib.auth.middleware.AuthenticationMiddleware",
     "django.contrib.messages.middleware.MessageMiddleware",
     "django.middleware.clickjacking.XFrameOptionsMiddleware",
+    "csp.middleware.CSPMiddleware",
 ]
+
+# DJANGO Content Security Policy
+CSP_DEFAULT_SRC = (
+    "'self'",
+    "https://cdn.datatables.net",
+)
+CSP_STYLE_SRC = (
+    "'self'",
+    "https://bootswatch.com",
+    "https://cdn.datatables.net",
+    "https://cdnjs.cloudflare.com",
+    "https://fonts.googleapis.com",
+)
+CSP_SCRIPT_SRC = (
+    "'self'",
+    "https://cdn.datatables.net",
+    "https://cdn.jsdelivr.net",
+    "https://code.jquery.com",
+)
+CSP_INCLUDE_NONCE_IN = ["script-src"]
+CSP_IMG_SRC = ("'self'",)
+CSP_FONT_SRC = (
+    "'self'",
+    "https://fonts.gstatic.com",
+    "https://cdnjs.cloudflare.com",
+)
 
 ROOT_URLCONF = "core.urls"
 
