@@ -28,7 +28,6 @@ services:
       - "traefik.http.routers.django.rule=Host(`${ALLOWED_HOSTS}`)"
       - "traefik.http.routers.django.tls=true"
       - "traefik.http.routers.django.tls.certresolver=letsencrypt"
-      - "traefik.http.routers.django.middlewares=default-headers@file"
   db:
     image: postgres:15-alpine
     volumes:
