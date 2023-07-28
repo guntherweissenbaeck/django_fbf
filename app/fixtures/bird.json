@@ -1,1 +1,74 @@
-[{"model": "bird.bird", "pk": 1, "fields": {"name": "Amsel", "description": ""}}, {"model": "bird.bird", "pk": 2, "fields": {"name": "Grünfink", "description": ""}}, {"model": "bird.bird", "pk": 3, "fields": {"name": "Kernbeißer", "description": ""}}, {"model": "bird.bird", "pk": 4, "fields": {"name": "Mauersegler", "description": ""}}, {"model": "bird.bird", "pk": 5, "fields": {"name": "Ringeltaube", "description": ""}}, {"model": "bird.bird", "pk": 6, "fields": {"name": "Spatz", "description": ""}}, {"model": "bird.bird", "pk": 7, "fields": {"name": "Straßentaube", "description": ""}}, {"model": "bird.bird", "pk": 8, "fields": {"name": "Türkentaube", "description": ""}}, {"model": "bird.bird", "pk": 9, "fields": {"name": "Turmfalke", "description": ""}}]
+[
+    {
+        "model": "bird.bird",
+        "pk": 1,
+        "fields": {
+            "name": "Amsel",
+            "description": ""
+        }
+    },
+    {
+        "model": "bird.bird",
+        "pk": 2,
+        "fields": {
+            "name": "Grünfink",
+            "description": ""
+        }
+    },
+    {
+        "model": "bird.bird",
+        "pk": 3,
+        "fields": {
+            "name": "Kernbeißer",
+            "description": ""
+        }
+    },
+    {
+        "model": "bird.bird",
+        "pk": 4,
+        "fields": {
+            "name": "Mauersegler",
+            "description": ""
+        }
+    },
+    {
+        "model": "bird.bird",
+        "pk": 5,
+        "fields": {
+            "name": "Ringeltaube",
+            "description": ""
+        }
+    },
+    {
+        "model": "bird.bird",
+        "pk": 6,
+        "fields": {
+            "name": "Spatz",
+            "description": ""
+        }
+    },
+    {
+        "model": "bird.bird",
+        "pk": 7,
+        "fields": {
+            "name": "Straßentaube",
+            "description": ""
+        }
+    },
+    {
+        "model": "bird.bird",
+        "pk": 8,
+        "fields": {
+            "name": "Türkentaube",
+            "description": ""
+        }
+    },
+    {
+        "model": "bird.bird",
+        "pk": 9,
+        "fields": {
+            "name": "Turmfalke",
+            "description": ""
+        }
+    }
+]
