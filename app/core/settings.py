@@ -108,7 +108,7 @@ CSP_SCRIPT_SRC = (
     "https://code.jquery.com",
 )
 CSP_INCLUDE_NONCE_IN = ["script-src"]
-CSP_IMG_SRC = ("'self'",)
+CSP_IMG_SRC = ("'self'", "data:")
 CSP_FONT_SRC = (
     "'self'",
     "https://fonts.gstatic.com",
