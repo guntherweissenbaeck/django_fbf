@@ -12,7 +12,7 @@
             <fieldset>
                 {% csrf_token %}
                 {{form|crispy}}
-                <button class="btn btn-success" type="abbort">Abbrechen</button>
+                <a href="{% url 'bird_all' %}" class="btn btn-success">Abbrechen</a>
                 <a href="{% url 'bird_delete' bird.id %}" class="btn btn-danger">Löschen</a>
                 <a href="{% url 'costs_create' bird.id %}" class="btn btn-warning">Buchung +</a>
                 <button class="btn btn-primary" type="submit">Speichern</button>
