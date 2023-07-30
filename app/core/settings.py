@@ -96,6 +96,7 @@ CSP_DEFAULT_SRC = (
 )
 CSP_STYLE_SRC = (
     "'self'",
+    "'unsafe-inline'",
     "https://bootswatch.com",
     "https://cdn.datatables.net",
     "https://cdnjs.cloudflare.com",
