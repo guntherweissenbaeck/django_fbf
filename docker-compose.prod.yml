@@ -33,6 +33,7 @@ services:
     image: postgres:15-alpine
     volumes:
       - ./postgres_data:/var/lib/postgresql/data/
+      - ./postgres_backup:/backup
     expose:
       - 5432
     environment:
