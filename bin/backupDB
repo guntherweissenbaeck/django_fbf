@@ -3,5 +3,5 @@
 # CREATE DATABASE DUMP OF DB_FBF.
 docker exec django_fbf-db-1 /bin/bash -c "/usr/local/bin/pg_dump -U fbf -d db_fbf > /backup/fbf-backup.sql"
 
-# cOPY AND COMPRESS DUMP FILE.
+# COPY AND COMPRESS DUMP FILE.
 docker exec django_fbf-db-1 /bin/bash -c "cd /backup && /bin/tar -czvf fbf-backup__$(date '+%Y-%m-%d').tar.gz fbf-backup.sql"
