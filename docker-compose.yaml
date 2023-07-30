@@ -22,6 +22,11 @@ services:
       - "DB_PORT=${DB_PORT}"
       - "DB_USER=${DB_USER}"
       - "SECRET_KEY=${SECRET_KEY}"
+      - "DEFAULT_FROM_EMAIL=${DEFAULT_FROM_EMAIL}"
+      - "EMAIL_HOST_PASSWORD=${EMAIL_HOST_PASSWORD}"
+      - "EMAIL_HOST_USER=${EMAIL_HOST_USER}"
+      - "EMAIL_HOST=${EMAIL_HOST}"
+      - "EMAIL_PORT=${EMAIL_PORT}"
     depends_on:
       - db
     labels:
@@ -30,8 +35,8 @@ services:
   db:
     image: postgres:15-alpine
     volumes:
-      - ./postgres_data:/var/lib/postgresql/data/
-      - ./postgres_backup:/backup
+      - ./postgres/data:/var/lib/postgresql/data/
+      - ./postgres/backup:/backup
     expose:
       - 5432
     environment:
@@ -44,7 +49,7 @@ services:
       - 8008:80
       - 8081:8080
     volumes:
-      - "$PWD/traefik.dev.toml:/etc/traefik/traefik.toml"
+      - "./traefik/traefik.dev.toml:/etc/traefik/traefik.toml"
       - "/var/run/docker.sock:/var/run/docker.sock:ro"
 
 volumes:
