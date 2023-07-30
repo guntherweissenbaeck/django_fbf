@@ -173,6 +173,7 @@ traefik-public-certificates
 
 # Postgres Data
 postgres_data
+postgres_backup
 
 # Prestatic Collections
 app/staticfiles

@@ -1,0 +1,16 @@
+#!/bin/bash
+
+# STOP WEB CONTAINER TO KILL ALL SESSIONS.
+docker stop django_fbf-web-1
+
+# DROP THE DATABASE.
+docker exec -it django_fbf-db-1 psql -U fbf -d postgres -c "DROP DATABASE db_fbf;"
+
+# CREATE THE DATABASE.
+docker exec -it django_fbf-db-1 psql -U fbf -d postgres -c "CREATE DATABASE db_fbf;"
+
+# RESTORE THE DATABASE.
+docker exec -it django_fbf-db-1 /usr/local/bin/psql -U fbf -d db_fbf -f /backup/fbf-backup.sql
+
+# START THE WEB CONTAINER.
+docker start django_fbf-web-1
