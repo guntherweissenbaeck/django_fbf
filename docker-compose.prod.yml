@@ -21,6 +21,10 @@ services:
       - "DB_PORT=${DB_PORT}"
       - "DB_USER=${DB_USER}"
       - "SECRET_KEY=${SECRET_KEY}"
+      - "EMAIL_HOST_PASSWORD=${EMAIL_HOST_PASSWORD}"
+      - "EMAIL_HOST_USER=${EMAIL_HOST_USER}"
+      - "EMAIL_HOST=${EMAIL_HOST}"
+      - "EMAIL_PORT=${EMAIL_PORT}"
     depends_on:
       - db
     labels:
