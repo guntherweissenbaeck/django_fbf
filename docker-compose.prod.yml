@@ -21,6 +21,7 @@ services:
       - "DB_PORT=${DB_PORT}"
       - "DB_USER=${DB_USER}"
       - "SECRET_KEY=${SECRET_KEY}"
+      - "DEFAULT_FROM_EMAIL=${DEFAULT_FROM_EMAIL}"
       - "EMAIL_HOST_PASSWORD=${EMAIL_HOST_PASSWORD}"
       - "EMAIL_HOST_USER=${EMAIL_HOST_USER}"
       - "EMAIL_HOST=${EMAIL_HOST}"
@@ -46,8 +47,8 @@ services:
       - "POSTGRES_DB=${DB_NAME}"
   traefik:
     build:
-      context: .
-      dockerfile: ./traefik/Dockerfile.traefik
+      context: ./traefik
+      dockerfile: ./Dockerfile.traefik
     ports:
       - 80:80
       - 443:443
