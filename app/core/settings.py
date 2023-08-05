@@ -239,7 +239,7 @@ except ImportError:
 # SMTP Backup for Production Usage.
 EMAIL_BACKEND = "django.core.mail.backends.smtp.EmailBackend"
 
-if EMAIL_BACKEND = "django.core.mail.backends.smtp.EmailBackend":
+if EMAIL_BACKEND == "django.core.mail.backends.smtp.EmailBackend":
     DEFAULT_FROM_EMAIL = env("DEFAULT_FROM_EMAIL")
     EMAIL_HOST_PASSWORD = env("EMAIL_HOST_PASSWORD")
     EMAIL_HOST_USER = env("EMAIL_HOST_USER")
