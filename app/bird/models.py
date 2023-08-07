@@ -14,6 +14,7 @@ CHOICE_AGE = [
     ("Ei", "Ei"),
     ("Nestling", "Nestling"),
     ("Ästling", "Ästling"),
+    ("Juvenil", "Juvenil"),
     ("Adult", "Adult"),
 ]
 
