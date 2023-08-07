@@ -11,6 +11,7 @@ from rescuer.models import Rescuer
 
 
 CHOICE_AGE = [
+    ("unbekannt", "unbekannt"),
     ("Ei", "Ei"),
     ("Nestling", "Nestling"),
     ("Ästling", "Ästling"),
