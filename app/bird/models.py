@@ -88,6 +88,8 @@ class Bird(models.Model):
     class Meta:
         verbose_name = _("Vogel")
         verbose_name_plural = _("Vögel")
+        ordering = ["bird", "find_circumstances"]
+
 
     def __str__(self):
         return self.name
