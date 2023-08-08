@@ -32,10 +32,10 @@ def costs_default():
 
 class FallenBird(models.Model):
     id = models.UUIDField(primary_key=True, default=uuid4, editable=False)
-    bird_identifier = models.CharField(max_length=256, verbose_name=_("Patienten Alias"))
-    bird = models.ForeignKey(
-        "Bird", on_delete=models.CASCADE, verbose_name=_("Vogel")
+    bird_identifier = models.CharField(
+        max_length=256, verbose_name=_("Patienten Alias")
     )
+    bird = models.ForeignKey("Bird", on_delete=models.CASCADE, verbose_name=_("Vogel"))
     age = models.CharField(max_length=15, choices=CHOICE_AGE, verbose_name=_("Alter"))
     sex = models.CharField(
         max_length=15, choices=CHOICE_SEX, verbose_name=_("Geschlecht")
@@ -89,7 +89,6 @@ class Bird(models.Model):
         verbose_name = _("Vogel")
         verbose_name_plural = _("Vögel")
         ordering = ["name"]
-
 
     def __str__(self):
         return self.name
