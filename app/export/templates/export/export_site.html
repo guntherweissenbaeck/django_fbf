@@ -1,0 +1,19 @@
+{% extends "base.html" %}
+{% load static %}
+{% block content %}
+<div class="row">
+    <div class="col-lg-8 mb-3">
+        <h3>Datenexport</h3>
+        <p>
+            Anbei finden Sie mehrere Möglichkeiten die Daten der Anwendung zu
+            exportieren.
+        </p>
+        <ul>
+            <li><a href="{% url 'export_birds' %}">alle Patienten</a></li>
+            <li>alle Finder</li>
+            <li>alle Patienten Finder</li>
+            <li><a href="{% url 'export_costs' %}">alle Kosten</a></li>
+        </ul>
+    </div>
+</div>
+{% endblock content %}
