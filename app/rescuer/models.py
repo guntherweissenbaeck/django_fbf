@@ -22,6 +22,5 @@ class Rescuer(models.Model):
         verbose_name_plural = _("Finder")
         ordering = ["last_name"]
 
-
     def __str__(self) -> str:
         return self.first_name + " " + self.last_name
