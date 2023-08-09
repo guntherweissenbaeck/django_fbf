@@ -1,4 +1,6 @@
 {% load static %}
+{% load group_check %}
+
 {% if user.is_authenticated %}
 
 <nav class="navbar navbar-expand-lg navbar-dark bg-primary sticky-top">
@@ -14,26 +16,29 @@
         <div class="collapse navbar-collapse" id="navbarColor01">
             <ul class="navbar-nav me-auto">
                 {% if user.is_authenticated %}
-                <li class="nav-item">
-                    <a class="nav-link {% if '/bird/all/' in request.path %} active {% endif %}"
-                        href="{% url 'bird_all' %}">alle Patienten</a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link {% if '/rescuer/all' in request.path %} active {% endif %}"
-                        href="{% url 'rescuer_all' %}">alle Finder</a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link {% if '/aviary/all' in request.path %} active {% endif %}"
-                        href="{% url 'aviary_all' %}">alle Volieren</a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link {% if '/costs/all' in request.path %} active {% endif %}"
-                        href="{% url 'costs_all' %}">alle Kosten</a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link {% if '/export' in request.path %} active {% endif %}"
-                        href="{% url 'site_exports' %}">Daten-Export</a>
-                </li>
+                    <li class="nav-item">
+                        <a class="nav-link {% if '/bird/all/' in request.path %} active {% endif %}"
+                            href="{% url 'bird_all' %}">alle Patienten</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link {% if '/rescuer/all' in request.path %} active {% endif %}"
+                            href="{% url 'rescuer_all' %}">alle Finder</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link {% if '/aviary/all' in request.path %} active {% endif %}"
+                            href="{% url 'aviary_all' %}">alle Volieren</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link {% if '/costs/all' in request.path %} active {% endif %}"
+                            href="{% url 'costs_all' %}">alle Kosten</a>
+                    </li>
+
+                    {% if request.user|group_check:"data-export" %} 
+                        <li class="nav-item">
+                            <a class="nav-link {% if '/export' in request.path %} active {% endif %}"
+                            href="{% url 'site_exports' %}">Daten-Export</a>
+                        </li>
+                    {% endif %}
                 {% endif %}
             </ul>
 
