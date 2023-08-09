@@ -73,6 +73,7 @@ INSTALLED_APPS = [
     "aviary",
     "bird",
     "costs",
+    "export",
     "rescuer",
     "sites",
 ]
