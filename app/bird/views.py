@@ -52,7 +52,7 @@ def bird_help_single(request, id):
 def bird_all(request):
     birds = FallenBird.objects.filter(Q(status="1") | Q(status="2")).annotate(
         total_costs=Sum("costs__costs")
-    )
+    ).order_by("date_found")
     rescuer_modal = Rescuer.objects.all()
     context = {"birds": birds, "rescuer_modal": rescuer_modal}
     # Post came from the modal form.

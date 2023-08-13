@@ -71,10 +71,8 @@
     <tr>
       <td><a href="{% url 'bird_single' bird.id %}">{{ bird.bird_identifier }}</a></td>
       <td>{{ bird.bird }}</td>
-      <td>{{ bird.date_found }}</td>
-      <td>
-        <a href="{% url 'rescuer_single' bird.rescuer_id %}">{{ bird.rescuer|default_if_none:"" }}</a>
-      </td>
+      <td data-order="{{ forloop.counter }}">{{ bird.date_found }}</td>
+      <td><a href="{% url 'rescuer_single' bird.rescuer_id %}">{{ bird.rescuer|default_if_none:"" }}</a></td>
       <td>{{ bird.place }}</td>
       <td>{{ bird.status }}</td>
       <td>{{ bird.aviary|default_if_none:"" }}</td>
