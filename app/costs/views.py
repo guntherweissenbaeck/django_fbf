@@ -7,7 +7,7 @@ from .models import Costs
 
 @login_required(login_url="account_login")
 def costs_all(request):
-    costs = Costs.objects.all()
+    costs = Costs.objects.all().order_by("created")
     context = {"costs": costs}
     return render(request, "costs/costs_all.html", context)
 

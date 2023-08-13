@@ -18,7 +18,7 @@
 <script src="https://cdn.datatables.net/responsive/2.2.9/js/responsive.bootstrap5.min.js"></script>
 
 <!-- Configure the DataTable. -->
-<script nonce="{{request.csp_nonce}}">
+<script nonce="{{ request.csp_nonce }}">
     $(document).ready(function () {
         let table = $('#t__costs_all').DataTable({
             language: {
@@ -64,11 +64,11 @@
     <tbody>
         {% for item in costs %}
         <tr>
-            <td> {{item.id_bird|default_if_none:"nicht mehr in WVH"}} </td>
-            <td> {{item.costs}} &euro;</td>
-            <td> {{item.created}} </td>
-            <td> {{item.comment|default_if_none:""}} </td>
-            <td> {{item.user}} </td>
+            <td> {{ item.id_bird|default_if_none:"nicht mehr in WVH" }} </td>
+            <td> {{ item.costs }} &euro;</td>
+            <td data-order="{{ forloop.counter }}"> {{ item.created }} </td>
+            <td> {{ item.comment|default_if_none:"" }} </td>
+            <td> {{ item.user }} </td>
             <td><a href="{% url 'costs_edit' item.id %}"><i class="fa-sharp fa-solid fa-pen"></i></a></td>
             <td><a href="{% url 'costs_delete' item.id %}"><i class="fa-sharp fa-solid fa-trash"></i></a></td>
         </tr>
