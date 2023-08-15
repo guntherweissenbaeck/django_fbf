@@ -80,11 +80,6 @@ def bird_inactive(request):
 
 
 @login_required(login_url="account_login")
-def bird_recover_all(request):
-    return HttpResponse("Show all recovered Birds")
-
-
-@login_required(login_url="account_login")
 def bird_single(request, id):
     bird = FallenBird.objects.get(id=id)
     form = BirdEditForm(request.POST or None, request.FILES or None, instance=bird)
@@ -107,8 +102,3 @@ def bird_delete(request, id):
         return redirect("bird_all")
     context = {"bird": bird}
     return render(request, "bird/bird_delete.html", context)
-
-
-@login_required(login_url="account_login")
-def bird_recover(request, id):
-    return HttpResponse(f"Show recover with ID {id}")

@@ -75,7 +75,6 @@ INSTALLED_APPS = [
     "costs",
     "export",
     "rescuer",
-    "sites",
 ]
 
 MIDDLEWARE = [
