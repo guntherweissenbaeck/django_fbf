@@ -71,6 +71,7 @@ class FallenBird(models.Model):
     sent_to = models.CharField(
         max_length=256, null=True, blank=True, verbose_name=_("Übersandt nach")
     )
+    comment = models.TextField(blank=True, null=True, verbose_name=_("Bemerkung"))
 
     class Meta:
         verbose_name = _("Patient")
