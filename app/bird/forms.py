@@ -55,6 +55,7 @@ class BirdEditForm(forms.ModelForm):
             "sent_to",
             "find_circumstances",
             "diagnostic_finding",
+            "comment",
         ]
         labels = {
             "bird": _("Vogel"),
@@ -66,4 +67,5 @@ class BirdEditForm(forms.ModelForm):
             "sent_to": _("Übermittelt nach"),
             "find_circumstances": _("Fundumstände"),
             "diagnostic_finding": _("Diagnose bei Fund"),
+            "comment": _("Bermerkung"),
         }
