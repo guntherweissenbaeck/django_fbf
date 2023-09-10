@@ -65,8 +65,8 @@ INSTALLED_APPS = [
     # -----------------------------------
     # CKEditor
     # -----------------------------------
-    "ckeditor",
-    "ckeditor_uploader",
+    # "ckeditor",
+    # "ckeditor_uploader",
     # -----------------------------------
     # My Apps
     # -----------------------------------
@@ -215,8 +215,8 @@ ACCOUNT_UNIQUE_EMAIL = True
 LOGIN_REDIRECT_URL = "/bird/all"
 
 # CKEditor
-CKEDITOR_BASEPATH = "/static/ckeditor/ckeditor/"
-CKEDITOR_UPLOAD_PATH = "media"
+# CKEDITOR_BASEPATH = "/static/ckeditor/ckeditor/"
+# CKEDITOR_UPLOAD_PATH = "media"
 
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/4.2/howto/static-files/
