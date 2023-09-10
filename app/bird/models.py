@@ -83,7 +83,9 @@ class FallenBird(models.Model):
 class Bird(models.Model):
     id = models.BigAutoField(primary_key=True)
     name = models.CharField(max_length=256, unique=True, verbose_name=_("Bezeichnung"))
-    description = models.CharField(max_length=256,blank=True, null=True, verbose_name=_("Beschreibung"))
+    description = models.CharField(
+        max_length=256, blank=True, null=True, verbose_name=_("Beschreibung")
+    )
 
     class Meta:
         verbose_name = _("Vogel")
