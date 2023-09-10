@@ -1,7 +1,6 @@
 from datetime import date
 from uuid import uuid4
 
-from ckeditor.fields import RichTextField
 from django.conf import settings
 from django.db import models
 from django.utils.translation import gettext_lazy as _
@@ -84,7 +83,7 @@ class FallenBird(models.Model):
 class Bird(models.Model):
     id = models.BigAutoField(primary_key=True)
     name = models.CharField(max_length=256, unique=True, verbose_name=_("Bezeichnung"))
-    description = RichTextField(blank=True, null=True)
+    description = models.CharField(max_length=256,blank=True, null=True, verbose_name=_("Beschreibung"))
 
     class Meta:
         verbose_name = _("Vogel")
