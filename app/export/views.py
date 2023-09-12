@@ -59,8 +59,8 @@ def export_birds(request):
     writer = csv.writer(response)
     writer.writerow(
         [
-            "Vogel",
             "Patienten Alias",
+            "Vogel",
             "Alter",
             "Geschlecht",
             "gefunden am",
