@@ -49,7 +49,7 @@ services:
       - "POSTGRES_DB=${DB_NAME}"
 
   traefik:
-    image: traefik:v2.9.6
+    image: traefik:v2.10.4
     container_name: django_fbf_traefik_1
     ports:
       - 8008:80
