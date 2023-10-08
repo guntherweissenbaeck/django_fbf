@@ -104,7 +104,7 @@ CSP_STYLE_SRC = (
     "https://fonts.googleapis.com",
 )
 CSP_SCRIPT_SRC = (
-    "'self'", 
+    "'self'",
     "'unsafe-inline'",
     "https://cdn.datatables.net",
     "https://cdn.jsdelivr.net",
