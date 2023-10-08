@@ -3,8 +3,9 @@
 {% block content %}
 <div class="row">
     <div class="col-lg-8 mb-3">
-        <h3>{{ bird.name }}</h3>
+        <h3>{{ bird.name }}</h3> 
         <p>{{ bird.description|safe }}</p>
+        <p><a href="{% url 'bird_help' %}">zurück zur Hilfesammlung</a></p>
     </div>
 </div>
 {% endblock content %}
