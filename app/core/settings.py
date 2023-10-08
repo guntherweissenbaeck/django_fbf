@@ -65,8 +65,8 @@ INSTALLED_APPS = [
     # -----------------------------------
     # CKEditor
     # -----------------------------------
-    # "ckeditor",
-    # "ckeditor_uploader",
+    "ckeditor",
+    "ckeditor_uploader",
     # -----------------------------------
     # My Apps
     # -----------------------------------
@@ -93,6 +93,7 @@ MIDDLEWARE = [
 CSP_DEFAULT_SRC = (
     "'self'",
     "https://cdn.datatables.net",
+    "https://cke4.ckeditor.com",
 )
 CSP_STYLE_SRC = (
     "'self'",
@@ -103,7 +104,8 @@ CSP_STYLE_SRC = (
     "https://fonts.googleapis.com",
 )
 CSP_SCRIPT_SRC = (
-    "'self'",
+    "'self'", 
+    "'unsafe-inline'",
     "https://cdn.datatables.net",
     "https://cdn.jsdelivr.net",
     "https://code.jquery.com",
@@ -215,8 +217,8 @@ ACCOUNT_UNIQUE_EMAIL = True
 LOGIN_REDIRECT_URL = "/bird/all"
 
 # CKEditor
-# CKEDITOR_BASEPATH = "/static/ckeditor/ckeditor/"
-# CKEDITOR_UPLOAD_PATH = "media"
+CKEDITOR_BASEPATH = "/static/ckeditor/ckeditor/"
+CKEDITOR_UPLOAD_PATH = "media"
 
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/4.2/howto/static-files/
@@ -246,3 +248,12 @@ if EMAIL_BACKEND == "django.core.mail.backends.smtp.EmailBackend":
     EMAIL_HOST = env("EMAIL_HOST")
     EMAIL_PORT = env("EMAIL_PORT")
     EMAIL_USE_TLS = True
+
+CKEDITOR_CONFIGS = {
+    'default': {
+        "removePlugins": "exportpdf",
+        "height": 300,
+        "width": '100%',
+        "allowedContent": True,
+    }
+}

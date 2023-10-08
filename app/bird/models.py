@@ -5,6 +5,8 @@ from django.conf import settings
 from django.db import models
 from django.utils.translation import gettext_lazy as _
 
+from ckeditor.fields import RichTextField
+
 from aviary.models import Aviary
 from rescuer.models import Rescuer
 
@@ -83,9 +85,7 @@ class FallenBird(models.Model):
 class Bird(models.Model):
     id = models.BigAutoField(primary_key=True)
     name = models.CharField(max_length=256, unique=True, verbose_name=_("Bezeichnung"))
-    description = models.CharField(
-        max_length=256, blank=True, null=True, verbose_name=_("Beschreibung")
-    )
+    description = RichTextField(verbose_name=_("Erläuterungen"))
 
     class Meta:
         verbose_name = _("Vogel")

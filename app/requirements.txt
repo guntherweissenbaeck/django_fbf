@@ -2,7 +2,7 @@ crispy-bootstrap5>=0.6
 django-allauth==0.55
 django-bootstrap-datepicker-plus>=4.0
 django-bootstrap-modal-forms>=2
-# django-ckeditor>=6.6
+django-ckeditor>=6.6
 django-crispy-forms>=1
 django-csp>=3.7
 django-environ>=0.9
