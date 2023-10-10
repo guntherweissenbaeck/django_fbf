@@ -12,30 +12,42 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/4.2/howto/deployment/checklist/
 
+# -----------------------------------
 # SECURITY WARNING: keep the secret key used in production secret!
+# -----------------------------------
 SECRET_KEY = env("SECRET_KEY")
 
+# -----------------------------------
 # SECURITY WARNING: don't run with debug turned on in production!
+# -----------------------------------
 DEBUG = env.bool("DEBUG")
 
+# -----------------------------------
 # CSRF Stuff
+# -----------------------------------
 CSRF_COOKIE_SECURE = True
 CSRF_TRUSTED_ORIGINS = ["https://fbf.nabu-jena.de"]
 
+# -----------------------------------
 # Cookies
+# -----------------------------------
 SESSION_COOKIE_SECURE = True
 
-
+# -----------------------------------
 # HTTPS
+# -----------------------------------
 SECURE_HSTS_SECONDS = 0
 SECURE_HSTS_INCLUDE_SUBDOMAINS = True
 SECURE_HSTS_PRELOAD = True
 
+# -----------------------------------
 # Allowed Hosts
+# -----------------------------------
 ALLOWED_HOSTS = [env("ALLOWED_HOSTS")]
 
+# -----------------------------------
 # Application definition
-
+# -----------------------------------
 INSTALLED_APPS = [
     # -----------------------------------
     # Jazzmin
@@ -55,7 +67,6 @@ INSTALLED_APPS = [
     # -----------------------------------
     "allauth",
     "allauth.account",
-    # "allauth.socialaccount",
     # -----------------------------------
     # Crispy forms, modals and bootstrap5
     # -----------------------------------
@@ -90,34 +101,13 @@ MIDDLEWARE = [
     "csp.middleware.CSPMiddleware",
 ]
 
+# -----------------------------------
 # DJANGO Content Security Policy
-CSP_DEFAULT_SRC = (
-    "'self'",
-    "https://cdn.datatables.net",
-    "https://cke4.ckeditor.com",
-)
-CSP_STYLE_SRC = (
-    "'self'",
-    "'unsafe-inline'",
-    "https://bootswatch.com",
-    "https://cdn.datatables.net",
-    "https://cdnjs.cloudflare.com",
-    "https://fonts.googleapis.com",
-)
-CSP_SCRIPT_SRC = (
-    "'self'",
-    "'unsafe-inline'",
-    "https://cdn.datatables.net",
-    "https://cdn.jsdelivr.net",
-    "https://code.jquery.com",
-)
-CSP_INCLUDE_NONCE_IN = ["script-src"]
-CSP_IMG_SRC = ("'self'", "data:")
-CSP_FONT_SRC = (
-    "'self'",
-    "https://fonts.gstatic.com",
-    "https://cdnjs.cloudflare.com",
-)
+# -----------------------------------
+try:
+    from .csp import *
+except ImportError:
+    print("No CSP Settings found!")
 
 ROOT_URLCONF = "core.urls"
 
@@ -147,7 +137,9 @@ AUTHENTICATION_BACKENDS = [
 WSGI_APPLICATION = "core.wsgi.application"
 
 
+# -----------------------------------
 # Database
+# -----------------------------------
 # https://docs.djangoproject.com/en/4.2/ref/settings/#databases
 
 DATABASES = {
@@ -162,7 +154,9 @@ DATABASES = {
 }
 
 
+# -----------------------------------
 # Password validation
+# -----------------------------------
 # https://docs.djangoproject.com/en/4.2/ref/settings/#auth-password-validators
 
 AUTH_PASSWORD_VALIDATORS = [
@@ -181,18 +175,19 @@ AUTH_PASSWORD_VALIDATORS = [
 ]
 
 
+# -----------------------------------
 # Internationalization
+# -----------------------------------
 # https://docs.djangoproject.com/en/4.2/topics/i18n/
 
 LANGUAGE_CODE = "de-de"
-
 TIME_ZONE = "Europe/Berlin"
-
 USE_I18N = True
-
 USE_TZ = True
 
+# -----------------------------------
 # Default primary key field type
+# -----------------------------------
 # https://docs.djangoproject.com/en/4.2/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
@@ -201,25 +196,14 @@ DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
 CRISPY_ALLOWED_TEMPLATE_PACKS = "bootstrap5"
 CRISPY_TEMPLATE_PACK = "bootstrap5"
 
+# -----------------------------------
 # Allauth
-SITE_ID = 1
-ACCOUNT_AUTHENTICATION_METHOD = "username_email"
-ACCOUNT_EMAIL_REQUIRED = True
-ACCOUNT_EMAIL_VERIFICATION = "mandatory"
-ACCOUNT_LOGIN_ATTEMPTS_LIMIT = 5
-ACCOUNT_LOGIN_ATTEMPTS_TIMEOUT = 900  # 15 Minutes
-ACCOUNT_LOGIN_ON_EMAIL_CONFIRMATION = True
-ACCOUNT_LOGOUT_REDIRECT_URL = "/"
-ACCOUNT_LOGOUT_ON_GET = True
-ACCOUNT_SESSION_REMEMBER = True
-ACCOUNT_USERNAME_BLACKLIST = ["admin", "god"]
-ACCOUNT_USERNAME_MIN_LENGTH = 3
-ACCOUNT_UNIQUE_EMAIL = True
-LOGIN_REDIRECT_URL = "/bird/all"
+# -----------------------------------
+try:
+    from .allauth import *
+except ImportError:
+    print("No AllAuth Settings found!")
 
-# CKEditor
-CKEDITOR_BASEPATH = "/static/ckeditor/ckeditor/"
-CKEDITOR_UPLOAD_PATH = "media"
 
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/4.2/howto/static-files/
@@ -228,13 +212,9 @@ STATIC_URL = "static/"
 STATICFILES_DIRS = [BASE_DIR / "static"]
 STATIC_ROOT = BASE_DIR / "staticfiles"
 
-# Jazzmin
-try:
-    from .jazzmin import JAZZMIN_SETTINGS
-except ImportError:
-    print("No Jazzmin Settings found!")
-
+# -----------------------------------
 # Email
+# -----------------------------------
 
 # Console Backend for Development Usage.
 # EMAIL_BACKEND = "django.core.mail.backends.console.EmailBackend"
@@ -250,11 +230,17 @@ if EMAIL_BACKEND == "django.core.mail.backends.smtp.EmailBackend":
     EMAIL_PORT = env("EMAIL_PORT")
     EMAIL_USE_TLS = True
 
-CKEDITOR_CONFIGS = {
-    'default': {
-        "removePlugins": "exportpdf",
-        "height": 300,
-        "width": '100%',
-        "allowedContent": True,
-    }
-}
+# -----------------------------------
+# Additional App Settings
+# -----------------------------------
+# Jazzmin
+try:
+    from .jazzmin import JAZZMIN_SETTINGS
+except ImportError:
+    print("No Jazzmin Settings found!")
+
+# CKEditor
+try:
+    from .ckeditor import *
+except ImportError:
+    print("No CKEditor Settings found!")
