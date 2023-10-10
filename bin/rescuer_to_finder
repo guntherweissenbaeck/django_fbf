@@ -1,0 +1,8 @@
+#!/bin/bash
+echo "Copying rescuer_to_finder.py to django_fbf_web_1"
+docker cp ./scripts/rescuer_to_finder.py django_fbf_web_1:/app/rescuer_to_finder.py
+
+echo "Running rescuer_to_finder.py"
+docker exec django_fbf_web_1 python3 /app/rescuer_to_finder.py
+
+echo "Done"

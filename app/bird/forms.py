@@ -25,8 +25,8 @@ class BirdAddForm(forms.ModelForm):
             "place",
             "find_circumstances",
             "diagnostic_finding",
-            "comment",
             "finder",
+            "comment",
         ]
         labels = {
             "bird_identifier": _("Kennung"),
@@ -57,6 +57,7 @@ class BirdEditForm(forms.ModelForm):
             "sent_to",
             "find_circumstances",
             "diagnostic_finding",
+            "finder",
             "comment",
         ]
         labels = {
@@ -69,5 +70,6 @@ class BirdEditForm(forms.ModelForm):
             "sent_to": _("Übermittelt nach"),
             "find_circumstances": _("Fundumstände"),
             "diagnostic_finding": _("Diagnose bei Fund"),
+            "finder": _("Finder"),
             "comment": _("Bermerkung"),
         }
