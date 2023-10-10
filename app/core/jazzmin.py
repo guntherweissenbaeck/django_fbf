@@ -26,7 +26,6 @@ JAZZMIN_SETTINGS = {
         "aviary.Aviary",
         "bird.FallenBird",
         "bird.User",
-        "rescuer.Rescuer",
     ],
     # Field name on user model that contains avatar ImageField/URLField/Charfield or a callable that receives the user
     # "user_avatar": None,
@@ -87,7 +86,7 @@ JAZZMIN_SETTINGS = {
         "bird.Circumstance": "fas fa-solid fa-ring",
         "bird.FallenBird": "fas fa-solid fa-bed",
         "costs.Costs": "fas fa-solid fa-money-bill",
-        "rescuer.Rescuer": "fas fa-solid fa-user-shield",
+        # "rescuer.Rescuer": "fas fa-solid fa-user-shield",
         "socialaccount.socialaccount": "fas fa-solid fa-lock",
         "socialaccount.socialapp": "fas fa-solid fa-laptop",
         "socialaccount.socialtoken": "fas fa-solid fa-keyboard",

@@ -5,7 +5,7 @@
 
 <nav class="navbar navbar-expand-lg navbar-dark bg-primary sticky-top">
     <div class="container-lg">
-        <a class="navbar-brand" href="{% url 'index' %}">
+        <a class="navbar-brand" href="{% url 'bird_all' %}">
             <img src="{% static 'img/favicon/l.png' %}" alt="logo" width="35" height="35" />
         </a>
         <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarColor01"
@@ -21,8 +21,8 @@
                             href="{% url 'bird_all' %}">alle Patienten</a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link {% if '/rescuer/all' in request.path %} active {% endif %}"
-                            href="{% url 'rescuer_all' %}">alle Finder</a>
+                        <a class="nav-link {% if '/bird/create/' in request.path %} active {% endif %}"
+                            href="{% url 'bird_create' %}">neuer Patient</a>
                     </li>
                     <li class="nav-item">
                         <a class="nav-link {% if '/aviary/all' in request.path %} active {% endif %}"

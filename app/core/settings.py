@@ -74,7 +74,7 @@ INSTALLED_APPS = [
     "bird",
     "costs",
     "export",
-    "rescuer",
+
 ]
 
 MIDDLEWARE = [

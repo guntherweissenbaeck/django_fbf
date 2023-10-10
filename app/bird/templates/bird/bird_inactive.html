@@ -52,7 +52,6 @@
       <th>Patienten Alias</th>
       <th>Vogel</th>
       <th>gefunden am</th>
-      <th>Finder</th>
       <th>Fundort</th>
       <th>Status</th>
       <th>Kosten</th>
@@ -66,9 +65,6 @@
       <td><a href="{% url 'bird_single' bird.id %}">{{ bird.bird_identifier }}</a></td>
       <td>{{ bird.bird }}</td>
       <td data-order="{{ forloop.counter }}">{{ bird.date_found }}</td>
-      <td>
-        <a href="{% url 'rescuer_single' bird.rescuer_id %}">{{ bird.rescuer|default_if_none:"" }}</a>
-      </td>
       <td>{{ bird.place }}</td>
       <td>{{ bird.status }}</td>
       <td>{{ bird.total_costs|default_if_none:"0,00" }} &euro;</td>

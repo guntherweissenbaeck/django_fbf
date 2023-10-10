@@ -26,6 +26,7 @@ class BirdAddForm(forms.ModelForm):
             "find_circumstances",
             "diagnostic_finding",
             "comment",
+            "finder",
         ]
         labels = {
             "bird_identifier": _("Kennung"),
@@ -37,6 +38,7 @@ class BirdAddForm(forms.ModelForm):
             "find_circumstances": _("Fundumstände"),
             "diagnostic_finding": _("Diagnose bei Fund"),
             "comment": _("Bermerkung"),
+            "finder": _("Finder"),
         }
 
 

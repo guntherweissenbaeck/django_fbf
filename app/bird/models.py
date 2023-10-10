@@ -8,7 +8,6 @@ from django.utils.translation import gettext_lazy as _
 from ckeditor.fields import RichTextField
 
 from aviary.models import Aviary
-from rescuer.models import Rescuer
 
 
 CHOICE_AGE = [
@@ -51,13 +50,6 @@ class FallenBird(models.Model):
     diagnostic_finding = models.CharField(
         max_length=256, verbose_name=_("Diagnose bei Fund")
     )
-    rescuer = models.ForeignKey(
-        Rescuer,
-        on_delete=models.SET_NULL,
-        blank=True,
-        null=True,
-        verbose_name=_("Finder"),
-    )
     user = models.ForeignKey(
         settings.AUTH_USER_MODEL, on_delete=models.CASCADE, verbose_name=_("Benutzer")
     )
@@ -73,6 +65,7 @@ class FallenBird(models.Model):
         max_length=256, null=True, blank=True, verbose_name=_("Übersandt nach")
     )
     comment = models.TextField(blank=True, null=True, verbose_name=_("Bemerkung"))
+    finder = models.TextField(blank=True, null=True, verbose_name=_("Finder"))
 
     class Meta:
         verbose_name = _("Patient")

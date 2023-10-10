@@ -5,23 +5,17 @@ from django.shortcuts import HttpResponse, redirect, render
 
 from .forms import BirdAddForm, BirdEditForm
 from .models import Bird, FallenBird
-from rescuer.models import Rescuer
 
 
 @login_required(login_url="account_login")
 def bird_create(request):
     form = BirdAddForm(initial={"bird_identifier": names.get_first_name()})
-    # Rescuer for modal usage
-    rescuer_id = request.session.get("rescuer_id")
-    rescuer = Rescuer.objects.get(id=rescuer_id)
+    rescuer_id = None
 
     # Just show only related rescuers in select field of the form.
     if request.method == "POST":
         form = BirdAddForm(request.POST or None, request.FILES or None)
-
-        # circumstances = Circumstance.objects.all()
-        rescuer_id = request.session.get("rescuer_id")
-        rescuer = Rescuer.objects.get(id=rescuer_id)
+        rescuer_id = None
 
         if form.is_valid():
             fs = form.save(commit=False)
@@ -30,7 +24,7 @@ def bird_create(request):
             fs.save()
             request.session["rescuer_id"] = None
             return redirect("bird_all")
-    context = {"form": form, "rescuer": rescuer}
+    context = {"form": form}
     return render(request, "bird/bird_create.html", context)
 
 
@@ -55,16 +49,7 @@ def bird_all(request):
         .annotate(total_costs=Sum("costs__costs"))
         .order_by("date_found")
     )
-    rescuer_modal = Rescuer.objects.all()
-    context = {"birds": birds, "rescuer_modal": rescuer_modal}
-    # Post came from the modal form.
-    if request.method == "POST":
-        rescuer_id = request._post["rescuer_id"]
-        if rescuer_id != "new_rescuer":
-            request.session["rescuer_id"] = rescuer_id
-            return redirect("bird_create")
-        else:
-            return redirect("rescuer_create")
+    context = {"birds": birds}
     return render(request, "bird/bird_all.html", context)
 
 

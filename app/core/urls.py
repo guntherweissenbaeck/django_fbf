@@ -9,7 +9,6 @@ urlpatterns = [
     path("bird/", include("bird.urls")),
     path("costs/", include("costs.urls")),
     path("export/", include("export.urls")),
-    path("rescuer/", include("rescuer.urls")),
     # Admin
     path("admin/", admin.site.urls),
     # Allauth
