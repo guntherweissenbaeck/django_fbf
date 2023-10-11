@@ -2,16 +2,16 @@
 echo "-------------------"
 echo "Copying rescuer_to_finder.py to django_fbf_web_1"
 echo "-------------------"
-docker cp ./scripts/rescuer_to_finder.py django_fbf_web_1:/app/rescuer_to_finder.py
+docker cp ./scripts/rescuer_to_finder.py django_fbf_web_1:/web/rescuer_to_finder.py
 
 echo "-------------------"
 echo "Running rescuer_to_finder.py"
 echo "-------------------"
-docker exec django_fbf_web_1 python3 /app/rescuer_to_finder.py
+docker exec django_fbf_web_1 python3 /web/rescuer_to_finder.py
 
 echo "Removing rescuer_to_finder.py from django_fbf_web_1"
 echo "-------------------"
-docker exec django_fbf_web_1 rm /app/rescuer_to_finder.py
+docker exec django_fbf_web_1 rm /web/rescuer_to_finder.py
 
 echo "Done"
 echo "-------------------"
