@@ -104,7 +104,14 @@ MIDDLEWARE = [
 # DJANGO Content Security Policy
 # -----------------------------------
 try:
-    from .csp import *
+    from .csp import (
+        CSP_DEFAULT_SRC,
+        CSP_FONT_SRC,
+        CSP_IMG_SRC,
+        CSP_SCRIPT_SRC,
+        CSP_STYLE_SRC,
+        CSP_INCLUDE_NONCE_IN,
+    )
 except ImportError:
     print("No CSP Settings found!")
 
@@ -199,7 +206,22 @@ CRISPY_TEMPLATE_PACK = "bootstrap5"
 # Allauth
 # -----------------------------------
 try:
-    from .allauth import *
+    from .allauth import (
+        ACCOUNT_AUTHENTICATION_METHOD,
+        ACCOUNT_EMAIL_REQUIRED,
+        ACCOUNT_EMAIL_VERIFICATION,
+        ACCOUNT_LOGIN_ATTEMPTS_LIMIT,
+        ACCOUNT_LOGIN_ATTEMPTS_TIMEOUT,
+        ACCOUNT_LOGIN_ON_EMAIL_CONFIRMATION,
+        ACCOUNT_LOGOUT_REDIRECT_URL,
+        ACCOUNT_LOGOUT_ON_GET,
+        ACCOUNT_SESSION_REMEMBER,
+        ACCOUNT_USERNAME_BLACKLIST,
+        ACCOUNT_USERNAME_MIN_LENGTH,
+        ACCOUNT_UNIQUE_EMAIL,
+        LOGIN_REDIRECT_URL,
+        SITE_ID,
+    )
 except ImportError:
     print("No AllAuth Settings found!")
 
@@ -240,6 +262,6 @@ except ImportError:
 
 # CKEditor
 try:
-    from .ckeditor import *
+    from .ckeditor import CKEDITOR_CONFIGS, CKEDITOR_BASEPATH, CKEDITOR_UPLOAD_PATH
 except ImportError:
     print("No CKEditor Settings found!")
