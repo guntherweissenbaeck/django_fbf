@@ -65,7 +65,12 @@ class FallenBird(models.Model):
         max_length=256, null=True, blank=True, verbose_name=_("Übersandt nach")
     )
     comment = models.TextField(blank=True, null=True, verbose_name=_("Bemerkung"))
-    finder = models.TextField(blank=True, null=True, verbose_name=_("Finder"), default="Vorname: \nNachname: \nStraße: \nHausnummer: \nStadt: \nPLZ: \nTelefonnummer: ")
+    finder = models.TextField(
+        blank=True,
+        null=True,
+        verbose_name=_("Finder"),
+        default="Vorname: \nNachname: \nStraße: \nHausnummer: \nStadt: \nPLZ: \nTelefonnummer: ",
+    )
 
     class Meta:
         verbose_name = _("Patient")
