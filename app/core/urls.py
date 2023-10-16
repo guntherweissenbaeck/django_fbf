@@ -7,6 +7,7 @@ urlpatterns = [
     path("", views.bird_all, name="index"),
     path("aviary/", include("aviary.urls")),
     path("bird/", include("bird.urls")),
+    path("contacts/", include("contact.urls")),
     path("costs/", include("costs.urls")),
     path("export/", include("export.urls")),
     # Admin
