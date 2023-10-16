@@ -87,6 +87,7 @@ JAZZMIN_SETTINGS = {
         "bird.Circumstance": "fas fa-solid fa-ring",
         "bird.FallenBird": "fas fa-solid fa-bed",
         "costs.Costs": "fas fa-solid fa-money-bill",
+        "contact.Contact": "fas fa-address-card",
         "rescuer.Rescuer": "fas fa-solid fa-user-shield",
         "socialaccount.socialaccount": "fas fa-solid fa-lock",
         "socialaccount.socialapp": "fas fa-solid fa-laptop",
