@@ -25,7 +25,7 @@ JAZZMIN_SETTINGS = {
     "search_model": [
         "aviary.Aviary",
         "bird.FallenBird",
-        "bird.User",
+        # "bird.User",
         "rescuer.Rescuer",
     ],
     # Field name on user model that contains avatar ImageField/URLField/Charfield or a callable that receives the user

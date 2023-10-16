@@ -72,6 +72,7 @@ INSTALLED_APPS = [
     # -----------------------------------
     "aviary",
     "bird",
+    "contact",
     "costs",
     "export",
     "rescuer",
