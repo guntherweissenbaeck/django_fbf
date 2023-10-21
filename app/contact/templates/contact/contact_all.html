@@ -1,0 +1,75 @@
+{% extends "base.html" %}
+{% load static %}
+{% block header %}
+<!-- Datatable CSS -->
+<link rel="stylesheet" href="https://cdn.datatables.net/1.13.4/css/dataTables.bootstrap5.min.css" />
+<link rel="stylesheet" href="https://cdn.datatables.net/responsive/2.2.9/css/responsive.bootstrap5.min.css">
+
+<!-- Font Awesome -->
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+<!-- jQuery -->
+<script src="https://code.jquery.com/jquery-3.5.1.js"></script>
+
+<!-- Datatable jQuery -->
+<script src="https://cdn.datatables.net/1.11.3/js/jquery.dataTables.min.js"></script>
+<script src="https://cdn.datatables.net/1.11.3/js/dataTables.bootstrap5.min.js"></script>
+<script src="https://cdn.datatables.net/responsive/2.2.9/js/dataTables.responsive.min.js"></script>
+<script src="https://cdn.datatables.net/responsive/2.2.9/js/responsive.bootstrap5.min.js"></script>
+
+<!-- Configure the DataTable. -->
+<script nonce="{{ request.csp_nonce }}">
+    $(document).ready(function () {
+        let table = $('#t__contact_all').DataTable({
+            language: {
+                url: 'https://cdn.datatables.net/plug-ins/1.11.3/i18n/de_de.json',
+            },
+            paging: true,
+            info: true,
+            "pagingType": "first_last_numbers",
+            responsive: true,
+            scrollX: true,
+            order: [[2, 'desc']],
+            columnDefs: [
+                { responsivePriority: 1, targets: 0 },
+            ]
+        });
+        table.on( 'responsive-display', function ( e, datatable, row, showHide, update ) {
+            table.rows().every( function () {
+              if (showHide && row.index() !== this.index() && this.child.isShown()) {
+                $('td', this.node()).eq(0).click();
+              }
+            }); 
+        });
+    })
+</script>
+{% endblock header %}
+
+{% block content %}
+<h3>Übersicht aller Kontakte</h3>
+<p>Die Übersicht aller bisher hinterlegten Kontakte.</p>
+
+<table class="table table-striped table-hover display responsive nowrap" width="100%" id="t__contact_all">
+    <thead>
+        <tr>
+            <th>Name</th>
+            <th>Telefon</th>
+            <th>Email</th>
+            <th>Adresse</th>
+            <th>Bemerkung</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for item in contacts %}
+        <tr>
+            <td> {{ item.name }} </td>
+            <td> {{ item.phone|default_if_none:"" }}</td>
+            <td> {{ item.email|default_if_none:"" }} </td>
+            <td> {{ item.address|default_if_none:"" }} </td>
+            <td> {{ item.comment|default_if_none:"" }} </td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+{% endblock content %}
+
