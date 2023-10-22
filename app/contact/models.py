@@ -21,21 +21,26 @@ class Contact(models.Model):
     comment = models.CharField(
         max_length=50, null=True, blank=True, verbose_name=_("Bemerkungen")
     )
-    tag_id = models.ForeignKey("ContactTag", on_delete=models.CASCADE, null=True, blank=True, verbose_name=_("Tag"))
+    tag_id = models.ForeignKey(
+        "ContactTag",
+        on_delete=models.CASCADE,
+        null=True,
+        blank=True,
+        verbose_name=_("Tag"),
+    )
 
     class Meta:
         verbose_name = _("Kontakt")
         verbose_name_plural = _("Kontakte")
 
+
 class ContactTag(models.Model):
     id = models.UUIDField(primary_key=True, default=uuid4, editable=False)
-    tag = models.CharField(
-        max_length=50, null=True, blank=True, verbose_name=_("Tag")
-    )
+    tag = models.CharField(max_length=50, null=True, blank=True, verbose_name=_("Tag"))
 
     class Meta:
         verbose_name = _("Kontakt Tag")
         verbose_name_plural = _("Kontakt Tags")
-        
+
     def __str__(self):
         return self.tag

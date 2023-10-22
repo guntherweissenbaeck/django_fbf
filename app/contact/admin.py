@@ -14,6 +14,7 @@ class FallenBirdAdmin(admin.ModelAdmin):
     ]
     list_filter = ("name", "phone", "email", "address", "comment")
 
+
 @admin.register(ContactTag)
 class ContactTagAdmin(admin.ModelAdmin):
     list_display = [
