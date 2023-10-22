@@ -4,6 +4,10 @@ h1 {
   font-weight: bold;
 }
 
+.fullWidthTable {
+  width: 100% !important;
+}
+
 .logowvh {
   display: block;
   margin-left: auto;
