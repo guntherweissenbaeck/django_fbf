@@ -29,7 +29,7 @@
             "pagingType": "first_last_numbers",
             responsive: true,
             scrollX: true,
-            order: [[2, 'desc']],
+            order: [[0, 'asc']],
             columnDefs: [
                 { responsivePriority: 1, targets: 0 },
             ]
@@ -57,6 +57,7 @@
             <th>Email</th>
             <th>Adresse</th>
             <th>Bemerkung</th>
+            <th>Kategorie</th>
         </tr>
     </thead>
     <tbody>
@@ -67,6 +68,7 @@
             <td> {{ item.email|default_if_none:"" }} </td>
             <td> {{ item.address|default_if_none:"" }} </td>
             <td> {{ item.comment|default_if_none:"" }} </td>
+            <td> {{ item.tag_id|default_if_none:"" }} </td>
         </tr>
         {% endfor %}
     </tbody>

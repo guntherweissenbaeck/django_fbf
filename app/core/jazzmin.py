@@ -87,6 +87,7 @@ JAZZMIN_SETTINGS = {
         "bird.FallenBird": "fas fa-solid fa-bed",
         "costs.Costs": "fas fa-solid fa-money-bill",
         "contact.Contact": "fas fa-solid fa-address-card",
+        "contact.ContactTag": "fas fa-solid fa-tags",
     },
     # Icons that are used when one is not manually specified
     #  "default_icon_parents": "fas fa-chevron-circle-right",

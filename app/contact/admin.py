@@ -1,6 +1,6 @@
 from django.contrib import admin
 
-from .models import Contact
+from .models import Contact, ContactTag
 
 
 @admin.register(Contact)
@@ -13,3 +13,10 @@ class FallenBirdAdmin(admin.ModelAdmin):
         "comment",
     ]
     list_filter = ("name", "phone", "email", "address", "comment")
+
+@admin.register(ContactTag)
+class ContactTagAdmin(admin.ModelAdmin):
+    list_display = [
+        "tag",
+    ]
+    list_filter = ("tag",)
