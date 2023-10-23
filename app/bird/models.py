@@ -118,3 +118,16 @@ class Circumstance(models.Model):
 
     def __str__(self) -> str:
         return self.description
+    
+
+class Image(models.Model):
+    id = models.BigAutoField(primary_key=True)
+    image = models.ImageField(upload_to='images/', verbose_name=_("Bild"))
+    bird = models.ForeignKey(Bird, on_delete=models.CASCADE, verbose_name=_("Patient"))
+
+    class Meta:
+        verbose_name = _("Bild")
+        verbose_name_plural = _("Bilder")
+
+    def __str__(self) -> str:
+        return self.image.name
