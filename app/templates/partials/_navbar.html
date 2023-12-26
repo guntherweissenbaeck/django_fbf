@@ -18,7 +18,7 @@
                 {% if user.is_authenticated %}
                     <li class="nav-item">
                         <a class="nav-link {% if '/bird/all/' in request.path %} active {% endif %}"
-                            href="{% url 'bird_all' %}">alle Patienten</a>
+                            href="{% url 'bird_all' %}">Patienten</a>
                     </li>
                     <li class="nav-item">
                         <a class="nav-link {% if '/bird/create/' in request.path %} active {% endif %}"
@@ -26,11 +26,11 @@
                     </li>
                     <li class="nav-item">
                         <a class="nav-link {% if '/aviary/all' in request.path %} active {% endif %}"
-                            href="{% url 'aviary_all' %}">alle Volieren</a>
+                            href="{% url 'aviary_all' %}">Volieren</a>
                     </li>
                     <li class="nav-item">
                         <a class="nav-link {% if '/costs/all' in request.path %} active {% endif %}"
-                            href="{% url 'costs_all' %}">alle Kosten</a>
+                            href="{% url 'costs_all' %}">Kosten</a>
                     </li>
                     <li class="nav-item">
                         <a class="nav-link {% if '/contacts' in request.path %} active {% endif %}"
