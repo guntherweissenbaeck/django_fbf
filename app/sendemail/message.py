@@ -1,18 +1,11 @@
-# the message body for the email should have placeholders for the bird name, the date found and the diagnosis
-
-
-def messagebody(
-    date,
-    bird,
-    place,
-    diagnosis,
-) -> str:
-    text = f"""
-        Guten Tag,
+def messagebody(date, bird, place, diagnosis,) -> str:
+    """Returns the body of the message to be sent to UNB."""
+    body = f"""
+        Sehr geehrte Damen und Herren,
 
         am {date} wurde in der NABU Wildvogelhilfe ein Vogel der Art {bird} aufgenomen.
-        Der Fundort laut Finder*in war: {place}
-        Die Diagnose bei Fund lautet: {diagnosis}
+        Der Fundort laut Finder*in war: {place}.
+        Die Diagnose bei Fund lautet: {diagnosis}.
 
         Mit freundlichen Grüßen
 
@@ -22,4 +15,4 @@ def messagebody(
         Schillergässchen 5
         07745 Jena
         """
-    return text
+    return body
