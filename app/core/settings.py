@@ -86,6 +86,7 @@ INSTALLED_APPS = [
     "contact",
     "costs",
     "export",
+    "sendemail",
 ]
 
 MIDDLEWARE = [
