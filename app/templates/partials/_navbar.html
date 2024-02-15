@@ -51,7 +51,7 @@
                 {% if user.is_superuser %}
                 <li class="nav-item">
                     <a class="nav-link {% if '/admin' in request.path %} active {% endif %}"
-                        href="{% url 'admin:index' %}">Settings</a>
+                        href="{% url 'admin:index' %}" target="_blank">Settings</a>
                 </li>
                 {% endif %}
                 <li class="nav-item">
