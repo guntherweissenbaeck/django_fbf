@@ -10,7 +10,9 @@ class Emailadress(models.Model):
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
     user = models.ForeignKey(
-        settings.AUTH_USER_MODEL, on_delete=models.CASCADE, verbose_name=_("Benutzer")
+        settings.AUTH_USER_MODEL,
+        on_delete=models.CASCADE,
+        verbose_name=_("Benutzer"),
     )
 
     def __str__(self):
@@ -22,7 +24,9 @@ class Emailadress(models.Model):
 
 
 class BirdEmail(models.Model):
-    bird = models.ForeignKey(Bird, on_delete=models.CASCADE, verbose_name=_("Vogel"))
+    bird = models.ForeignKey(
+        Bird, on_delete=models.CASCADE, verbose_name=_("Vogel")
+    )
     email = models.ForeignKey(
         Emailadress, on_delete=models.CASCADE, verbose_name=_("Emailadresse")
     )

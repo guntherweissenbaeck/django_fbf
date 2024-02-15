@@ -12,7 +12,9 @@ class DateInput(forms.DateInput):
 class AviaryEditForm(forms.ModelForm):
     class Meta:
         widgets = {
-            "last_ward_round": DateInput(format="%Y-%m-%d", attrs={"value": date.today})
+            "last_ward_round": DateInput(
+                format="%Y-%m-%d", attrs={"value": date.today}
+            )
         }
         model = Aviary
         fields = [

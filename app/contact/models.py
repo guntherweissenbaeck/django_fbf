@@ -36,7 +36,9 @@ class Contact(models.Model):
 
 class ContactTag(models.Model):
     id = models.UUIDField(primary_key=True, default=uuid4, editable=False)
-    tag = models.CharField(max_length=50, null=True, blank=True, verbose_name=_("Tag"))
+    tag = models.CharField(
+        max_length=50, null=True, blank=True, verbose_name=_("Tag")
+    )
 
     class Meta:
         verbose_name = _("Kontakt Tag")

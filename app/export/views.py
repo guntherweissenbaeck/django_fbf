@@ -23,9 +23,12 @@ def export_costs(request):
         "costs",
         "created",
         "comment",
-        "user__username")
+        "user__username",
+    )
     response = HttpResponse(content_type="text/csv")
-    response["Content-Disposition"] = f"attachment, filename=fbf_costs_{today}.csv"
+    response["Content-Disposition"] = (
+        f"attachment, filename=fbf_costs_{today}.csv"
+    )
     writer = csv.writer(response)
     writer.writerow(
         ["Vogel", "Betrag in Euro", "Gebucht am", "Kommentar", "Gebucht von"]
@@ -54,7 +57,9 @@ def export_birds(request):
         "sent_to",
     )
     response = HttpResponse(content_type="text/csv")
-    response["Content-Disposition"] = f"attachment, filename=fbf_birds_{today}.csv"
+    response["Content-Disposition"] = (
+        f"attachment, filename=fbf_birds_{today}.csv"
+    )
     writer = csv.writer(response)
     writer.writerow(
         [

@@ -13,7 +13,9 @@ class DateInput(forms.DateInput):
 class BirdAddForm(forms.ModelForm):
     class Meta:
         widgets = {
-            "date_found": DateInput(format="%Y-%m-%d", attrs={"value": date.today})
+            "date_found": DateInput(
+                format="%Y-%m-%d", attrs={"value": date.today}
+            )
         }
         model = FallenBird
         fields = [
