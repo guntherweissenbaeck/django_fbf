@@ -48,6 +48,12 @@
 
             <ul class="navbar-nav pull-right">
                 {% if user.is_authenticated %}
+                {% if user.is_superuser %}
+                <li class="nav-item">
+                    <a class="nav-link {% if '/admin' in request.path %} active {% endif %}"
+                        href="{% url 'admin:index' %}">Settings</a>
+                </li>
+                {% endif %}
                 <li class="nav-item">
                     <a class="nav-link {% if '/bird/help/' in request.path %} active {% endif %}"
                         href="{% url 'bird_help' %}">Hilfe</a>
