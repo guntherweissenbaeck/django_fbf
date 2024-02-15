@@ -12,5 +12,3 @@ CHOICE_SEX = [
     ("Männlich", "Männlich"),
     ("Unbekannt", "Unbekannt"),
 ]
-
-
