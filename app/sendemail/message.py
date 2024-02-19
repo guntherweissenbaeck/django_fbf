@@ -3,7 +3,7 @@ def messagebody(date, bird, place, diagnosis,) -> str:
     body = f"""
 Sehr geehrte Damen und Herren,
 
-am {date} wurde in der NABU Wildvogelhilfe ein Vogel der Art {bird} aufgenomen.
+am {date} wurde in der NABU Wildvogelhilfe ein Vogel der Art {bird} aufgenommen.
 Der Fundort laut Finder*in war: {place}.
 Die Diagnose bei Fund lautet: {diagnosis}.
 
