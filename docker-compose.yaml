@@ -1,5 +1,3 @@
-version: '3.8'
-
 services:
   web:
     build: ./app
@@ -49,7 +47,7 @@ services:
       - "POSTGRES_DB=${DB_NAME}"
 
   traefik:
-    image: traefik:v2.10.4
+    image: traefik:v3.2.0
     container_name: django_fbf_traefik_1
     ports:
       - 8008:80

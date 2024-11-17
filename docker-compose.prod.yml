@@ -1,11 +1,9 @@
-version: '3.8'
-
 services:
   web:
     build:
       context: ./app
       dockerfile: Dockerfile.prod
-    command: > 
+    command: >
       bash -c 'while !</dev/tcp/db/5432; do sleep 1; done;
       python manage.py migrate;
       python manage.py collectstatic --no-input --no-post-process;
