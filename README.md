@@ -1,5 +1,39 @@
 # The Fallen Birdy Form
 
+## 🚀 Schneller Einstieg
+
+Für einen schnellen Start des Projekts verwenden Sie die bereitgestellten Skripte:
+
+### Start des Projekts
+```bash
+./start_project.sh
+```
+
+Das Start-Skript führt automatisch folgende Schritte aus:
+- Erstellt eine `.env` Datei mit Entwicklungseinstellungen
+- Baut und startet alle Docker Container (Web, Datenbank, Traefik)
+- Führt Django Migrations aus
+- Lädt Testdaten (Fixtures)
+- Erstellt einen Admin-Benutzer
+- Sammelt statische Dateien
+
+**Nach dem Start ist die Anwendung verfügbar unter:**
+- **Hauptanwendung**: [http://localhost:8008](http://localhost:8008)
+- **Admin-Panel**: [http://localhost:8008/admin](http://localhost:8008/admin)
+
+**Standard Admin-Zugang:**
+- Benutzername: `admin`
+- Passwort: `admin`
+
+### Stop des Projekts
+```bash
+./stop_project.sh
+```
+
+Das Stop-Skript stoppt alle Container und räumt auf.
+
+---
+
 ## Throw old database
 In case you've got an preexisting database, delete it and do the following:
 
@@ -82,7 +116,16 @@ CSRF_TRUSTED_ORIGINS=[os.getenv('CSRF_TRUSTED_ORIGINS')]
 
 ## How to use this project?
 
-### Development
+### Einfachster Weg (Empfohlen)
+Verwenden Sie die bereitgestellten Skripte für einen schnellen Start:
+```bash
+./start_project.sh  # Projekt starten
+./stop_project.sh   # Projekt stoppen
+```
+
+### Manueller Weg
+
+#### Development
 
 Build the images and spin up the containers:
 
@@ -92,8 +135,8 @@ $ docker-compose up -d --build
 
 Test it out:
 
-1. [http://django.localhost:8008/](http://django.localhost:8008/)
-1. [http://django.localhost:8081/](http://django.localhost:8081/)
+1. [http://localhost:8008/](http://localhost:8008/) - Hauptanwendung
+1. [http://localhost:8081/](http://localhost:8081/) - Traefik Dashboard
 
 ### Production
 
