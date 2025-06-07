@@ -146,6 +146,11 @@ Dieses Dokument listet alle Abhängigkeiten auf, die Updates benötigen, sowie S
    - ✅ Group DoesNotExist Error in template filter behoben
    - ✅ Robuste Fehlerbehandlung für fehlende User Groups implementiert
 
+6. **Test-Suite repariert** ✅ **ABGESCHLOSSEN**
+   - ✅ Host-System django-ckeditor-5 dependency installiert
+   - ✅ Alle 107 Tests bestehen wieder (13 Django + 94 Pytest)
+   - ✅ Test Coverage Report generiert
+
 ### Phase 3: Größere Updates (Geplante Wartung)
 1. **Python 3.12 Migration**
    - Dockerfile aktualisieren: `FROM python:3.12-slim`

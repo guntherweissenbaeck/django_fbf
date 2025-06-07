@@ -6,6 +6,9 @@ pytest==7.4.3
 pytest-django==4.7.0
 pytest-cov==4.1.0
 
+# Django dependencies (must match production)
+django-ckeditor-5>=0.2  # Added for CKEditor 5 migration
+
 # Factory libraries for test data
 factory-boy==3.3.0
 
