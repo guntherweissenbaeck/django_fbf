@@ -34,6 +34,47 @@ Das Stop-Skript stoppt alle Container und räumt auf.
 
 ---
 
+## 🧪 Tests ausführen
+
+Das Projekt verfügt über eine umfassende Test-Suite mit verschiedenen Test-Arten:
+
+### Django Tests (im Docker Container)
+Führen Sie die Standard Django Tests aus:
+```bash
+docker exec django_fbf_web_1 python manage.py test
+```
+
+### Komplette Test-Suite (Unit, Integration, Functional)
+Für die vollständige Test-Suite (94 Tests):
+```bash
+python -m pytest test/ -v
+```
+
+### Nur Unit Tests
+```bash
+python -m pytest test/unit/ -v
+```
+
+### Nur Integration Tests
+```bash
+python -m pytest test/integration/ -v
+```
+
+### Nur Functional Tests
+```bash
+python -m pytest test/functional/ -v
+```
+
+### Test-Coverage Report
+Um einen Bericht über die Test-Abdeckung zu erhalten:
+```bash
+python -m pytest test/ --cov=app --cov-report=html
+```
+
+**Hinweis:** Stellen Sie sicher, dass das Projekt läuft (`./start_project.sh`) bevor Sie die Tests ausführen.
+
+---
+
 ## Throw old database
 In case you've got an preexisting database, delete it and do the following:
 

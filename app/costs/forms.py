@@ -11,16 +11,10 @@ class DateInput(forms.DateInput):
 
 class CostsForm(forms.ModelForm):
     class Meta:
-        widgets = {
-            "created": DateInput(
-                format="%Y-%m-%d", attrs={"value": date.today}
-            )
-        }
         model = Costs
-        fields = ["id_bird", "costs", "comment", "created"]
+        fields = ["id_bird", "costs", "comment"]
         labels = {
             "id_bird": _("Patient"),
             "costs": _("Betrag [€]"),
             "comment": _("Bemerkung"),
-            "created": _("Gebucht am"),
         }

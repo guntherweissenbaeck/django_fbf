@@ -1,0 +1,28 @@
+# Test requirements for Django FBF project
+# These packages are needed for running tests
+
+# Core testing frameworks
+pytest==7.4.3
+pytest-django==4.7.0
+pytest-cov==4.1.0
+
+# Factory libraries for test data
+factory-boy==3.3.0
+
+# Mock and testing utilities
+responses==0.24.0
+freezegun==1.2.2
+
+# Code quality tools
+flake8==6.1.0
+black==23.11.0
+isort==5.12.0
+
+# Performance testing
+pytest-benchmark==4.0.0
+
+# HTML test reports
+pytest-html==4.1.1
+
+# Test database utilities
+pytest-xdist==3.5.0  # For parallel test execution
