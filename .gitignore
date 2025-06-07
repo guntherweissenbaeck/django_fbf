@@ -178,3 +178,4 @@ postgres
 
 # Prestatic Collections
 app/staticfiles
+TODO.md
