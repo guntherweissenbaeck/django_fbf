@@ -23,12 +23,17 @@ Dieses Dokument listet alle Abhängigkeiten auf, die Updates benötigen, sowie S
   - ✅ Alle Tests erfolgreich (keine Deprecated Warnings)
   - ✅ Web-Interface funktioniert korrekt mit CKEditor 5
 
-### 2. Django-allauth Settings (MITTEL PRIORITÄT)
-- **Problem:** Veraltete Settings-Optionen werden verwendet
-- **Deprecation Warnings:**
-  - `ACCOUNT_AUTHENTICATION_METHOD` → `ACCOUNT_LOGIN_METHODS`
-  - `ACCOUNT_EMAIL_REQUIRED` → `ACCOUNT_SIGNUP_FIELDS`
-  - `ACCOUNT_LOGIN_ATTEMPTS_LIMIT/TIMEOUT` → `ACCOUNT_RATE_LIMITS`
+### 2. Django-allauth Settings (MITTEL PRIORITÄT) ✅ ABGESCHLOSSEN
+- **Problem:** Veraltete Settings-Optionen wurden verwendet
+- **Lösung:** ✅ Alle deprecated Settings erfolgreich aktualisiert
+- **Umgesetzte Änderungen:**
+  - ✅ `ACCOUNT_AUTHENTICATION_METHOD` → `ACCOUNT_LOGIN_METHODS = {"username", "email"}`
+  - ✅ `ACCOUNT_EMAIL_REQUIRED` → `ACCOUNT_SIGNUP_FIELDS = ["email*", "username*", "password1*", "password2*"]`
+  - ✅ `ACCOUNT_LOGIN_ATTEMPTS_LIMIT/TIMEOUT` → `ACCOUNT_RATE_LIMITS = {"login_failed": "5/15m"}`
+- **Validierung:**
+  - ✅ Keine Deprecation Warnings mehr vorhanden
+  - ✅ django-allauth 65.9.0 läuft einwandfrei
+  - ✅ Login-Funktionalität getestet und funktionsfähig
 
 ---
 
@@ -111,9 +116,10 @@ Dieses Dokument listet alle Abhängigkeiten auf, die Updates benötigen, sowie S
    - ✅ CSP Security Policy aktualisiert  
    - ✅ Web-Interface getestet und funktionsfähig
 
-2. **Django-allauth Settings aktualisieren** 🟡 **NOCH OFFEN**
-   - Settings in `core/settings.py` anpassen
-   - Deprecated Warnings beheben
+2. **Django-allauth Settings aktualisieren** ✅ **ABGESCHLOSSEN**
+   - ✅ Alle deprecated Settings in `core/allauth.py` modernisiert
+   - ✅ django-allauth 65.9.0 läuft ohne Deprecation Warnings
+   - ✅ Login-Funktionalität vollständig getestet und funktionsfähig
 
 ### Phase 2: System Updates (Nächste Wartung)
 1. **pip Update**
