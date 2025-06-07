@@ -5,7 +5,7 @@ from django.conf import settings
 from django.db import models
 from django.utils.translation import gettext_lazy as _
 
-from ckeditor.fields import RichTextField
+from django_ckeditor_5.fields import CKEditor5Field
 
 from aviary.models import Aviary
 
@@ -125,7 +125,7 @@ class Bird(models.Model):
     name = models.CharField(
         max_length=256, unique=True, verbose_name=_("Bezeichnung")
     )
-    description = RichTextField(verbose_name=_("Erläuterungen"), blank=True, null=True)
+    description = CKEditor5Field(verbose_name=_("Erläuterungen"), blank=True, null=True)
     species = models.CharField(
         max_length=256, blank=True, null=True, verbose_name=_("Art")
     )

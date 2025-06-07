@@ -39,8 +39,7 @@ THIRD_PARTY_APPS = [
     'allauth.account',
     'bootstrap_datepicker_plus',
     'bootstrap_modal_forms',
-    'ckeditor',
-    'ckeditor_uploader',
+    'django_ckeditor_5',
 ]
 
 # Local apps
@@ -151,11 +150,10 @@ LOGOUT_REDIRECT_URL = '/'
 CRISPY_ALLOWED_TEMPLATE_PACKS = 'bootstrap5'
 CRISPY_TEMPLATE_PACK = 'bootstrap5'
 
-# CKEditor settings for tests
-CKEDITOR_UPLOAD_PATH = tempfile.mkdtemp()
-CKEDITOR_CONFIGS = {
+# CKEditor 5 settings for tests
+CKEDITOR_5_CONFIGS = {
     'default': {
-        'toolbar': 'Basic',
+        'toolbar': ['bold', 'italic', 'underline', '|', 'bulletedList', 'numberedList'],
     },
 }
 
