@@ -34,6 +34,60 @@ Das Stop-Skript stoppt alle Container und räumt auf.
 
 ---
 
+## 🧪 Tests ausführen
+
+Das Projekt verfügt über eine umfassende Test-Suite mit verschiedenen Test-Arten:
+
+### Einfachster Weg (Empfohlen)
+Verwenden Sie das bereitgestellte Test-Skript für einen vollständigen Test-Durchlauf:
+```bash
+./start_test.sh
+```
+
+Das Test-Skript führt automatisch folgende Tests aus:
+- Django Tests (13 Tests im Docker Container)
+- Pytest Unit Tests (77 Tests)
+- Pytest Integration Tests (11 Tests) 
+- Pytest Functional Tests (6 Tests)
+- Generiert einen HTML Coverage Report
+
+### Django Tests (im Docker Container)
+Führen Sie die Standard Django Tests aus:
+```bash
+docker exec django_fbf_web_1 python manage.py test
+```
+
+### Komplette Test-Suite (Unit, Integration, Functional)
+Für die vollständige Test-Suite (94 Tests):
+```bash
+python3 -m pytest test/ -v
+```
+
+### Nur Unit Tests
+```bash
+python3 -m pytest test/unit/ -v
+```
+
+### Nur Integration Tests
+```bash
+python3 -m pytest test/integration/ -v
+```
+
+### Nur Functional Tests
+```bash
+python3 -m pytest test/functional/ -v
+```
+
+### Test-Coverage Report
+Um einen Bericht über die Test-Abdeckung zu erhalten:
+```bash
+python3 -m pytest test/ --cov=app --cov-report=html
+```
+
+**Hinweis:** Stellen Sie sicher, dass das Projekt läuft (`./start_project.sh`) bevor Sie die Tests ausführen.
+
+---
+
 ## Throw old database
 In case you've got an preexisting database, delete it and do the following:
 
