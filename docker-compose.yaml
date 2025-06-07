@@ -34,7 +34,7 @@ services:
       - "traefik.http.routers.django.rule=Host(`${ALLOWED_HOSTS}`)"
 
   db:
-    image: postgres:16-alpine
+    image: postgres:15-alpine
     container_name: django_fbf_db_1
     volumes:
       - ./postgres/data:/var/lib/postgresql/data/
