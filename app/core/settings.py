@@ -74,10 +74,9 @@ INSTALLED_APPS = [
     "crispy_bootstrap5",
     "crispy_forms",
     # -----------------------------------
-    # CKEditor
+    # CKEditor 5
     # -----------------------------------
-    "ckeditor",
-    "ckeditor_uploader",
+    "django_ckeditor_5",
     # -----------------------------------
     # My Apps
     # -----------------------------------
@@ -209,11 +208,10 @@ CRISPY_TEMPLATE_PACK = "bootstrap5"
 # -----------------------------------
 try:
     from .allauth import (
-        ACCOUNT_AUTHENTICATION_METHOD,
-        ACCOUNT_EMAIL_REQUIRED,
+        ACCOUNT_LOGIN_METHODS,
+        ACCOUNT_SIGNUP_FIELDS,
         ACCOUNT_EMAIL_VERIFICATION,
-        ACCOUNT_LOGIN_ATTEMPTS_LIMIT,
-        ACCOUNT_LOGIN_ATTEMPTS_TIMEOUT,
+        ACCOUNT_RATE_LIMITS,
         ACCOUNT_LOGIN_ON_EMAIL_CONFIRMATION,
         ACCOUNT_LOGOUT_REDIRECT_URL,
         ACCOUNT_LOGOUT_ON_GET,
@@ -262,8 +260,8 @@ try:
 except ImportError:
     print("No Jazzmin Settings found!")
 
-# CKEditor
+# CKEditor 5
 try:
-    from .ckeditor import CKEDITOR_CONFIGS, CKEDITOR_BASEPATH, CKEDITOR_UPLOAD_PATH
+    from .ckeditor import CKEDITOR_5_CONFIGS
 except ImportError:
     print("No CKEditor Settings found!")

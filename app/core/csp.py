@@ -5,7 +5,7 @@
 CSP_DEFAULT_SRC = (
     "'self'",
     "https://cdn.datatables.net",
-    "https://cke4.ckeditor.com",
+    "https://cdn.ckeditor.com",
 )
 CSP_STYLE_SRC = (
     "'self'",

@@ -1,9 +1,10 @@
 from django.test import TestCase
+from aviary.models import Aviary
 
 # Write costs tests here
 class AviaryTestCase(TestCase):
     def setUp(self):
-        Aviary.objects.create(
+        self.aviary = Aviary.objects.create(
             description="Voliere 1",
             condition="Offen",
             last_ward_round="2021-01-01",
@@ -20,7 +21,7 @@ class AviaryTestCase(TestCase):
 
     def test_aviary_last_ward_round(self):
         aviary = Aviary.objects.get(description="Voliere 1")
-        self.assertEqual(aviary.last_ward_round, "2021-01-01")
+        self.assertEqual(str(aviary.last_ward_round), "2021-01-01")
 
     def test_aviary_comment(self):
         aviary = Aviary.objects.get(description="Voliere 1")
