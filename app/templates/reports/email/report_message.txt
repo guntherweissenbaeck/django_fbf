@@ -1,0 +1,32 @@
+{% load i18n %}{% autoescape off %}
+Hallo,
+
+anbei erhalten Sie den angeforderten Report der Wildvogelhilfe Jena.
+
+Report-Details:
+- Zeitraum: {{ date_from }} bis {{ date_to }}
+- Anzahl Patienten: {{ patient_count }}
+{% if filter_naturschutzbehörde and filter_jagdbehörde %}
+- Filter: Naturschutzbehörde und Jagdbehörde
+{% elif filter_naturschutzbehörde %}
+- Filter: Nur Naturschutzbehörde
+{% elif filter_jagdbehörde %}
+- Filter: Nur Jagdbehörde
+{% endif %}
+{% if automatic_report %}
+- Automatischer Report: {{ automatic_report.name }}
+{% else %}
+- Report-Typ: Manuell erstellt
+{% endif %}
+
+Der Report liegt als CSV-Datei im Anhang bei und kann in Excel oder anderen Tabellenkalkulationsprogrammen geöffnet werden.
+
+Bei Fragen zum Report wenden Sie sich bitte an das Team der Wildvogelhilfe Jena.
+
+Mit freundlichen Grüßen
+Wildvogelhilfe Jena e.V.
+
+---
+Diese E-Mail wurde automatisch generiert.
+Erstellt am: {{ created_at }}
+{% endautoescape %}

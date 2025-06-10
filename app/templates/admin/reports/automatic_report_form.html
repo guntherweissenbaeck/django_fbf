@@ -1,0 +1,145 @@
+{% extends "admin/reports/base.html" %}
+{% load i18n %}
+
+{% block title %}
+    {% if object %}
+        {% trans "Automatischen Report bearbeiten" %}
+    {% else %}
+        {% trans "Automatischen Report erstellen" %}
+    {% endif %}
+{% endblock %}
+
+{% block content %}
+<div class="report-content">
+    <div class="card">
+        <div class="card-header">
+            <h3>
+                {% if object %}
+                    {% trans "Automatischen Report bearbeiten" %}
+                {% else %}
+                    {% trans "Automatischen Report erstellen" %}
+                {% endif %}
+            </h3>
+        </div>
+        <div class="card-body">
+            <form method="post" class="report-form">
+                {% csrf_token %}
+                
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="{{ form.name.id_for_label }}">{{ form.name.label }}</label>
+                        {{ form.name }}
+                        {% if form.name.help_text %}
+                            <small class="form-text text-muted">{{ form.name.help_text }}</small>
+                        {% endif %}
+                        {% if form.name.errors %}
+                            <div class="error-messages">
+                                {% for error in form.name.errors %}
+                                    <div class="error">{{ error }}</div>
+                                {% endfor %}
+                            </div>
+                        {% endif %}
+                    </div>
+                </div>
+
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="{{ form.email_addresses.id_for_label }}">{{ form.email_addresses.label }}</label>
+                        {{ form.email_addresses }}
+                        {% if form.email_addresses.help_text %}
+                            <small class="form-text text-muted">{{ form.email_addresses.help_text }}</small>
+                        {% endif %}
+                        {% if form.email_addresses.errors %}
+                            <div class="error-messages">
+                                {% for error in form.email_addresses.errors %}
+                                    <div class="error">{{ error }}</div>
+                                {% endfor %}
+                            </div>
+                        {% endif %}
+                    </div>
+                </div>
+
+                <div class="form-row">
+                    <div class="form-group col-md-6">
+                        <label for="{{ form.frequency.id_for_label }}">{{ form.frequency.label }}</label>
+                        {{ form.frequency }}
+                        {% if form.frequency.errors %}
+                            <div class="error-messages">
+                                {% for error in form.frequency.errors %}
+                                    <div class="error">{{ error }}</div>
+                                {% endfor %}
+                            </div>
+                        {% endif %}
+                    </div>
+                    <div class="form-group col-md-6">
+                        <label for="{{ form.is_active.id_for_label }}">{{ form.is_active.label }}</label>
+                        <div class="checkbox-wrapper">
+                            {{ form.is_active }}
+                        </div>
+                        {% if form.is_active.errors %}
+                            <div class="error-messages">
+                                {% for error in form.is_active.errors %}
+                                    <div class="error">{{ error }}</div>
+                                {% endfor %}
+                            </div>
+                        {% endif %}
+                    </div>
+                </div>
+
+                <div class="form-section">
+                    <h4>{% trans "Filter-Optionen" %}</h4>
+                    <div class="form-row">
+                        <div class="form-group col-md-6">
+                            <div class="checkbox-wrapper">
+                                {{ form.include_naturschutzbehörde }}
+                                <label for="{{ form.include_naturschutzbehörde.id_for_label }}">{{ form.include_naturschutzbehörde.label }}</label>
+                            </div>
+                            {% if form.include_naturschutzbehörde.errors %}
+                                <div class="error-messages">
+                                    {% for error in form.include_naturschutzbehörde.errors %}
+                                        <div class="error">{{ error }}</div>
+                                    {% endfor %}
+                                </div>
+                            {% endif %}
+                        </div>
+                        <div class="form-group col-md-6">
+                            <div class="checkbox-wrapper">
+                                {{ form.include_jagdbehörde }}
+                                <label for="{{ form.include_jagdbehörde.id_for_label }}">{{ form.include_jagdbehörde.label }}</label>
+                            </div>
+                            {% if form.include_jagdbehörde.errors %}
+                                <div class="error-messages">
+                                    {% for error in form.include_jagdbehörde.errors %}
+                                        <div class="error">{{ error }}</div>
+                                    {% endfor %}
+                                </div>
+                            {% endif %}
+                        </div>
+                    </div>
+                </div>
+
+                {% if form.non_field_errors %}
+                    <div class="error-messages">
+                        {% for error in form.non_field_errors %}
+                            <div class="error">{{ error }}</div>
+                        {% endfor %}
+                    </div>
+                {% endif %}
+
+                <div class="form-actions">
+                    <button type="submit" class="btn btn-primary">
+                        {% if object %}
+                            {% trans "Speichern" %}
+                        {% else %}
+                            {% trans "Erstellen" %}
+                        {% endif %}
+                    </button>
+                    <a href="{% url 'reports:automatic_reports' %}" class="btn btn-secondary">
+                        {% trans "Abbrechen" %}
+                    </a>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+{% endblock %}

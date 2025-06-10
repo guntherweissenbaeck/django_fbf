@@ -1,0 +1,36 @@
+"Patienten-ID";"Vogel";"Alter";"Geschlecht";"Gefunden am";"Fundort";"Fundumstände";"Diagnose bei Fund";"Status";"Voliere";"Finder";"Benutzer";"Erstellt am";"Aktualisiert am";"Naturschutzbehörde";"Jagdbehörde";"Wildvogelhilfe-Team"
+"FB001";"Test Bird 1749312567.204729";"adult";"unknown";"07.06.2025";"Test Location";"Test Circumstance";"Test finding";"Test bird status";"";"Vorname: 
+Nachname: 
+Straße: 
+Hausnummer: 
+Stadt: 
+PLZ: 
+Telefonnummer: ";"testuser1749312566.838063";"07.06.2025 16:09";"07.06.2025 16:09";"Ja";"Nein";"Ja"
+"Angelo";"Mauersegler";"Nestling";"Männlich";"08.06.2025";"";"";"";"In Behandlung";"";"Vorname: 
+Nachname: 
+Straße: 
+Hausnummer: 
+Stadt: 
+PLZ: 
+Telefonnummer:";"admin";"08.06.2025 13:26";"08.06.2025 13:26";"Ja";"Nein";"Ja"
+"Tim";"TestMelder";"Ei";"Männlich";"10.06.2025";"";"Verletzt";"";"In Behandlung";"";"Vorname: 
+Nachname: 
+Straße: 
+Hausnummer: 
+Stadt: 
+PLZ: 
+Telefonnummer:";"admin";"10.06.2025 06:23";"10.06.2025 06:23";"Ja";"Nein";"Ja"
+"Theodore";"Turmfalke";"Nestling";"Weiblich";"10.06.2025";"Teststraße 123, Jena";"Test Circumstance";"Test - keine echte Verletzung";"In Behandlung";"";"Vorname: Max
+Nachname: Mustermann
+Straße: 
+Hausnummer: 
+Stadt: 
+PLZ: 
+Telefonnummer:";"admin";"10.06.2025 08:14";"10.06.2025 08:14";"Ja";"Ja";"Ja"
+"Carlos";"Turmfalke";"Nestling";"Männlich";"10.06.2025";"";"";"";"In Behandlung";"";"Vorname: 
+Nachname: 
+Straße: 
+Hausnummer: 
+Stadt: 
+PLZ: 
+Telefonnummer:";"admin";"10.06.2025 08:18";"10.06.2025 08:18";"Ja";"Ja";"Ja"
