@@ -5,4 +5,4 @@ from django.utils.translation import gettext_lazy as _
 class SendemailConfig(AppConfig):
     default_auto_field = "django.db.models.BigAutoField"
     name = "sendemail"
-    verbose_name = _("Untere Naturschutzbehörde")
+    verbose_name = _("Mail Empfänger")

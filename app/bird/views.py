@@ -11,7 +11,7 @@ from .forms import BirdAddForm, BirdEditForm, BirdSpeciesForm
 from .models import Bird, FallenBird
 
 from sendemail.message import messagebody
-from sendemail.models import BirdEmail, Emailadress
+from sendemail.models import Emailadress
 
 env = environ.Env()
 

@@ -12,7 +12,6 @@ erDiagram
     User ||--o{ Contact : creates
     
     Bird ||--o{ FallenBird : "is type of"
-    Bird ||--o{ BirdEmail : "has emails for"
     Bird ||--o{ Costs : "can have costs"
     Bird }|--|| BirdStatus : "has status"
     Bird }|--|| Circumstance : "has circumstances"
@@ -25,8 +24,6 @@ erDiagram
     FallenBird ||--o{ Costs : "has costs"
     
     ContactTag ||--o{ Contact : "categorizes"
-    
-    Emailadress ||--o{ BirdEmail : "used for birds"
     
     User {
         int id PK
@@ -169,12 +166,6 @@ erDiagram
         boolean is_jagdbehoerde
         boolean is_wildvogelhilfe_team
     }
-    
-    BirdEmail {
-        int id PK
-        int bird_id FK
-        int email_id FK
-    }
 ```
 
 ## Tabellenbeschreibungen
@@ -270,10 +261,7 @@ erDiagram
   - Standard-Aktivierung für Naturschutz und Wildvogelhilfe
 - **Beziehungen**: Gehört zu einem `User`
 
-#### `BirdEmail` (Vogel-E-Mail-Verknüpfung)
-- **Zweck**: Many-to-Many Beziehung zwischen Vögeln und E-Mail-Adressen
-- **Primärschlüssel**: BigInt
-- **Hinweis**: Wird durch die neuen Benachrichtigungsfelder in `Bird` und `Emailadress` ersetzt
+**Hinweis**: Das frühere `BirdEmail`-System wurde durch das direkte kategoriebasierte Benachrichtigungssystem ersetzt.
 
 ## Datenbank-Design-Prinzipien
 

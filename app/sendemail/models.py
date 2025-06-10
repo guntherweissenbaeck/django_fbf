@@ -35,19 +35,3 @@ class Emailadress(models.Model):
     class Meta:
         verbose_name = _("Emailadresse")
         verbose_name_plural = _("Emailadressen")
-
-
-class BirdEmail(models.Model):
-    bird = models.ForeignKey(
-        Bird, on_delete=models.CASCADE, verbose_name=_("Vogel")
-    )
-    email = models.ForeignKey(
-        Emailadress, on_delete=models.CASCADE, verbose_name=_("Emailadresse")
-    )
-
-    def __str__(self):
-        return f"{self.bird} - {self.email}"
-
-    class Meta:
-        verbose_name = _("Vogel-Email")
-        verbose_name_plural = _("Vogel-Emails")

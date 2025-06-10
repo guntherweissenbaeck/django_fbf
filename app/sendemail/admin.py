@@ -1,6 +1,6 @@
 from django.contrib import admin
 
-from .models import Emailadress, BirdEmail
+from .models import Emailadress
 
 
 @admin.register(Emailadress)
@@ -23,11 +23,3 @@ class EmailaddressAdmin(admin.ModelAdmin):
         if not change:  # Only set user when creating new object
             obj.user = request.user
         super().save_model(request, obj, form, change)
-
-
-@admin.register(BirdEmail)
-class BirdEmailAdmin(admin.ModelAdmin):
-    list_display = ["bird", "email"]
-    search_fields = ["bird", "email"]
-    list_filter = ["bird", "email"]
-    list_per_page = 20
