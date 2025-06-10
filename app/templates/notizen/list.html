@@ -1,0 +1,108 @@
+{% extends "base.html" %}
+{% load crispy_forms_tags %}
+
+{% block title %}Notizen{% endblock %}
+
+{% block content %}
+<div class="container-fluid">
+    <div class="row">
+        <div class="col">
+            <h1 class="mb-4">
+                <i class="fas fa-sticky-note text-primary"></i>
+                Meine Notizen
+            </h1>
+            
+            <div class="mb-3">
+                <a href="{% url 'notizen:create' %}" class="btn btn-primary">
+                    <i class="fas fa-plus"></i> Neue Notiz erstellen
+                </a>
+            </div>
+            
+            {% if notizen %}
+                <div class="row">
+                    {% for notiz in notizen %}
+                        <div class="col-md-6 col-lg-4 mb-4">
+                            <div class="card h-100">
+                                <div class="card-body">
+                                    <h5 class="card-title">
+                                        <a href="{% url 'notizen:detail' notiz.pk %}" class="text-decoration-none">
+                                            {{ notiz.name }}
+                                        </a>
+                                    </h5>
+                                    
+                                    {% if notiz.attached_to_object_str %}
+                                        <p class="card-text">
+                                            <small class="text-muted">
+                                                <i class="fas fa-paperclip"></i>
+                                                Angehängt an: {{ notiz.attached_to_model_name }} - {{ notiz.attached_to_object_str }}
+                                            </small>
+                                        </p>
+                                    {% endif %}
+                                    
+                                    <p class="card-text">
+                                        <small class="text-muted">
+                                            Zuletzt bearbeitet: {{ notiz.geaendert_am|date:"d.m.Y H:i" }}
+                                        </small>
+                                    </p>
+                                </div>
+                                <div class="card-footer bg-transparent">
+                                    <div class="btn-group btn-group-sm" role="group">
+                                        <a href="{% url 'notizen:detail' notiz.pk %}" class="btn btn-outline-primary">
+                                            <i class="fas fa-eye"></i> Anzeigen
+                                        </a>
+                                        <a href="{% url 'notizen:edit' notiz.pk %}" class="btn btn-outline-secondary">
+                                            <i class="fas fa-edit"></i> Bearbeiten
+                                        </a>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    {% endfor %}
+                </div>
+                
+                <!-- Pagination -->
+                {% if page_obj.has_other_pages %}
+                    <nav aria-label="Notizen Navigation">
+                        <ul class="pagination justify-content-center">
+                            {% if page_obj.has_previous %}
+                                <li class="page-item">
+                                    <a class="page-link" href="?page=1">Erste</a>
+                                </li>
+                                <li class="page-item">
+                                    <a class="page-link" href="?page={{ page_obj.previous_page_number }}">Zurück</a>
+                                </li>
+                            {% endif %}
+                            
+                            <li class="page-item active">
+                                <span class="page-link">
+                                    Seite {{ page_obj.number }} von {{ page_obj.paginator.num_pages }}
+                                </span>
+                            </li>
+                            
+                            {% if page_obj.has_next %}
+                                <li class="page-item">
+                                    <a class="page-link" href="?page={{ page_obj.next_page_number }}">Weiter</a>
+                                </li>
+                                <li class="page-item">
+                                    <a class="page-link" href="?page={{ page_obj.paginator.num_pages }}">Letzte</a>
+                                </li>
+                            {% endif %}
+                        </ul>
+                    </nav>
+                {% endif %}
+            {% else %}
+                <div class="alert alert-info">
+                    <h4 class="alert-heading">Keine Notizen vorhanden</h4>
+                    <p>Sie haben noch keine Notizen erstellt.</p>
+                    <hr>
+                    <p class="mb-0">
+                        <a href="{% url 'notizen:create' %}" class="btn btn-primary">
+                            <i class="fas fa-plus"></i> Erste Notiz erstellen
+                        </a>
+                    </p>
+                </div>
+            {% endif %}
+        </div>
+    </div>
+</div>
+{% endblock %}

@@ -73,5 +73,10 @@
         {% endfor %}
     </tbody>
 </table>
+
+<!-- Notizen für diese Übersicht -->
+{% load notizen_tags %}
+{% show_page_notizen "contact_overview" %}
+
 {% endblock content %}
 

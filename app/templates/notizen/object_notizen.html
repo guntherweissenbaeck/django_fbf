@@ -1,0 +1,125 @@
+{% load static %}
+{% load notizen_tags %}
+
+<!-- Notizen für dieses Objekt -->
+{% if notizen_with_html %}
+    <div class="mt-4">
+        <h4>
+            <i class="fas fa-sticky-note text-primary"></i>
+            Notizen ({{ notizen_with_html|length }})
+        </h4>
+        
+        {% for item in notizen_with_html %}
+            <div class="card mb-3">
+                <div class="card-header">
+                    <div class="d-flex justify-content-between align-items-center">
+                        <h5 class="mb-0">{{ item.notiz.name }}</h5>
+                        <div class="btn-group btn-group-sm">
+                            <a href="{% url 'notizen:edit' item.notiz.pk %}" class="btn btn-outline-primary">
+                                <i class="fas fa-edit"></i> Bearbeiten
+                            </a>
+                            <a href="{% url 'notizen:detail' item.notiz.pk %}" class="btn btn-outline-secondary">
+                                <i class="fas fa-external-link-alt"></i> Vollansicht
+                            </a>
+                        </div>
+                    </div>
+                    <small class="text-muted">
+                        Von {{ item.notiz.erstellt_von.get_full_name|default:item.notiz.erstellt_von.username }}
+                        am {{ item.notiz.erstellt_am|date:"d.m.Y H:i" }}
+                        {% if item.notiz.geaendert_am != item.notiz.erstellt_am %}
+                            (bearbeitet am {{ item.notiz.geaendert_am|date:"d.m.Y H:i" }})
+                        {% endif %}
+                    </small>
+                </div>
+                <div class="card-body">
+                    <div class="notiz-content">
+                        {{ item.html_content|safe }}
+                    </div>
+                </div>
+            </div>
+        {% endfor %}
+    </div>
+{% endif %}
+
+<!-- Button zum Hinzufügen einer neuen Notiz -->
+<div class="mt-3">
+    {% if user.is_authenticated %}
+        <a href="{% url 'notizen:attach' content_type.id content_object.pk %}" class="btn btn-outline-primary">
+            <i class="fas fa-plus"></i> Notiz hinzufügen
+        </a>
+    {% endif %}
+</div>
+
+<style>
+.notiz-content {
+    line-height: 1.6;
+}
+
+.notiz-content h1, .notiz-content h2, .notiz-content h3,
+.notiz-content h4, .notiz-content h5, .notiz-content h6 {
+    margin-top: 1rem;
+    margin-bottom: 0.5rem;
+}
+
+.notiz-content h1:first-child, .notiz-content h2:first-child,
+.notiz-content h3:first-child, .notiz-content h4:first-child,
+.notiz-content h5:first-child, .notiz-content h6:first-child {
+    margin-top: 0;
+}
+
+.notiz-content p {
+    margin-bottom: 0.75rem;
+}
+
+.notiz-content pre {
+    background-color: #f8f9fa;
+    border: 1px solid #e9ecef;
+    border-radius: 0.375rem;
+    padding: 0.75rem;
+    overflow-x: auto;
+    font-size: 0.875em;
+}
+
+.notiz-content code {
+    background-color: #f8f9fa;
+    padding: 0.125rem 0.25rem;
+    border-radius: 0.25rem;
+    font-size: 0.875em;
+}
+
+.notiz-content pre code {
+    background-color: transparent;
+    padding: 0;
+}
+
+.notiz-content blockquote {
+    border-left: 4px solid #dee2e6;
+    padding-left: 1rem;
+    margin: 1rem 0;
+    color: #6c757d;
+    font-style: italic;
+}
+
+.notiz-content ul, .notiz-content ol {
+    margin-bottom: 0.75rem;
+    padding-left: 1.5rem;
+}
+
+.notiz-content table {
+    width: 100%;
+    margin-bottom: 1rem;
+    border-collapse: collapse;
+}
+
+.notiz-content table th,
+.notiz-content table td {
+    padding: 0.5rem;
+    border: 1px solid #dee2e6;
+    text-align: left;
+}
+
+.notiz-content table th {
+    background-color: #f8f9fa;
+    font-weight: 600;
+}
+</style>

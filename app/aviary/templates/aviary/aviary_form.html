@@ -1,13 +1,13 @@
 {% extends "base.html" %}
 {% load static %}
 {% load crispy_forms_tags %}
-{% load notizen_tags %}
 {% block content %}
 
-<h3>Voliere <strong>{{ aviary.description }}</strong> bearbeiten </h3>
+<h3>{% if is_create %}Voliere hinzufügen{% else %}Voliere bearbeiten{% endif %}</h3>
+
 <div class="row">
-    <div class="col-lg-5 mt-3 mb-3">
-        <form method="post" enctype="multipart/form-data">
+    <div class="col-lg-8 mb-3">
+        <form method="post">
             {% csrf_token %}
             
             <div class="mb-3">
@@ -53,32 +53,56 @@
                 {% endif %}
             </div>
             
-            <a href="{% url 'aviary_all' %}" class="btn btn-success">Abbrechen</a>
-            <button class="btn btn-primary" type="submit">Speichern</button>
+            <div class="d-flex gap-2">
+                {% if is_create %}
+                    <button class="btn btn-success" type="submit">Speichern</button>
+                    <button class="btn btn-info" type="submit" name="save_and_add">Sichern und neu hinzufügen</button>
+                    <button class="btn btn-info" type="submit" name="save_and_continue">Sichern und weiter bearbeiten</button>
+                {% else %}
+                    <button class="btn btn-primary" type="submit">Speichern</button>
+                {% endif %}
+                <a href="{% url 'aviary_all' %}" class="btn btn-secondary">Abbrechen</a>
+            </div>
+            
+            <div class="mt-3">
+                <small class="text-muted">* Pflichtfeld</small>
+            </div>
         </form>
     </div>
-    <div class="col-lg-1"></div>
+    
     <div class="col-lg-4">
-        <h4>
-            Patienten der Voliere
-        </h4>
-        <p>Hier finden Sie die Patienten, die momentan in der Voliere {{ aviary.description }} untergebracht sind.</p>
-        <p>
-            {% for bird in birds %}
-            <div class="card bg-light mb-3" style="max-width: 30rem;">
-                <div class="card-header"><h5 class="card-title">Patient: {{bird.bird_identifier}}</h5></div>
-                <div class="card-body">
-                    <p class="card-text">
-                        <strong>Vogel:</strong> {{bird.bird}}<br>
-                        <strong>gefunden am:</strong> {{bird.created}}<br>
-                        <strong>Statusänderung am:</strong> {{bird.updated}}<br>
-                        <strong>Fundumstände:</strong> {{bird.find_circumstances}}<br>
-                        <strong>Diagnose:</strong> {{bird.diagnostic_finding}}<br>
-                    </p>
-                </div>
+        <div class="card">
+            <div class="card-header">
+                <h5>Informationen</h5>
             </div>
-            {% endfor %}
-        </p>
+            <div class="card-body">
+                <h6>Beschreibung</h6>
+                <p class="small">
+                    Die Beschreibung dient zur eindeutigen Identifikation der Voliere.
+                    Verwenden Sie einen aussagekräftigen Namen.
+                </p>
+                
+                <h6>Zustand</h6>
+                <p class="small">
+                    Der Zustand gibt an, ob die Voliere derzeit genutzt werden kann:
+                    <br><strong>Offen:</strong> Verfügbar für neue Tiere
+                    <br><strong>Geschlossen:</strong> Temporär nicht verfügbar
+                    <br><strong>Gesperrt:</strong> Dauerhaft außer Betrieb
+                </p>
+                
+                <h6>Letzte Visite</h6>
+                <p class="small">
+                    Datum der letzten Kontrolle oder Reinigung der Voliere.
+                    Klicken Sie auf "Heute" um das aktuelle Datum einzutragen.
+                </p>
+                
+                <h6>Bemerkungen</h6>
+                <p class="small">
+                    Zusätzliche Informationen zur Voliere, wie besondere Ausstattung
+                    oder Wartungshinweise.
+                </p>
+            </div>
+        </div>
     </div>
 </div>
 

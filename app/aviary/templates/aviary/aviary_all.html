@@ -45,6 +45,9 @@
 <p>
     Die Übersicht aller Volieren.
 </p>
+<p>
+    <a href="{% url 'aviary_create' %}" class="btn btn-primary">Voliere hinzufügen</a>
+</p>
 <table class="table table-striped table-hover display responsive nowrap" width="100%" id="t__aviary_all">
     <thead>
         <tr>
@@ -67,5 +70,9 @@
         {% endfor %}
     </tbody>
 </table>
+
+<!-- Notizen für diese Übersicht -->
+{% load notizen_tags %}
+{% show_page_notizen "aviary_overview" %}
 
 {% endblock content %}
