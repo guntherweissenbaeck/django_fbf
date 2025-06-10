@@ -8,6 +8,8 @@ from .views import (
     bird_help_single,
     bird_inactive,
     bird_single,
+    bird_species_list,
+    bird_species_edit,
 )
 
 urlpatterns = [
@@ -17,5 +19,7 @@ urlpatterns = [
     path("delete/<id>", bird_delete, name="bird_delete"),
     path("help/", bird_help, name="bird_help"),
     path("help/<id>", bird_help_single, name="bird_help_single"),
+    path("species/", bird_species_list, name="bird_species_list"),
+    path("species/<id>/edit/", bird_species_edit, name="bird_species_edit"),
     path("<id>/", bird_single, name="bird_single"),
 ]

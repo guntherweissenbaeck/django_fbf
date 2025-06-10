@@ -14,6 +14,20 @@ class Emailadress(models.Model):
         on_delete=models.CASCADE,
         verbose_name=_("Benutzer"),
     )
+    
+    # New notification category fields
+    is_naturschutzbehoerde = models.BooleanField(
+        default=True,
+        verbose_name=_("Naturschutzbehörde")
+    )
+    is_jagdbehoerde = models.BooleanField(
+        default=False,
+        verbose_name=_("Jagdbehörde")
+    )
+    is_wildvogelhilfe_team = models.BooleanField(
+        default=True,
+        verbose_name=_("Wildvogelhilfe-Team")
+    )
 
     def __str__(self):
         return self.email_address

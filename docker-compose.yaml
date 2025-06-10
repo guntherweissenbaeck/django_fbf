@@ -31,7 +31,8 @@ services:
       - db
     labels:
       - "traefik.enable=true"
-      - "traefik.http.routers.django.rule=Host(`${ALLOWED_HOSTS}`)"
+      - "traefik.http.routers.web.rule=Host(`${ALLOWED_HOSTS}`)"
+      - "traefik.http.services.web.loadbalancer.server.port=8000"
 
   db:
     image: postgres:15-alpine

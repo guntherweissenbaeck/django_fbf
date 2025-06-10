@@ -193,6 +193,20 @@ class Bird(models.Model):
     updated = models.DateTimeField(
         auto_now=True, verbose_name=_("Geändert am")
     )
+    
+    # New notification settings fields - "Melden an" section
+    melden_an_naturschutzbehoerde = models.BooleanField(
+        default=True,
+        verbose_name=_("Melden an Naturschutzbehörde")
+    )
+    melden_an_jagdbehoerde = models.BooleanField(
+        default=False,
+        verbose_name=_("Melden an Jagdbehörde")
+    )
+    melden_an_wildvogelhilfe_team = models.BooleanField(
+        default=True,
+        verbose_name=_("Melden an Wildvogelhilfe-Team")
+    )
 
     class Meta:
         verbose_name = _("Vogel")
