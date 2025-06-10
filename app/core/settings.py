@@ -243,19 +243,23 @@ MEDIA_ROOT = BASE_DIR / "media"
 # Email
 # -----------------------------------
 
-# Console Backend for Development Usage.
-# EMAIL_BACKEND = "django.core.mail.backends.console.EmailBackend"
-
-# SMTP Backup for Production Usage.
-EMAIL_BACKEND = "django.core.mail.backends.smtp.EmailBackend"
-
-if EMAIL_BACKEND == "django.core.mail.backends.smtp.EmailBackend":
-    DEFAULT_FROM_EMAIL = env("DEFAULT_FROM_EMAIL")
-    EMAIL_HOST_PASSWORD = env("EMAIL_HOST_PASSWORD")
-    EMAIL_HOST_USER = env("EMAIL_HOST_USER")
-    EMAIL_HOST = env("EMAIL_HOST")
-    EMAIL_PORT = env("EMAIL_PORT")
-    EMAIL_USE_TLS = True
+# Choose email backend based on DEBUG setting or environment variable
+if env.bool("DEBUG", default=True):
+    # Development: Use console backend to display emails in terminal
+    EMAIL_BACKEND = "django.core.mail.backends.console.EmailBackend"
+    DEFAULT_FROM_EMAIL = "wildvogelhilfe@nabu-jena.de"
+    print("📧 Development Email Backend: E-Mails werden in der Konsole angezeigt")
+else:
+    # Production: Use SMTP backend for real email sending
+    EMAIL_BACKEND = "django.core.mail.backends.smtp.EmailBackend"
+    if EMAIL_BACKEND == "django.core.mail.backends.smtp.EmailBackend":
+        DEFAULT_FROM_EMAIL = env("DEFAULT_FROM_EMAIL")
+        EMAIL_HOST_PASSWORD = env("EMAIL_HOST_PASSWORD")
+        EMAIL_HOST_USER = env("EMAIL_HOST_USER")
+        EMAIL_HOST = env("EMAIL_HOST")
+        EMAIL_PORT = env("EMAIL_PORT")
+        EMAIL_USE_TLS = True
+        print("📧 Production Email Backend: SMTP wird verwendet")
 
 # -----------------------------------
 # Additional App Settings
