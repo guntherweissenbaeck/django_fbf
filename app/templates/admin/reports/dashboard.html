@@ -1,0 +1,85 @@
+{% extends "admin/reports/base.html" %}
+{% load i18n %}
+
+{% block reports_content %}
+<div class="dashboard">
+    <h1>📊 Reports Dashboard</h1>
+    <p>Willkommen zum Reports-System der Django FBF Anwendung. Hier können Sie Berichte über gefallene Vögel erstellen und verwalten.</p>
+    
+    <div class="dashboard-modules">
+        <div class="module">
+            <h2>📝 Report erstellen</h2>
+            <p>Erstellen Sie sofort einen benutzerdefinierten Report für einen bestimmten Zeitraum.</p>
+            <ul>
+                <li>Zeitraum auswählen (Standard: letzte 3 Monate)</li>
+                <li>Filter nach Naturschutzbehörde/Jagdbehörde</li>
+                <li>E-Mail versenden oder als CSV herunterladen</li>
+            </ul>
+            <a href="{% url 'reports:manual_report' %}" class="btn btn-primary">Report erstellen</a>
+        </div>
+        
+        <div class="module">
+            <h2>⚙️ Automatischer Report</h2>
+            <p>Konfigurieren Sie automatische Reports, die regelmäßig versendet werden.</p>
+            <ul>
+                <li>Wöchentliche, monatliche oder vierteljährliche Reports</li>
+                <li>Vordefinierte E-Mail-Empfänger</li>
+                <li>Automatische Zeitraum-Berechnung</li>
+            </ul>
+            <a href="{% url 'reports:automatic_reports' %}" class="btn btn-primary">Automatische Reports verwalten</a>
+        </div>
+        
+        <div class="module">
+            <h2>📋 Report-Protokoll</h2>
+            <p>Übersicht über alle erstellten und versendeten Reports.</p>
+            <ul>
+                <li>Historie aller Reports</li>
+                <li>Status der E-Mail-Versendung</li>
+                <li>Filter und Statistiken</li>
+            </ul>
+            <a href="{% url 'reports:report_logs' %}" class="btn btn-primary">Protokoll anzeigen</a>
+        </div>
+    </div>
+</div>
+
+<style>
+.dashboard-modules {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: 20px;
+    margin-top: 30px;
+}
+.module {
+    background: white;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    padding: 20px;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+}
+.module h2 {
+    color: #417690;
+    margin-top: 0;
+}
+.module ul {
+    margin: 15px 0;
+    padding-left: 20px;
+}
+.module li {
+    margin-bottom: 8px;
+    color: #666;
+}
+.btn {
+    display: inline-block;
+    padding: 10px 20px;
+    background: #417690;
+    color: white;
+    text-decoration: none;
+    border-radius: 4px;
+    margin-top: 15px;
+}
+.btn:hover {
+    background: #2e5a70;
+    color: white;
+}
+</style>
+{% endblock %}

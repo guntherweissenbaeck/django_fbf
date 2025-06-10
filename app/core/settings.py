@@ -85,6 +85,7 @@ INSTALLED_APPS = [
     "contact",
     "costs",
     "export",
+    "reports",
     "sendemail",
 ]
 

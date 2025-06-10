@@ -14,6 +14,7 @@ urlpatterns = [
     path("export/", include("export.urls")),
     # Admin
     path("admin/", admin.site.urls),
+    path("admin/reports/", include("reports.urls", namespace="reports")),
     # Allauth
     path("accounts/", include("allauth.urls")),
     # CKEditor 5

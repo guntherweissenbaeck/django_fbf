@@ -1,0 +1,72 @@
+{% extends "admin/base_site.html" %}
+{% load i18n admin_urls static admin_list %}
+
+{% block title %}{{ title }} | {{ site_title|default:_('Django site admin') }}{% endblock %}
+
+{% block branding %}
+<h1 id="site-name"><a href="{% url 'admin:index' %}">Django FBF Administration</a></h1>
+{% endblock %}
+
+{% block nav-global %}
+<div class="nav-global">
+    <a href="{% url 'reports:dashboard' %}" class="{% if request.resolver_match.url_name == 'dashboard' %}current{% endif %}">📊 Dashboard</a>
+    <a href="{% url 'reports:manual_report' %}" class="{% if request.resolver_match.url_name == 'manual_report' %}current{% endif %}">📝 Report erstellen</a>
+    <a href="{% url 'reports:automatic_reports' %}" class="{% if request.resolver_match.url_name == 'automatic_reports' %}current{% endif %}">⚙️ Automatischer Report</a>
+    <a href="{% url 'reports:report_logs' %}" class="{% if request.resolver_match.url_name == 'report_logs' %}current{% endif %}">📋 Protokoll</a>
+</div>
+{% endblock %}
+
+{% block content %}
+<div class="reports-content">
+    {% if messages %}
+    <div class="messagelist">
+        {% for message in messages %}
+        <div class="alert alert-{{ message.tags }}">{{ message }}</div>
+        {% endfor %}
+    </div>
+    {% endif %}
+    
+    {% block reports_content %}
+    {% endblock %}
+</div>
+{% endblock %}
+
+{% block extrahead %}
+{{ block.super }}
+<style>
+.nav-global {
+    background: #417690;
+    padding: 10px 20px;
+    margin: 0 -20px 20px -20px;
+}
+.nav-global a {
+    color: white;
+    text-decoration: none;
+    margin-right: 20px;
+    padding: 8px 12px;
+    border-radius: 4px;
+}
+.nav-global a:hover, .nav-global a.current {
+    background: rgba(255,255,255,0.2);
+}
+.reports-content {
+    max-width: 1200px;
+}
+.alert {
+    padding: 12px;
+    margin-bottom: 20px;
+    border: 1px solid transparent;
+    border-radius: 4px;
+}
+.alert-success {
+    color: #155724;
+    background-color: #d4edda;
+    border-color: #c3e6cb;
+}
+.alert-error {
+    color: #721c24;
+    background-color: #f8d7da;
+    border-color: #f5c6cb;
+}
+</style>
+{% endblock %}

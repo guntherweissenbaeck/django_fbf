@@ -180,4 +180,8 @@ postgres
 
 # Prestatic Collections
 app/staticfiles
+
+# Reports CSV files
+app/media/reports/csv/*
+
 TODO.md

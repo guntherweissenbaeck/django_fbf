@@ -1,0 +1,178 @@
+{% extends "admin/reports/base.html" %}
+{% load i18n crispy_forms_tags %}
+
+{% block reports_content %}
+<div class="manual-report">
+    <h1>📝 Report erstellen</h1>
+    <p>Erstellen Sie einen benutzerdefinierten Report für einen bestimmten Zeitraum.</p>
+    
+    <form method="post" class="report-form">
+        {% csrf_token %}
+        
+        <fieldset class="fieldset">
+            <legend>📅 Zeitraum</legend>
+            <div class="form-row">
+                <div class="form-group">
+                    <label for="{{ form.date_from.id_for_label }}">{{ form.date_from.label }}</label>
+                    {{ form.date_from }}
+                    {% if form.date_from.help_text %}<p class="help">{{ form.date_from.help_text }}</p>{% endif %}
+                    {% if form.date_from.errors %}<ul class="errorlist">{% for error in form.date_from.errors %}<li>{{ error }}</li>{% endfor %}</ul>{% endif %}
+                </div>
+                <div class="form-group">
+                    <label for="{{ form.date_to.id_for_label }}">{{ form.date_to.label }}</label>
+                    {{ form.date_to }}
+                    {% if form.date_to.help_text %}<p class="help">{{ form.date_to.help_text }}</p>{% endif %}
+                    {% if form.date_to.errors %}<ul class="errorlist">{% for error in form.date_to.errors %}<li>{{ error }}</li>{% endfor %}</ul>{% endif %}
+                </div>
+            </div>
+        </fieldset>
+        
+        <fieldset class="fieldset">
+            <legend>🎯 Filter</legend>
+            <div class="form-row">
+                <div class="form-group checkbox-group">
+                    {{ form.include_naturschutzbehoerde }}
+                    <label for="{{ form.include_naturschutzbehoerde.id_for_label }}">{{ form.include_naturschutzbehoerde.label }}</label>
+                    {% if form.include_naturschutzbehoerde.help_text %}<p class="help">{{ form.include_naturschutzbehoerde.help_text }}</p>{% endif %}
+                </div>
+                <div class="form-group checkbox-group">
+                    {{ form.include_jagdbehoerde }}
+                    <label for="{{ form.include_jagdbehoerde.id_for_label }}">{{ form.include_jagdbehoerde.label }}</label>
+                    {% if form.include_jagdbehoerde.help_text %}<p class="help">{{ form.include_jagdbehoerde.help_text }}</p>{% endif %}
+                </div>
+            </div>
+            {% if form.include_naturschutzbehoerde.errors or form.include_jagdbehoerde.errors %}
+            <ul class="errorlist">
+                {% for error in form.include_naturschutzbehoerde.errors %}<li>{{ error }}</li>{% endfor %}
+                {% for error in form.include_jagdbehoerde.errors %}<li>{{ error }}</li>{% endfor %}
+            </ul>
+            {% endif %}
+        </fieldset>
+        
+        <fieldset class="fieldset">
+            <legend>📧 E-Mail-Adressen</legend>
+            <div class="form-group">
+                <label>{{ form.email_addresses.label }}</label>
+                {{ form.email_addresses }}
+                {% if form.email_addresses.help_text %}<p class="help">{{ form.email_addresses.help_text }}</p>{% endif %}
+                {% if form.email_addresses.errors %}<ul class="errorlist">{% for error in form.email_addresses.errors %}<li>{{ error }}</li>{% endfor %}</ul>{% endif %}
+            </div>
+            <div class="form-group">
+                <label for="{{ form.custom_email.id_for_label }}">{{ form.custom_email.label }}</label>
+                {{ form.custom_email }}
+                {% if form.custom_email.help_text %}<p class="help">{{ form.custom_email.help_text }}</p>{% endif %}
+                {% if form.custom_email.errors %}<ul class="errorlist">{% for error in form.custom_email.errors %}<li>{{ error }}</li>{% endfor %}</ul>{% endif %}
+            </div>
+        </fieldset>
+        
+        <fieldset class="fieldset">
+            <legend>🎬 Aktion</legend>
+            <div class="form-group">
+                {{ form.action }}
+                {% if form.action.errors %}<ul class="errorlist">{% for error in form.action.errors %}<li>{{ error }}</li>{% endfor %}</ul>{% endif %}
+            </div>
+        </fieldset>
+        
+        {% if form.non_field_errors %}
+        <div class="form-errors">
+            {{ form.non_field_errors }}
+        </div>
+        {% endif %}
+        
+        <div class="form-actions">
+            <button type="submit" class="btn btn-primary">Report erstellen</button>
+            <a href="{% url 'reports:dashboard' %}" class="btn btn-secondary">Abbrechen</a>
+        </div>
+    </form>
+</div>
+
+<style>
+.report-form {
+    max-width: 800px;
+}
+.fieldset {
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    padding: 20px;
+    margin-bottom: 20px;
+    background: white;
+}
+.fieldset legend {
+    font-weight: bold;
+    color: #417690;
+    padding: 0 10px;
+}
+.form-row {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 20px;
+}
+.form-group {
+    margin-bottom: 15px;
+}
+.form-group label {
+    display: block;
+    font-weight: bold;
+    margin-bottom: 5px;
+    color: #333;
+}
+.form-group input, .form-group select {
+    width: 100%;
+    padding: 8px;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+}
+.checkbox-group {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+.checkbox-group input {
+    width: auto;
+}
+.checkbox-group label {
+    margin-bottom: 0;
+}
+.help {
+    font-size: 0.9em;
+    color: #666;
+    margin-top: 5px;
+}
+.errorlist {
+    color: #d32f2f;
+    list-style: none;
+    padding: 0;
+    margin: 5px 0;
+}
+.form-errors {
+    background: #ffebee;
+    border: 1px solid #f5c6cb;
+    border-radius: 4px;
+    padding: 10px;
+    margin-bottom: 20px;
+}
+.form-actions {
+    margin-top: 30px;
+}
+.btn {
+    display: inline-block;
+    padding: 10px 20px;
+    border: none;
+    border-radius: 4px;
+    text-decoration: none;
+    cursor: pointer;
+    margin-right: 10px;
+}
+.btn-primary {
+    background: #417690;
+    color: white;
+}
+.btn-secondary {
+    background: #6c757d;
+    color: white;
+}
+.btn:hover {
+    opacity: 0.9;
+}
+</style>
+{% endblock %}

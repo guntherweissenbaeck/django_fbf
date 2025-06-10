@@ -1,0 +1,104 @@
+{% extends "admin/reports/base.html" %}
+{% load i18n %}
+
+{% block title %}{% trans "Automatischen Report löschen" %}{% endblock %}
+
+{% block content %}
+<div class="report-content">
+    <div class="card">
+        <div class="card-header">
+            <h3>{% trans "Automatischen Report löschen" %}</h3>
+        </div>
+        <div class="card-body">
+            <div class="alert alert-warning">
+                <strong>{% trans "Achtung!" %}</strong>
+                {% trans "Sind Sie sicher, dass Sie den automatischen Report" %} 
+                <strong>"{{ object.name }}"</strong> 
+                {% trans "löschen möchten?" %}
+            </div>
+            
+            <div class="report-details">
+                <h4>{% trans "Report-Details:" %}</h4>
+                <ul>
+                    <li><strong>{% trans "Name:" %}</strong> {{ object.name }}</li>
+                    <li><strong>{% trans "Häufigkeit:" %}</strong> {{ object.get_frequency_display }}</li>
+                    <li><strong>{% trans "Status:" %}</strong> 
+                        {% if object.is_active %}
+                            <span class="badge badge-success">{% trans "Aktiv" %}</span>
+                        {% else %}
+                            <span class="badge badge-secondary">{% trans "Inaktiv" %}</span>
+                        {% endif %}
+                    </li>
+                    <li><strong>{% trans "Erstellt am:" %}</strong> {{ object.created_at|date:"d.m.Y H:i" }}</li>
+                    <li><strong>{% trans "E-Mail-Adressen:" %}</strong>
+                        <ul>
+                            {% for email in object.email_addresses.all %}
+                                <li>{{ email.email }}</li>
+                            {% endfor %}
+                        </ul>
+                    </li>
+                </ul>
+            </div>
+
+            <div class="alert alert-info">
+                <strong>{% trans "Hinweis:" %}</strong>
+                {% trans "Das Löschen des automatischen Reports stoppt alle zukünftigen automatischen Versendungen. Bereits gesendete Reports bleiben im Report-Log erhalten." %}
+            </div>
+
+            <form method="post" class="delete-form">
+                {% csrf_token %}
+                <div class="form-actions">
+                    <button type="submit" class="btn btn-danger">
+                        <i class="fas fa-trash"></i> {% trans "Ja, löschen" %}
+                    </button>
+                    <a href="{% url 'reports:automatic_reports' %}" class="btn btn-secondary">
+                        <i class="fas fa-arrow-left"></i> {% trans "Abbrechen" %}
+                    </a>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<style>
+.report-details {
+    background-color: #f8f9fa;
+    padding: 15px;
+    border-radius: 5px;
+    margin: 15px 0;
+}
+
+.report-details ul {
+    margin-bottom: 0;
+}
+
+.report-details ul li {
+    margin-bottom: 8px;
+}
+
+.report-details ul ul {
+    margin-top: 5px;
+    margin-left: 20px;
+}
+
+.delete-form {
+    margin-top: 20px;
+}
+
+.badge {
+    padding: 4px 8px;
+    border-radius: 4px;
+    font-size: 0.875em;
+}
+
+.badge-success {
+    background-color: #28a745;
+    color: white;
+}
+
+.badge-secondary {
+    background-color: #6c757d;
+    color: white;
+}
+</style>
+{% endblock %}

@@ -1,0 +1,157 @@
+{% extends "admin/reports/base.html" %}
+{% load i18n %}
+
+{% block reports_content %}
+<div class="automatic-reports">
+    <h1>⚙️ Automatische Reports</h1>
+    <p>Verwalten Sie automatische Reports, die regelmäßig versendet werden.</p>
+    
+    <div class="actions">
+        <a href="{% url 'reports:create_automatic_report' %}" class="btn btn-primary">➕ Neuen automatischen Report erstellen</a>
+    </div>
+    
+    {% if reports %}
+    <div class="reports-table">
+        <table>
+            <thead>
+                <tr>
+                    <th>Name</th>
+                    <th>Häufigkeit</th>
+                    <th>Filter</th>
+                    <th>E-Mail-Adressen</th>
+                    <th>Status</th>
+                    <th>Zuletzt gesendet</th>
+                    <th>Aktionen</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for report in reports %}
+                <tr>
+                    <td>
+                        <strong>{{ report.name }}</strong>
+                        {% if report.description %}<br><small>{{ report.description|truncatechars:50 }}</small>{% endif %}
+                    </td>
+                    <td>{{ report.get_frequency_display }}</td>
+                    <td>
+                        {% if report.include_naturschutzbehoerde %}
+                            <span class="badge badge-naturschutz">Naturschutzbehörde</span>
+                        {% endif %}
+                        {% if report.include_jagdbehoerde %}
+                            <span class="badge badge-jagd">Jagdbehörde</span>
+                        {% endif %}
+                    </td>
+                    <td>{{ report.email_addresses.count }} Adresse(n)</td>
+                    <td>
+                        {% if report.is_active %}
+                            <span class="status status-active">✅ Aktiv</span>
+                        {% else %}
+                            <span class="status status-inactive">❌ Inaktiv</span>
+                        {% endif %}
+                    </td>
+                    <td>
+                        {% if report.last_sent %}
+                            {{ report.last_sent|date:"d.m.Y H:i" }}
+                        {% else %}
+                            <em>Noch nie gesendet</em>
+                        {% endif %}
+                    </td>
+                    <td class="actions-cell">
+                        <a href="{% url 'reports:edit_automatic_report' report.id %}" class="btn btn-small btn-edit">✏️ Bearbeiten</a>
+                        <a href="{% url 'reports:delete_automatic_report' report.id %}" class="btn btn-small btn-delete">🗑️ Löschen</a>
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+    {% else %}
+    <div class="empty-state">
+        <h3>Keine automatischen Reports konfiguriert</h3>
+        <p>Sie haben noch keine automatischen Reports erstellt. Klicken Sie auf den Button oben, um Ihren ersten automatischen Report zu erstellen.</p>
+    </div>
+    {% endif %}
+</div>
+
+<style>
+.actions {
+    margin-bottom: 30px;
+}
+.reports-table {
+    background: white;
+    border-radius: 8px;
+    overflow: hidden;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+}
+.reports-table table {
+    width: 100%;
+    border-collapse: collapse;
+}
+.reports-table th {
+    background: #417690;
+    color: white;
+    padding: 15px;
+    text-align: left;
+    font-weight: bold;
+}
+.reports-table td {
+    padding: 15px;
+    border-bottom: 1px solid #eee;
+    vertical-align: top;
+}
+.reports-table tr:hover {
+    background: #f8f9fa;
+}
+.badge {
+    display: inline-block;
+    padding: 4px 8px;
+    border-radius: 12px;
+    font-size: 0.8em;
+    font-weight: bold;
+    margin: 2px;
+}
+.badge-naturschutz {
+    background: #e8f5e8;
+    color: #2e7d32;
+}
+.badge-jagd {
+    background: #fff3e0;
+    color: #f57c00;
+}
+.status {
+    font-weight: bold;
+}
+.status-active {
+    color: #2e7d32;
+}
+.status-inactive {
+    color: #d32f2f;
+}
+.actions-cell {
+    white-space: nowrap;
+}
+.btn-small {
+    padding: 6px 12px;
+    font-size: 0.9em;
+    margin: 2px;
+}
+.btn-edit {
+    background: #1976d2;
+    color: white;
+}
+.btn-delete {
+    background: #d32f2f;
+    color: white;
+}
+.empty-state {
+    text-align: center;
+    padding: 60px 20px;
+    background: white;
+    border-radius: 8px;
+    color: #666;
+}
+.empty-state h3 {
+    color: #417690;
+    margin-bottom: 15px;
+}
+</style>
+{% endblock %}

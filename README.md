@@ -88,6 +88,28 @@ python3 -m pytest test/ --cov=app --cov-report=html
 
 ---
 
+## 📊 Reports System
+
+Das Django FBF verfügt über ein vollständiges Reports-System für die Wildvogelhilfe Jena:
+
+### Features
+- **Manuelle Reports**: Interaktive Erstellung mit Datumsbereich und Filteroptionen
+- **Automatische Reports**: Wiederkehrende Reports (wöchentlich/monatlich/quartalsweise)
+- **E-Mail-Versand**: Professional formatierte E-Mails mit CSV-Anhang
+- **Report-Protokoll**: Vollständige Audit-Spur aller generierten Reports
+- **Admin-Integration**: Nahtlose Integration in Django Admin
+
+### Verwendung
+1. **Admin-Panel öffnen**: [http://localhost:8008/admin/reports/](http://localhost:8008/admin/reports/)
+2. **Manuelle Reports**: "Report erstellen" → Datum wählen → Filter setzen → Herunterladen/E-Mail
+3. **Automatische Reports**: Wiederkehrende Reports konfigurieren mit E-Mail-Verteilern
+4. **Report-Logs**: Verlauf aller Reports mit Download-Möglichkeit
+
+### CSV-Export
+Reports enthalten folgende Felder: Vogel, Alter, Geschlecht, Gefunden am, Fundort, Fundumstände, Diagnose bei Fund, Status
+
+---
+
 ## Throw old database
 In case you've got an preexisting database, delete it and do the following:
 
