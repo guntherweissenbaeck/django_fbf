@@ -1,0 +1,50 @@
+{% extends "base.html" %}
+{% load static %}
+{% load crispy_forms_tags %}
+{% block content %}
+
+<h3>E-Mail-Benachrichtigungen für {{ bird_species.name }} bearbeiten</h3>
+<div class="row">
+    <div class="col-lg-6 mb-3">
+        <form method="post">
+            {% csrf_token %}
+            {{ form|crispy }}
+            <a href="{% url 'bird_species_list' %}" class="btn btn-success">Abbrechen</a>
+            <button class="btn btn-primary" type="submit">Speichern</button>
+        </form>
+    </div>
+
+    <div class="col-lg-6">
+        <div class="card">
+            <div class="card-header">
+                <h5>Informationen zu E-Mail-Benachrichtigungen</h5>
+            </div>
+            <div class="card-body">
+                <h6>Naturschutzbehörde</h6>
+                <p class="small">
+                    Wenn aktiviert, wird automatisch eine E-Mail an alle als "Naturschutzbehörde" 
+                    markierten E-Mail-Adressen gesendet, wenn ein Vogel dieser Art gefunden wird.
+                </p>
+                
+                <h6>Jagdbehörde</h6>
+                <p class="small">
+                    Wenn aktiviert, wird automatisch eine E-Mail an alle als "Jagdbehörde" 
+                    markierten E-Mail-Adressen gesendet, wenn ein Vogel dieser Art gefunden wird.
+                </p>
+                
+                <h6>Wildvogelhilfe-Team</h6>
+                <p class="small">
+                    Wenn aktiviert, wird automatisch eine E-Mail an alle als "Wildvogelhilfe-Team" 
+                    markierten E-Mail-Adressen gesendet, wenn ein Vogel dieser Art gefunden wird.
+                </p>
+                
+                <div class="alert alert-info mt-3">
+                    <strong>Hinweis:</strong> Für neue Vogelarten werden standardmäßig 
+                    "Naturschutzbehörde" und "Wildvogelhilfe-Team" aktiviert.
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+{% endblock content %}

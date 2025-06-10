@@ -21,7 +21,14 @@ class FallenBirdAdmin(admin.ModelAdmin):
 
 @admin.register(Bird)
 class BirdAdmin(admin.ModelAdmin):
-    list_display = ["name"]
+    list_display = ["name", "melden_an_naturschutzbehoerde", "melden_an_jagdbehoerde", "melden_an_wildvogelhilfe_team"]
+    list_filter = ["melden_an_naturschutzbehoerde", "melden_an_jagdbehoerde", "melden_an_wildvogelhilfe_team"]
+    fields = ('name', 'description', 'melden_an_naturschutzbehoerde', 'melden_an_jagdbehoerde', 'melden_an_wildvogelhilfe_team')
+    
+    def save_model(self, request, obj, form, change):
+        if not change:  # Only set created_by when creating new object
+            obj.created_by = request.user
+        super().save_model(request, obj, form, change)
 
 
 @admin.register(BirdStatus)

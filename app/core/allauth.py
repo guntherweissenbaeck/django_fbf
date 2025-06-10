@@ -6,11 +6,13 @@
 
 
 SITE_ID = 1
-ACCOUNT_AUTHENTICATION_METHOD = "username_email"
-ACCOUNT_EMAIL_REQUIRED = True
+# Updated settings to replace deprecated options
+ACCOUNT_LOGIN_METHODS = {"username", "email"}  # Replaces ACCOUNT_AUTHENTICATION_METHOD
+ACCOUNT_SIGNUP_FIELDS = ["email*", "username*", "password1*", "password2*"]  # Replaces ACCOUNT_EMAIL_REQUIRED
 ACCOUNT_EMAIL_VERIFICATION = "mandatory"
-ACCOUNT_LOGIN_ATTEMPTS_LIMIT = 5
-ACCOUNT_LOGIN_ATTEMPTS_TIMEOUT = 900  # 15 Minutes
+ACCOUNT_RATE_LIMITS = {
+    "login_failed": "5/15m",  # Replaces ACCOUNT_LOGIN_ATTEMPTS_LIMIT/TIMEOUT (5 attempts per 15 minutes)
+}
 ACCOUNT_LOGIN_ON_EMAIL_CONFIRMATION = True
 ACCOUNT_LOGOUT_REDIRECT_URL = "/"
 ACCOUNT_LOGOUT_ON_GET = True

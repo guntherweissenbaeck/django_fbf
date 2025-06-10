@@ -1,5 +1,7 @@
 from django.contrib import admin
 from django.urls import path, include
+from django.conf import settings
+from django.conf.urls.static import static
 from bird import views
 
 urlpatterns = [
@@ -14,6 +16,12 @@ urlpatterns = [
     path("admin/", admin.site.urls),
     # Allauth
     path("accounts/", include("allauth.urls")),
+    # CKEditor 5
+    path("ckeditor5/", include('django_ckeditor_5.urls')),
     # Static sites
     # path("", include("sites.urls")),
 ]
+
+# Serve media files during development
+if settings.DEBUG:
+    urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

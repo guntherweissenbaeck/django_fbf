@@ -3,7 +3,7 @@ from datetime import date
 from django import forms
 from django.utils.translation import gettext_lazy as _
 
-from .models import FallenBird
+from .models import FallenBird, Bird
 
 
 class DateInput(forms.DateInput):
@@ -74,4 +74,31 @@ class BirdEditForm(forms.ModelForm):
             "diagnostic_finding": _("Diagnose bei Fund"),
             "finder": _("Finder"),
             "comment": _("Bermerkung"),
+        }
+
+
+class BirdSpeciesForm(forms.ModelForm):
+    """Form for editing Bird species with notification settings."""
+    class Meta:
+        model = Bird
+        fields = [
+            "name",
+            "description",
+            "species",
+            "melden_an_naturschutzbehoerde",
+            "melden_an_jagdbehoerde",
+            "melden_an_wildvogelhilfe_team",
+        ]
+        labels = {
+            "name": _("Bezeichnung"),
+            "description": _("Erläuterungen"),
+            "species": _("Art"),
+            "melden_an_naturschutzbehoerde": _("Melden an Naturschutzbehörde"),
+            "melden_an_jagdbehoerde": _("Melden an Jagdbehörde"),
+            "melden_an_wildvogelhilfe_team": _("Melden an Wildvogelhilfe-Team"),
+        }
+        help_texts = {
+            "melden_an_naturschutzbehoerde": _("Automatische E-Mail-Benachrichtigung an Naturschutzbehörde senden"),
+            "melden_an_jagdbehoerde": _("Automatische E-Mail-Benachrichtigung an Jagdbehörde senden"),
+            "melden_an_wildvogelhilfe_team": _("Automatische E-Mail-Benachrichtigung an Wildvogelhilfe-Team senden"),
         }

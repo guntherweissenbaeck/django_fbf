@@ -7,11 +7,11 @@ from django.shortcuts import redirect, render, HttpResponse
 from django.core.mail import send_mail, BadHeaderError
 from smtplib import SMTPException
 
-from .forms import BirdAddForm, BirdEditForm
+from .forms import BirdAddForm, BirdEditForm, BirdSpeciesForm
 from .models import Bird, FallenBird
 
 from sendemail.message import messagebody
-from sendemail.models import BirdEmail
+from sendemail.models import Emailadress
 
 env = environ.Env()
 
@@ -33,24 +33,42 @@ def bird_create(request):
             fs.save()
             request.session["rescuer_id"] = None
 
-            # Send email to all related email addresses
-            email_addresses = BirdEmail.objects.filter(bird=fs.bird_id)
+            # Send email to all related email addresses based on bird species notification settings
             bird = Bird.objects.get(id=fs.bird_id)
-            try:
-                send_mail(
-                    subject="Wildvogel gefunden!",
-                    message=messagebody(
-                        fs.date_found, bird, fs.place, fs.diagnostic_finding
-                    ),
-                    from_email=env("DEFAULT_FROM_EMAIL"),
-                    recipient_list=[
-                        email.email.email_address for email in email_addresses
-                    ],
-                )
-            except BadHeaderError:
-                return HttpResponse("Invalid header found.")
-            except SMTPException as e:
-                print("There was an error sending an email: ", e)
+            
+            # Get email addresses that match the bird species' notification settings
+            email_addresses = []
+            
+            # Check each notification category and add matching email addresses
+            if bird.melden_an_naturschutzbehoerde:
+                naturschutz_emails = Emailadress.objects.filter(is_naturschutzbehoerde=True)
+                email_addresses.extend([email.email_address for email in naturschutz_emails])
+            
+            if bird.melden_an_jagdbehoerde:
+                jagd_emails = Emailadress.objects.filter(is_jagdbehoerde=True)
+                email_addresses.extend([email.email_address for email in jagd_emails])
+            
+            if bird.melden_an_wildvogelhilfe_team:
+                team_emails = Emailadress.objects.filter(is_wildvogelhilfe_team=True)
+                email_addresses.extend([email.email_address for email in team_emails])
+            
+            # Remove duplicates
+            email_addresses = list(set(email_addresses))
+            
+            if email_addresses:  # Only send if there are recipients
+                try:
+                    send_mail(
+                        subject="Wildvogel gefunden!",
+                        message=messagebody(
+                            fs.date_found, bird, fs.place, fs.diagnostic_finding
+                        ),
+                        from_email=env("DEFAULT_FROM_EMAIL"),
+                        recipient_list=email_addresses,
+                    )
+                except BadHeaderError:
+                    return HttpResponse("Invalid header found.")
+                except SMTPException as e:
+                    print("There was an error sending an email: ", e)
 
             return redirect("bird_all")
     context = {"form": form}
@@ -119,3 +137,26 @@ def bird_delete(request, id):
         return redirect("bird_all")
     context = {"bird": bird}
     return render(request, "bird/bird_delete.html", context)
+
+
+@login_required(login_url="account_login")
+def bird_species_list(request):
+    """List all bird species with their notification settings."""
+    birds = Bird.objects.all().order_by("name")
+    context = {"birds": birds}
+    return render(request, "bird/bird_species_list.html", context)
+
+
+@login_required(login_url="account_login")
+def bird_species_edit(request, id):
+    """Edit bird species notification settings."""
+    bird_species = Bird.objects.get(id=id)
+    form = BirdSpeciesForm(request.POST or None, instance=bird_species)
+    
+    if request.method == "POST":
+        if form.is_valid():
+            form.save()
+            return redirect("bird_species_list")
+    
+    context = {"form": form, "bird_species": bird_species}
+    return render(request, "bird/bird_species_edit.html", context)
