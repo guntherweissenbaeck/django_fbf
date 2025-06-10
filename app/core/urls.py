@@ -12,6 +12,7 @@ urlpatterns = [
     path("contacts/", include("contact.urls")),
     path("costs/", include("costs.urls")),
     path("export/", include("export.urls")),
+    path("notizen/", include("notizen.urls")),
     # Admin
     path("admin/", admin.site.urls),
     path("admin/reports/", include("reports.urls", namespace="reports")),

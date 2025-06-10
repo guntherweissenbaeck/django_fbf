@@ -1,0 +1,57 @@
+{% extends "base.html" %}
+{% load static %}
+{% load crispy_forms_tags %}
+
+{% block content %}
+<div class="container">
+    <div class="row">
+        <div class="col-lg-8">
+            <h3>Notiz zu "{{ page.name }}" hinzufügen</h3>
+            <p class="text-muted">
+                Fügen Sie eine Notiz zu dieser Übersichtsseite hinzu. Die Notiz wird am Ende der Seite angezeigt.
+            </p>
+            
+            <form method="post">
+                {% csrf_token %}
+                {{ form|crispy }}
+                
+                <div class="mt-3">
+                    <button type="submit" class="btn btn-primary">
+                        <i class="fas fa-save"></i> Notiz speichern
+                    </button>
+                    <a href="javascript:history.back()" class="btn btn-secondary">
+                        <i class="fas fa-times"></i> Abbrechen
+                    </a>
+                </div>
+            </form>
+        </div>
+        
+        <div class="col-lg-4">
+            <div class="card">
+                <div class="card-header">
+                    <h5><i class="fas fa-info-circle"></i> Hinweise</h5>
+                </div>
+                <div class="card-body">
+                    <h6>Markdown-Unterstützung</h6>
+                    <p class="small">
+                        Sie können Markdown-Syntax verwenden, um Ihre Notiz zu formatieren:
+                    </p>
+                    <ul class="small">
+                        <li><strong>**Fett**</strong> für fetten Text</li>
+                        <li><em>*Kursiv*</em> für kursiven Text</li>
+                        <li><code># Überschrift</code> für Überschriften</li>
+                        <li><code>- Punkt</code> für Listen</li>
+                        <li><code>[Link](URL)</code> für Links</li>
+                    </ul>
+                    
+                    <h6 class="mt-3">Sichtbarkeit</h6>
+                    <p class="small">
+                        Diese Notiz wird am Ende der Übersichtsseite "{{ page.name }}" angezeigt 
+                        und ist für alle Benutzer sichtbar, die Zugriff auf diese Seite haben.
+                    </p>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

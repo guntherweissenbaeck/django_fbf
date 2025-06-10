@@ -1,0 +1,98 @@
+{% load static %}
+{% load notizen_tags %}
+
+<!-- Notizen für diese Seite -->
+{% if notizen_with_html %}
+    <div class="mt-4 mb-4" style="border-top: 2px solid #dc3545; padding-top: 20px;">
+        <h4>
+            <i class="fas fa-sticky-note text-primary"></i>
+            Notizen zu dieser Übersicht ({{ notizen_with_html|length }})
+        </h4>
+        
+        {% for item in notizen_with_html %}
+            <div class="card mb-3">
+                <div class="card-header">
+                    <div class="d-flex justify-content-between align-items-center">
+                        <h5 class="mb-0">{{ item.notiz.name }}</h5>
+                        <div class="btn-group btn-group-sm">
+                            <a href="{% url 'notizen:edit' item.notiz.pk %}" class="btn btn-outline-primary">
+                                <i class="fas fa-edit"></i> Bearbeiten
+                            </a>
+                            <a href="{% url 'notizen:detail' item.notiz.pk %}" class="btn btn-outline-secondary">
+                                <i class="fas fa-eye"></i> Details
+                            </a>
+                        </div>
+                    </div>
+                    <small class="text-muted">
+                        <i class="fas fa-calendar"></i> {{ item.notiz.geaendert_am|date:"d.m.Y H:i" }} Uhr
+                        {% if item.notiz.autor %}
+                            | <i class="fas fa-user"></i> {{ item.notiz.autor }}
+                        {% endif %}
+                    </small>
+                </div>
+                <div class="card-body">
+                    <div class="notiz-content">
+                        {{ item.html_content|safe }}
+                    </div>
+                </div>
+            </div>
+        {% endfor %}
+    </div>
+{% endif %}
+
+<!-- Button zum Hinzufügen einer neuen Notiz -->
+<div class="mt-3 mb-4" style="border-top: 1px solid #dee2e6; padding-top: 15px;">
+    {% if user.is_authenticated %}
+        <a href="{% url 'notizen:attach_page' page_identifier %}" class="btn btn-outline-primary">
+            <i class="fas fa-plus"></i> Notiz zu dieser Übersicht hinzufügen
+        </a>
+    {% endif %}
+</div>
+
+<style>
+.notiz-content {
+    line-height: 1.6;
+}
+
+.notiz-content h1,
+.notiz-content h2,
+.notiz-content h3,
+.notiz-content h4,
+.notiz-content h5,
+.notiz-content h6 {
+    margin-top: 1rem;
+    margin-bottom: 0.5rem;
+}
+
+.notiz-content p {
+    margin-bottom: 1rem;
+}
+
+.notiz-content ul,
+.notiz-content ol {
+    margin-bottom: 1rem;
+    padding-left: 2rem;
+}
+
+.notiz-content blockquote {
+    border-left: 4px solid #007bff;
+    padding-left: 1rem;
+    margin-left: 0;
+    font-style: italic;
+    color: #6c757d;
+}
+
+.notiz-content code {
+    background-color: #f8f9fa;
+    padding: 0.2rem 0.4rem;
+    border-radius: 0.25rem;
+    font-size: 0.875em;
+}
+
+.notiz-content pre {
+    background-color: #f8f9fa;
+    padding: 1rem;
+    border-radius: 0.25rem;
+    overflow-x: auto;
+}
+</style>

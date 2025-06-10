@@ -1,0 +1,86 @@
+{% extends "base.html" %}
+
+{% block title %}Notiz löschen - {{ notiz.name }}{% endblock %}
+
+{% block content %}
+<div class="container-fluid">
+    <div class="row">
+        <div class="col-lg-6 mx-auto">
+            <div class="d-flex justify-content-between align-items-center mb-4">
+                <h1>
+                    <i class="fas fa-trash text-danger"></i>
+                    Notiz löschen
+                </h1>
+                <a href="{% url 'notizen:detail' notiz.pk %}" class="btn btn-outline-secondary">
+                    <i class="fas fa-arrow-left"></i> Zurück
+                </a>
+            </div>
+            
+            <div class="alert alert-danger">
+                <h4 class="alert-heading">
+                    <i class="fas fa-exclamation-triangle"></i> Achtung!
+                </h4>
+                <p>Sie sind dabei, die folgende Notiz unwiderruflich zu löschen:</p>
+                <hr>
+                <h5>{{ notiz.name }}</h5>
+                {% if notiz.attached_to_object_str %}
+                    <p class="mb-0">
+                        <small class="text-muted">
+                            Angehängt an: {{ notiz.attached_to_model_name }} - {{ notiz.attached_to_object_str }}
+                        </small>
+                    </p>
+                {% endif %}
+            </div>
+            
+            <div class="card">
+                <div class="card-header">
+                    <h5 class="mb-0">Bestätigung erforderlich</h5>
+                </div>
+                <div class="card-body">
+                    <p>Diese Aktion kann nicht rückgängig gemacht werden. Sind Sie sicher, dass Sie diese Notiz löschen möchten?</p>
+                    
+                    <form method="post">
+                        {% csrf_token %}
+                        <div class="d-flex justify-content-between">
+                            <div>
+                                <button type="submit" class="btn btn-danger">
+                                    <i class="fas fa-trash"></i> Ja, endgültig löschen
+                                </button>
+                            </div>
+                            <div>
+                                <a href="{% url 'notizen:detail' notiz.pk %}" class="btn btn-outline-secondary">
+                                    <i class="fas fa-times"></i> Abbrechen
+                                </a>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+            
+            <div class="card mt-4">
+                <div class="card-header">
+                    <h5 class="mb-0">Notiz-Details</h5>
+                </div>
+                <div class="card-body">
+                    <div class="row">
+                        <div class="col-sm-4"><strong>Name:</strong></div>
+                        <div class="col-sm-8">{{ notiz.name }}</div>
+                    </div>
+                    <div class="row">
+                        <div class="col-sm-4"><strong>Erstellt von:</strong></div>
+                        <div class="col-sm-8">{{ notiz.erstellt_von.get_full_name|default:notiz.erstellt_von.username }}</div>
+                    </div>
+                    <div class="row">
+                        <div class="col-sm-4"><strong>Erstellt am:</strong></div>
+                        <div class="col-sm-8">{{ notiz.erstellt_am|date:"d.m.Y H:i" }}</div>
+                    </div>
+                    <div class="row">
+                        <div class="col-sm-4"><strong>Zuletzt geändert:</strong></div>
+                        <div class="col-sm-8">{{ notiz.geaendert_am|date:"d.m.Y H:i" }}</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

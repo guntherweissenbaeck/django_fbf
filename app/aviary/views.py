@@ -14,6 +14,29 @@ def aviary_all(request):
 
 
 @login_required(login_url="account_login")
+def aviary_create(request):
+    """Create a new aviary."""
+    form = AviaryEditForm(request.POST or None)
+    if request.method == "POST":
+        if form.is_valid():
+            aviary = form.save(commit=False)
+            if request.user.is_authenticated:
+                aviary.created_by = request.user
+            aviary.save()
+            
+            # Handle different save options
+            if 'save_and_add' in request.POST:
+                return redirect("aviary_create")  # Redirect to create another
+            elif 'save_and_continue' in request.POST:
+                return redirect("aviary_single", id=aviary.id)  # Redirect to edit the created aviary
+            else:
+                return redirect("aviary_all")  # Default: go to list
+
+    context = {"form": form, "is_create": True}
+    return render(request, "aviary/aviary_form.html", context)
+
+
+@login_required(login_url="account_login")
 def aviary_single(request, id):
     aviary = Aviary.objects.get(id=id)
     birds = FallenBird.objects.filter(aviary_id=id).order_by("created")

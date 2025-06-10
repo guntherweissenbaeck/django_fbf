@@ -1,6 +1,9 @@
-{% extends "base.html" %}
-{% load static %}
+{% extends "base.html"    </div>
+</div>
+
+{% endblock content %}load static %}
 {% load crispy_forms_tags %}
+{% load notizen_tags %}
 {% block content %}
 <h3>Buchung bearbeiten</h3>
 <div class="row mt-3">
@@ -21,4 +24,8 @@
         </p>
     </div>
 </div>
+
+<!-- Notizen für diese Buchung -->
+{% show_object_notizen costs %}
+
 {% endblock content %}
