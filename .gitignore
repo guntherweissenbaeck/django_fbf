@@ -185,3 +185,5 @@ app/staticfiles
 app/media/reports/csv/*
 
 TODO.md
+pre_migration_backup_*.sql
+fbf-backup.sql
