@@ -1,4 +1,5 @@
 from django.views.generic import TemplateView
+from django.contrib.auth.mixins import LoginRequiredMixin
 from django.db.models import Count, Q
 from django.utils import timezone
 from datetime import datetime
@@ -6,7 +7,7 @@ from bird.models import FallenBird, Bird, BirdStatus, Circumstance
 from .models import StatisticIndividual, StatisticYearGroup, StatisticTotalGroup, StatisticConfiguration
 
 
-class StatisticView(TemplateView):
+class StatisticView(LoginRequiredMixin, TemplateView):
     template_name = 'statistic/overview.html'
     
     def get_context_data(self, **kwargs):
