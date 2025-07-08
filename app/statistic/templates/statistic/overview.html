@@ -122,12 +122,10 @@
     /* Segmentierte Balken für Vogelarten - neues horizontales Layout */
     .bird-bar {
         display: flex;
-        margin-bottom: 15px;
+        margin-bottom: 1%;
         align-items: center;
         clear: both;
         overflow: hidden;
-        padding: 10px 0;
-        border-bottom: 1px solid #e9ecef;
     }
     
     .bird-bar:last-child {
@@ -166,6 +164,8 @@
         transition: all 0.3s ease;
         cursor: pointer;
         position: relative;
+        min-width: 1px;
+        display: block;
     }
     
     .bird-bar-segment:hover {
@@ -195,9 +195,9 @@
     }
     
     .total-info {
-        margin-top: 8px;
+        margin-bottom: 8px;
         padding-top: 5px;
-        border-top: 1px solid #dee2e6;
+        border-bottom: 1px solid #dee2e6;
         font-size: 0.85rem;
     }
     
@@ -395,11 +395,11 @@
                             
                             <!-- Balkendiagramm in der Mitte -->
                             <div class="bird-bar-container">
-                                <div class="bird-bar-segments" style="width: {{ bird.total_bar_width }}%;">
+                                <div class="bird-bar-segments">
                                     {% for group_data in bird.groups %}
                                     {% if group_data.count > 0 %}
                                     <div class="bird-bar-segment" 
-                                         style="width: {{ group_data.percentage }}%; background-color: {{ group_data.color }};" 
+                                         style="width: {{ group_data.absolute_width }}%; background-color: {{ group_data.color }};" 
                                          title="{{ group_data.name }}: {{ group_data.count }} ({{ group_data.percentage }}%)">
                                     </div>
                                     {% endif %}

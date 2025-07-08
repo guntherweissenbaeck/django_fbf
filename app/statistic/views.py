@@ -131,14 +131,15 @@ class StatisticView(TemplateView):
             max_count = bird_stats[0]['total']  # Höchste Anzahl (wird 100% der Balkenbreite)
             
             for bird in bird_stats:
-                # Berechne Balkenbreite für Gesamtanzahl
+                # Berechne Balkenbreite für Gesamtanzahl (proportional zur häufigsten Art)
                 total_bar_width = (bird['total'] / max_count) * 100 if max_count > 0 else 0
                 bird['total_bar_width'] = f"{total_bar_width:.1f}".replace(',', '.')
                 
-                # Berechne Balkenbreiten für jede Gruppe
+                # Berechne absolute Segmentbreiten (bezogen auf die gesamte verfügbare Container-Breite)
                 for group_data in bird['groups']:
-                    group_bar_width = (group_data['count'] / max_count) * 100 if max_count > 0 else 0
-                    group_data['bar_width'] = f"{group_bar_width:.1f}".replace(',', '.')
+                    # Absolute Breite = (Anteil dieser Gruppe / 100) * Gesamtbalkenbreite
+                    absolute_width = (group_data['percentage'] / 100) * total_bar_width
+                    group_data['absolute_width'] = f"{absolute_width:.1f}".replace(',', '.')
         
         context['bird_stats'] = bird_stats
         
