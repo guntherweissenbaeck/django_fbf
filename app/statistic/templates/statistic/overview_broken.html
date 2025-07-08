@@ -1,0 +1,854 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block head_title %}Statistik - Fallen Birdy{% endblock %}
+
+{% block header %}
+<style>
+    .stats-card {
+        background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+        border-radius: 15px;
+        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        transition: transform 0.3s ease, box-shadow 0.3s ease;
+    }
+    
+    .stats-card:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 8px 15px rgba(0, 0, 0, 0.2);
+    }
+    
+    .stats-number {
+        font-size: 2.5rem;
+        font-weight: bold;
+        color: #2c3e50;
+    }
+    
+    .chart-container {
+        position: static; /* Changed from relative */
+        min-height: 400px; /* Changed from fixed height to min-height */
+        width: 100%;
+        margin: 20px 0;
+        /* Ensure proper flow */
+        overflow: visible;
+        clear: both;
+    }
+    
+    .bird-bar {
+        display: flex;
+        margin-bottom: 15px;
+        align-items: center;
+        /* Ensure proper clearing */
+        clear: both;
+        overflow: hidden; /* Contain floated elements */
+    }
+    
+    .bird-name {
+        width: 200px;
+        font-weight: bold;
+        text-align: right;
+        padding-right: 15px;
+        font-size: 0.9rem;
+        flex-shrink: 0; /* Prevent shrinking */
+    }
+    
+    .bar-container {
+        flex-grow: 1;
+        position: relative;
+        height: 30px;
+        background-color: #f8f9fa;
+        border-radius: 15px;
+        overflow: hidden;
+        border: 1px solid #dee2e6;
+        display: flex; /* Changed to flex instead of block */
+        align-items: stretch;
+    }
+    
+    /* Remove the clearfix as we're using flexbox now */
+    .bar-container::after {
+        display: none;
+    }
+    
+    .bar-rescued {
+        background: linear-gradient(90deg, #28a745, #20c997);
+        height: 100%;
+        position: relative;
+        min-width: 2px; /* Mindestbreite für Sichtbarkeit */
+        border-radius: 15px 0 0 15px; /* Runde nur die linke Seite */
+        flex: none; /* Use flex instead of float */
+    }
+    
+    .bar-deceased {
+        background: linear-gradient(90deg, #dc3545, #e74c3c);
+        height: 100%;
+        position: relative;
+        min-width: 2px; /* Mindestbreite für Sichtbarkeit */
+        flex: none; /* Use flex instead of float */
+    }
+    
+    .bar-in-treatment {
+        background: linear-gradient(90deg, #ffc107, #ffb300);
+        height: 100%;
+        position: relative;
+        min-width: 2px; /* Mindestbreite für Sichtbarkeit */
+        flex: none; /* Use flex instead of float */
+    }
+    
+    /* Generic bar segment class for dynamic segments */
+    .bar-segment {
+        height: 100%;
+        position: relative;
+        min-width: 2px;
+        flex: none; /* Use flex instead of float */
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+    
+    .bar-text {
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        color: white;
+        font-weight: bold;
+        font-size: 0.8rem;
+        text-shadow: 1px 1px 1px rgba(0,0,0,0.5);
+    }
+    
+    .bar-numbers {
+        width: 120px;
+        text-align: center;
+        font-size: 0.9rem;
+        padding-left: 10px;
+    }
+    
+    .legend {
+        display: flex;
+        justify-content: center;
+        gap: 30px;
+        margin: 20px 0;
+    }
+    
+    .legend-item {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+    }
+    
+    .legend-color {
+        width: 20px;
+        height: 20px;
+        border-radius: 4px;
+    }
+    
+    .legend-rescued {
+        background: linear-gradient(90deg, #28a745, #20c997);
+    }
+    
+    .legend-deceased {
+        background: linear-gradient(90deg, #dc3545, #e74c3c);
+    }
+    
+    .section-header {
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        color: white;
+        padding: 15px 20px;
+        border-radius: 10px;
+        margin: 30px 0 20px 0;
+        /* Ensure proper stacking and flow */
+        position: static;
+        z-index: 1;
+    }
+    
+    .collapsible {
+        cursor: pointer;
+        user-select: none;
+        position: static; /* Changed from relative to static */
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        /* Ensure no overlap issues */
+        overflow: visible;
+    }
+    
+    .collapsible:hover {
+        background: linear-gradient(135deg, #5a6fd8 0%, #6a4190 100%);
+    }
+    
+    .collapsible::after {
+        content: '▼';
+        font-size: 1.2rem;
+        font-weight: bold;
+        color: rgba(255, 255, 255, 0.9);
+        transition: transform 0.3s ease;
+        margin-left: 10px;
+    }
+    
+    .collapsible.collapsed::after {
+        transform: rotate(-90deg);
+    }
+    
+    /* Ensure collapse sections don't overlap */
+    .collapse {
+        position: static;
+        z-index: auto;
+        overflow: visible;
+    }
+    
+    /* Fix for proper section spacing and flow */
+    .collapse .card {
+        margin-bottom: 20px;
+        position: static;
+        z-index: auto;
+    }
+    
+    .main-container {
+        min-height: calc(100vh - 200px);
+        padding-bottom: 100px;
+        /* Ensure proper layout flow */
+        overflow: visible;
+        position: relative;
+    }
+    
+    /* Ensure proper section spacing without overlap */
+    .section-header + .collapse,
+    .section-header + .row,
+    .section-header + .card {
+        clear: both;
+        margin-top: 0;
+    }
+    
+    /* Bootstrap collapse override to ensure proper flow */
+    .collapse:not(.show) {
+        display: none !important;
+    }
+    
+    .collapse.show {
+        display: block !important;
+    }
+    
+    /* Prevent any absolute positioning issues */
+    .card, .card-body {
+        position: static;
+        z-index: auto;
+    }
+    
+    /* Pie Chart Styles */
+    .pie-chart {
+        position: relative;
+        width: 300px;
+        height: 300px;
+        border-radius: 50%;
+        margin: 0 auto;
+        background: #f8f9fa; /* Default background */
+        border: 2px solid #dee2e6;
+        box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+    }
+    
+    .pie-legend {
+        margin-top: 20px;
+    }
+    
+    .pie-legend-item {
+        display: flex;
+        align-items: center;
+        margin-bottom: 8px;
+        font-size: 0.9rem;
+    }
+    
+    .pie-legend-color {
+        width: 16px;
+        height: 16px;
+        border-radius: 4px;
+        margin-right: 10px;
+        flex-shrink: 0;
+    }
+    
+    .pie-legend-text {
+        flex-grow: 1;
+    }
+    
+    .pie-legend-value {
+        font-weight: bold;
+        margin-left: 10px;
+    }
+    
+    /* Fallback for pie charts if conic-gradient fails */
+    .pie-chart-fallback {
+        display: none;
+        max-width: 300px;
+        margin: 0 auto;
+    }
+    
+    .pie-chart-fallback .bar-item {
+        display: flex;
+        align-items: center;
+        margin-bottom: 8px;
+        padding: 8px;
+        border-radius: 4px;
+        background: #f8f9fa;
+    }
+    
+    .pie-chart-fallback .bar-color {
+        width: 20px;
+        height: 20px;
+        border-radius: 50%;
+        margin-right: 10px;
+        flex-shrink: 0;
+    }
+    
+    .pie-chart-fallback .bar-info {
+        flex-grow: 1;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+    }
+    
+    .pie-chart-fallback .bar-progress {
+        flex-grow: 1;
+        height: 8px;
+        background: #e9ecef;
+        border-radius: 4px;
+        margin: 0 10px;
+        overflow: hidden;
+    }
+    
+    .pie-chart-fallback .bar-fill {
+        height: 100%;
+        border-radius: 4px;
+        transition: width 0.3s ease;
+    }
+    
+    /* Specific fixes for the bird statistics and circumstances sections */
+    #birdStatsSection, #circumstancesSection {
+        margin-bottom: 30px; /* Ensure space after each section */
+        clear: both;
+    }
+    
+    #birdStatsSection .card, #circumstancesSection .card {
+        margin-bottom: 20px;
+        overflow: visible;
+    }
+    
+    /* Fix any potential z-index issues */
+    .section-header.collapsible {
+        z-index: 1;
+        position: relative;
+    }
+    
+    .collapse.show {
+        z-index: auto;
+        position: static;
+    }
+    
+    /* Ensure footer doesn't overlap */
+    footer {
+        clear: both;
+        margin-top: 50px;
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<!-- Check if user is authenticated - if not, show login prompt -->
+{% if not user.is_authenticated %}
+    <div class="alert alert-warning text-center" role="alert">
+        <h4>Anmeldung erforderlich</h4>
+        <p>Bitte melden Sie sich an, um die Statistiken zu sehen.</p>
+        <a href="/admin/login/?next={{ request.get_full_path }}" class="btn btn-primary">Anmelden</a>
+    </div>
+{% else %}
+<div class="main-container">
+    <div class="container-fluid py-4">
+    <div class="row">
+        <div class="col-12">
+            <h1 class="text-center mb-4">
+                <i class="fas fa-chart-bar"></i> Statistik Übersicht
+            </h1>
+        </div>
+    </div>
+
+    <!-- 1. Übersicht aktuelles Jahr -->
+    <div class="section-header">
+        <h2 class="mb-0">
+            <i class="fas fa-calendar-alt"></i> Übersicht {{ current_year }}
+        </h2>
+    </div>
+    
+    <div class="row g-4 mb-4">
+        {% if config.show_year_total_patients %}
+            <div class="col-lg-4 col-md-6">
+                <div class="card stats-card h-100">
+                    <div class="card-body text-center">
+                        <h5 class="card-title text-primary">Aufgenommene Patienten</h5>
+                        <div class="stats-number text-primary">{{ patients_this_year }}</div>
+                        <p class="card-text text-muted">dieses Jahr ({{ current_year }})</p>
+                    </div>
+                </div>
+            </div>
+        {% endif %}
+        
+        <!-- Dynamische Karten basierend auf konfigurierten Jahres-Gruppen -->
+        {% for group in year_summary %}
+            <div class="col-lg-4 col-md-6">
+                <div class="card stats-card h-100">
+                    <div class="card-body text-center">
+                        <h5 class="card-title" style="color: {{ group.color }};">{{ group.name }}</h5>
+                        <div class="stats-number" style="color: {{ group.color }};">{{ group.count }}</div>
+                        <p class="card-text text-muted">dieses Jahr ({{ current_year }})</p>
+                    </div>
+                </div>
+            </div>
+        {% endfor %}
+    </div>
+
+    <!-- 2. Übersicht alle Jahre -->
+    <div class="section-header">
+        <h2 class="mb-0">
+            <i class="fas fa-globe"></i> Gesamtübersicht (alle Jahre)
+        </h2>
+    </div>
+    
+    <div class="row g-4 mb-4">
+        {% if config.show_total_patients %}
+            <div class="col-lg-4 col-md-6">
+                <div class="card stats-card h-100">
+                    <div class="card-body text-center">
+                        <h5 class="card-title text-info">Patienten insgesamt</h5>
+                        <div class="stats-number text-info">{{ total_patients }}</div>
+                        <p class="card-text text-muted">seit Beginn der Aufzeichnungen</p>
+                    </div>
+                </div>
+            </div>
+        {% endif %}
+        
+        <!-- Dynamische Gesamtstatistik basierend auf konfigurierten Gesamt-Gruppen -->
+        {% for group in total_summary %}
+            <div class="col-lg-4 col-md-6">
+                <div class="card stats-card h-100">
+                    <div class="card-body text-center">
+                        <h5 class="card-title" style="color: {{ group.color }};">{{ group.name }}</h5>
+                        <div class="stats-number" style="color: {{ group.color }};">{{ group.count }}</div>
+                        <p class="card-text text-muted">
+                            {% if total_patients > 0 %}
+                                ({{ group.count }}/{{ total_patients }} = 
+                                {% widthratio group.count total_patients 100 %}%)
+                            {% endif %}
+                        </p>
+                    </div>
+                </div>
+            </div>
+        {% endfor %}
+    </div>
+
+    <!-- 3. Statistik pro Vogelart -->
+    <div class="section-header collapsible" data-bs-toggle="collapse" data-bs-target="#birdStatsSection" aria-expanded="false">
+        <h2 class="mb-0">
+            <i class="fas fa-dove"></i> Statistik pro Vogelart
+        </h2>
+    </div>
+    
+    <div class="collapse" id="birdStatsSection">
+        <div class="card">
+            <div class="card-body">
+                {% if bird_stats %}
+                    <!-- Dynamische Legende basierend auf konfigurierten Individuen-Gruppen -->
+                    <div class="legend">
+                        {% for group in statistic_individuals %}
+                            <div class="legend-item">
+                                <div class="legend-color" style="background: {{ group.color }};"></div>
+                                <span>{{ group.name }} ({{ group.get_status_names }})</span>
+                            </div>
+                        {% endfor %}
+                    </div>
+                    
+                    <div class="chart-container">
+                        {% for bird in bird_stats %}
+                            <div class="bird-bar">
+                                <div class="bird-name" title="{{ bird.species }}">
+                                    {{ bird.name }}
+                                    {% if bird.species and bird.species != 'Unbekannt' %}
+                                        <br><small class="text-muted">{{ bird.species }}</small>
+                                    {% endif %}
+                                </div>
+                                <div class="bar-container">
+                                    <!-- Dynamische Balken basierend auf konfigurierten Gruppen -->
+                                    {% for group_data in bird.groups %}
+                                        {% if group_data.count > 0 %}
+                                            <div class="bar-segment" style="
+                                                width: {{ group_data.bar_width }}%; 
+                                                background: {{ group_data.color }};
+                                            ">
+                                                {% if group_data.bar_width|floatformat:0|add:0 > 15 %}
+                                                    <div class="bar-text">{{ group_data.count }}</div>
+                                                {% endif %}
+                                            </div>
+                                        {% endif %}
+                                    {% endfor %}
+                                </div>
+                                <div class="bar-numbers">
+                                    <strong>{{ bird.total }}</strong>
+                                    <br>
+                                    {% for group_data in bird.groups %}
+                                        {% if group_data.count > 0 %}
+                                            <small style="color: {{ group_data.color }};">{{ group_data.count }}</small>{% if not forloop.last %} / {% endif %}
+                                        {% endif %}
+                                    {% endfor %}
+                                </div>
+                            </div>
+                        {% endfor %}
+                    </div>
+                {% else %}
+                    <div class="text-center text-muted py-5">
+                        <i class="fas fa-info-circle fa-3x mb-3"></i>
+                        <h5>Keine Daten verfügbar</h5>
+                        <p>Es wurden noch keine Patienten erfasst.</p>
+                    </div>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+
+    <!-- 4. Fundumstände -->
+    <div class="section-header collapsible" data-bs-toggle="collapse" data-bs-target="#circumstancesSection" aria-expanded="false">
+        <h2 class="mb-0">
+            <i class="fas fa-search-location"></i> Fundumstände
+        </h2>
+    </div>
+    
+    <div class="collapse" id="circumstancesSection">
+        <div class="card">
+            <div class="card-body">
+                <div class="row">
+                    <!-- Fundumstände aktuelles Jahr -->
+                    <div class="col-lg-6">
+                        <h4 class="text-center mb-4">
+                            <i class="fas fa-calendar-alt"></i> {{ current_year }}
+                            <small class="text-muted">({{ circumstances_this_year_total }} Patienten)</small>
+                        </h4>
+                        {% if circumstances_this_year %}
+                            <div class="pie-chart" id="pieChartThisYear">
+                                <div style="display: flex; align-items: center; justify-content: center; height: 100%; color: #6c757d; text-align: center; flex-direction: column;">
+                                    <i class="fas fa-chart-pie fa-3x mb-2" style="opacity: 0.3;"></i>
+                                    <small>Diagramm wird geladen...</small>
+                                </div>
+                            </div>
+                            <!-- Debug: Data available with {{ circumstances_this_year|length }} items -->
+                            <div class="pie-legend">
+                                {% for item in circumstances_this_year %}
+                                    <div class="pie-legend-item">
+                                        <div class="pie-legend-color" style="background-color: {{ item.color }};"></div>
+                                        <div class="pie-legend-text">{{ item.name }}</div>
+                                        <div class="pie-legend-value">{{ item.count }} ({{ item.percentage }}%)</div>
+                                    </div>
+                                {% endfor %}
+                            </div>
+                        {% else %}
+                            <div class="text-center text-muted py-5">
+                                <i class="fas fa-info-circle fa-2x mb-3"></i>
+                                <h6>Keine Fundumstände erfasst</h6>
+                                <p>Für dieses Jahr wurden noch keine Fundumstände dokumentiert.</p>
+                            </div>
+                        {% endif %}
+                    </div>
+                    
+                    <!-- Fundumstände alle Jahre -->
+                    <div class="col-lg-6">
+                        <h4 class="text-center mb-4">
+                            <i class="fas fa-globe"></i> Alle Jahre
+                            <small class="text-muted">({{ circumstances_all_time_total }} Patienten)</small>
+                        </h4>
+                        {% if circumstances_all_time %}
+                            <div class="pie-chart" id="pieChartAllTime">
+                                <div style="display: flex; align-items: center; justify-content: center; height: 100%; color: #6c757d; text-align: center; flex-direction: column;">
+                                    <i class="fas fa-chart-pie fa-3x mb-2" style="opacity: 0.3;"></i>
+                                    <small>Diagramm wird geladen...</small>
+                                </div>
+                            </div>
+                            <div class="pie-legend">
+                                {% for item in circumstances_all_time %}
+                                    <div class="pie-legend-item">
+                                        <div class="pie-legend-color" style="background-color: {{ item.color }};"></div>
+                                        <div class="pie-legend-text">{{ item.name }}</div>
+                                        <div class="pie-legend-value">{{ item.count }} ({{ item.percentage }}%)</div>
+                                    </div>
+                                {% endfor %}
+                            </div>
+                        {% else %}
+                            <div class="text-center text-muted py-5">
+                                <i class="fas fa-info-circle fa-2x mb-3"></i>
+                                <h6>Keine Fundumstände erfasst</h6>
+                                <p>Es wurden noch keine Fundumstände dokumentiert.</p>
+                            </div>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+</div> <!-- Close main-container -->
+{% endif %} <!-- Close authentication check -->
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    // Initialize Bootstrap collapse functionality properly
+    const collapsibles = document.querySelectorAll('.collapsible');
+    
+    collapsibles.forEach(function(collapsible) {
+        // Handle the visual state change
+        collapsible.addEventListener('click', function() {
+            this.classList.toggle('collapsed');
+        });
+        
+        // Listen to Bootstrap collapse events to ensure proper layout
+        const targetId = collapsible.getAttribute('data-bs-target');
+        if (targetId) {
+            const targetElement = document.querySelector(targetId);
+            if (targetElement) {
+                // When collapse is shown, remove collapsed class
+                targetElement.addEventListener('shown.bs.collapse', function() {
+                    collapsible.classList.remove('collapsed');
+                });
+                
+                // When collapse is hidden, add collapsed class
+                targetElement.addEventListener('hidden.bs.collapse', function() {
+                    collapsible.classList.add('collapsed');
+                });
+                
+                // Force layout recalculation on collapse events
+                targetElement.addEventListener('show.bs.collapse', function() {
+                    // Ensure no fixed positioning interferes
+                    setTimeout(() => {
+                        window.dispatchEvent(new Event('resize'));
+                    }, 50);
+                });
+                
+                targetElement.addEventListener('hide.bs.collapse', function() {
+                    // Ensure layout reflow
+                    setTimeout(() => {
+                        window.dispatchEvent(new Event('resize'));
+                    }, 350); // After Bootstrap animation completes
+                });
+            }
+        }
+    });
+    
+    // Initially set collapsed state
+    const birdStatsSection = document.getElementById('birdStatsSection');
+    const birdStatsHeader = document.querySelector('[data-bs-target="#birdStatsSection"]');
+    if (birdStatsSection && birdStatsHeader) {
+        birdStatsHeader.classList.add('collapsed');
+    }
+    
+    const circumstancesSection = document.getElementById('circumstancesSection');
+    const circumstancesHeader = document.querySelector('[data-bs-target="#circumstancesSection"]');
+    if (circumstancesSection && circumstancesHeader) {
+        circumstancesHeader.classList.add('collapsed');
+    }
+    
+    // Create pie charts using SVG (more reliable than CSS)
+    function createPieChart(elementId, data) {
+        const element = document.getElementById(elementId);
+        if (!element) {
+            console.error('Pie chart element not found:', elementId);
+            return;
+        }
+        
+        if (!data || data.length === 0) {
+            console.warn('No data for pie chart:', elementId);
+            element.innerHTML = '<div style="display: flex; align-items: center; justify-content: center; height: 100%; color: #6c757d;">Keine Daten</div>';
+            return;
+        }
+        
+        console.log('Creating SVG pie chart for:', elementId, data);
+        
+        // Filter valid data
+        const validData = data.filter(item => item.percentage > 0).sort((a, b) => b.percentage - a.percentage);
+        
+        if (validData.length === 0) {
+            element.innerHTML = '<div style="display: flex; align-items: center; justify-content: center; height: 100%; color: #6c757d;">Keine Daten</div>';
+            return;
+        }
+        
+        // Create SVG
+        const size = 200;
+        const radius = 80;
+        const centerX = size / 2;
+        const centerY = size / 2;
+        
+        let svg = `<svg width="${size}" height="${size}" viewBox="0 0 ${size} ${size}" style="transform: rotate(-90deg);">`;
+        
+        let currentAngle = 0;
+        
+        validData.forEach((item, index) => {
+            const angle = (item.percentage / 100) * 360;
+            const startAngle = currentAngle;
+            const endAngle = currentAngle + angle;
+            
+            // Convert to radians
+            const startRad = (startAngle * Math.PI) / 180;
+            const endRad = (endAngle * Math.PI) / 180;
+            
+            // Calculate path
+            const x1 = centerX + radius * Math.cos(startRad);
+            const y1 = centerY + radius * Math.sin(startRad);
+            const x2 = centerX + radius * Math.cos(endRad);
+            const y2 = centerY + radius * Math.sin(endRad);
+            
+            const largeArcFlag = angle > 180 ? 1 : 0;
+            
+            const pathData = [
+                `M ${centerX} ${centerY}`,
+                `L ${x1} ${y1}`,
+                `A ${radius} ${radius} 0 ${largeArcFlag} 1 ${x2} ${y2}`,
+                'Z'
+            ].join(' ');
+            
+            svg += `<path d="${pathData}" fill="${item.color}" stroke="white" stroke-width="2">`;
+            svg += `<title>${item.name}: ${item.percentage}%</title>`;
+            svg += `</path>`;
+            
+            currentAngle = endAngle;
+        });
+        
+        svg += '</svg>';
+        
+        // Add percentage labels
+        let labelsHtml = '<div style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; pointer-events: none;">';
+        currentAngle = 0;
+        
+        validData.forEach((item, index) => {
+            if (item.percentage >= 8) { // Only show labels for significant segments
+                const angle = (item.percentage / 100) * 360;
+                const midAngle = currentAngle + (angle / 2);
+                const midRad = (midAngle * Math.PI) / 180;
+                
+                const labelRadius = radius * 0.7;
+                const labelX = 50 + (labelRadius / radius) * 40 * Math.cos(midRad);
+                const labelY = 50 + (labelRadius / radius) * 40 * Math.sin(midRad);
+                
+                labelsHtml += `<div style="
+                    position: absolute;
+                    left: ${labelX}%;
+                    top: ${labelY}%;
+                    transform: translate(-50%, -50%);
+                    color: white;
+                    font-weight: bold;
+                    font-size: 12px;
+                    text-shadow: 1px 1px 2px rgba(0,0,0,0.7);
+                    pointer-events: none;
+                ">${Math.round(item.percentage)}%</div>`;
+            }
+            currentAngle += (item.percentage / 100) * 360;
+        });
+        
+        labelsHtml += '</div>';
+        
+        element.style.position = 'relative';
+        element.innerHTML = svg + labelsHtml;
+    }
+     // Function to initialize pie charts when elements are visible (LAZY LOADING)
+    function initializePieCharts() {
+        console.log('Lazy loading pie charts - starting initialization...');
+        
+        // Clear existing content and show loading state
+        const thisYearElement = document.getElementById('pieChartThisYear');
+        const allTimeElement = document.getElementById('pieChartAllTime');
+        
+        if (thisYearElement) {
+            thisYearElement.innerHTML = '<div style="display: flex; align-items: center; justify-content: center; height: 100%; color: #007bff;"><i class="fas fa-spinner fa-spin fa-2x"></i></div>';
+        }
+        if (allTimeElement) {
+            allTimeElement.innerHTML = '<div style="display: flex; align-items: center; justify-content: center; height: 100%; color: #007bff;"><i class="fas fa-spinner fa-spin fa-2x"></i></div>';
+        }
+        
+        // Small delay to show loading state, then generate charts
+        setTimeout(() => {
+            // Generate pie chart data for this year
+            {% if circumstances_this_year %}
+                const thisYearData = [
+                    {% for item in circumstances_this_year %}
+                        {
+                            name: '{{ item.name|escapejs }}',
+                            percentage: {{ item.percentage }},
+                            color: '{{ item.color }}'
+                        }{% if not forloop.last %},{% endif %}
+                    {% endfor %}
+                ];
+                console.log('This year data loaded:', thisYearData);
+                createPieChart('pieChartThisYear', thisYearData);
+            {% else %}
+                if (thisYearElement) {
+                    thisYearElement.innerHTML = '<div style="display: flex; align-items: center; justify-content: center; height: 100%; color: #6c757d;">Keine Daten für dieses Jahr</div>';
+                }
+            {% endif %}
+
+            // Generate pie chart data for all time
+            {% if circumstances_all_time %}
+                const allTimeData = [
+                    {% for item in circumstances_all_time %}
+                        {
+                            name: '{{ item.name|escapejs }}',
+                            percentage: {{ item.percentage }},
+                            color: '{{ item.color }}'
+                        }{% if not forloop.last %},{% endif %}
+                    {% endfor %}
+                ];
+                console.log('All time data loaded:', allTimeData);
+                createPieChart('pieChartAllTime', allTimeData);
+            {% else %}
+                if (allTimeElement) {
+                    allTimeElement.innerHTML = '<div style="display: flex; align-items: center; justify-content: center; height: 100%; color: #6c757d;">Keine Daten verfügbar</div>';
+                }
+            {% endif %}
+        }, 300);
+    }
+
+    // Set initial placeholder content for pie charts (before lazy loading)
+    function setPlaceholderContent() {
+        const thisYearElement = document.getElementById('pieChartThisYear');
+        const allTimeElement = document.getElementById('pieChartAllTime');
+        
+        const placeholderHtml = '<div style="display: flex; align-items: center; justify-content: center; height: 100%; color: #6c757d;"><i class="fas fa-chart-pie fa-2x"></i><span style="margin-left: 10px;">Klicken Sie auf "Fundumstände" um die Diagramme zu laden</span></div>';
+        
+        if (thisYearElement) {
+            thisYearElement.innerHTML = placeholderHtml;
+        }
+        if (allTimeElement) {
+            allTimeElement.innerHTML = placeholderHtml;
+        }
+    }
+
+    // Initialize placeholders first
+    setPlaceholderContent();
+
+    // Initialize pie charts ONLY when the circumstances section becomes visible (LAZY LOADING)
+    const circumstancesSection = document.getElementById('circumstancesSection');
+    if (circumstancesSection) {
+        let chartsInitialized = false;
+        
+        // Listen for when the section is shown
+        circumstancesSection.addEventListener('shown.bs.collapse', function() {
+            console.log('Circumstances section expanded - initializing charts');
+            if (!chartsInitialized) {
+                initializePieCharts();
+                chartsInitialized = true;
+            }
+        });
+        
+        // Check if section is already visible on page load
+        if (circumstancesSection.classList.contains('show')) {
+            console.log('Circumstances section already visible - initializing charts');
+            setTimeout(() => {
+                initializePieCharts();
+                chartsInitialized = true;
+            }, 500);
+        }
+    } else {
+        console.error('Circumstances section not found');
+    }
+});
+</script>
+{% endif %} <!-- Close authentication check -->
+{% endblock %}
