@@ -302,6 +302,61 @@
         opacity: 0.5;
         cursor: not-allowed;
     }
+    
+    /* Responsive Jahr-Navigation */
+    @media (max-width: 768px) {
+        .section-header {
+            flex-direction: column;
+            gap: 15px;
+            text-align: center;
+        }
+        
+        .year-navigation {
+            order: 2;
+        }
+        
+        .collapsible::after {
+            order: 3;
+            margin-left: 0;
+        }
+    }
+    
+    /* CSS-Pfeile für Jahr-Navigation */
+    .arrow {
+        border: solid white;
+        border-width: 0 3px 3px 0;
+        display: inline-block;
+        padding: 3px;
+    }
+
+    .right {
+        transform: rotate(-45deg);
+        -webkit-transform: rotate(-45deg);
+    }
+
+    .left {
+        transform: rotate(135deg);
+        -webkit-transform: rotate(135deg);
+    }
+    
+    /* Pfeile für disabled buttons */
+    .btn:disabled .arrow {
+        border-color: rgba(255, 255, 255, 0.5);
+    }
+    
+    /* Pfeile für secondary buttons in Card-Header */
+    .btn-outline-secondary .arrow,
+    .btn-secondary .arrow {
+        border-color: #6c757d;
+    }
+    
+    .btn-outline-secondary:hover .arrow {
+        border-color: white;
+    }
+    
+    .btn-outline-secondary:disabled .arrow {
+        border-color: rgba(108, 117, 125, 0.5);
+    }
 </style>
 {% endblock %}
 
@@ -324,11 +379,11 @@
             <div class="year-navigation d-flex align-items-center">
                 {% if can_go_previous %}
                     <a href="?year={{ previous_year }}" class="btn btn-outline-light me-2" title="Vorheriges Jahr ({{ previous_year }})">
-                        <i class="fas fa-chevron-left"></i>
+                        <i class="arrow left"></i>
                     </a>
                 {% else %}
                     <button class="btn btn-outline-light me-2" disabled title="Keine Daten vor {{ earliest_year }}">
-                        <i class="fas fa-chevron-left"></i>
+                        <i class="arrow left"></i>
                     </button>
                 {% endif %}
                 
@@ -336,11 +391,11 @@
                 
                 {% if can_go_next %}
                     <a href="?year={{ next_year }}" class="btn btn-outline-light ms-2" title="Nächstes Jahr ({{ next_year }})">
-                        <i class="fas fa-chevron-right"></i>
+                        <i class="arrow right"></i>
                     </a>
                 {% else %}
                     <button class="btn btn-outline-light ms-2" disabled title="Aktuelles Jahr erreicht">
-                        <i class="fas fa-chevron-right"></i>
+                        <i class="arrow right"></i>
                     </button>
                 {% endif %}
                 
@@ -548,7 +603,12 @@ document.addEventListener('DOMContentLoaded', function() {
     const collapsibles = document.querySelectorAll('.collapsible');
     
     collapsibles.forEach(function(collapsible) {
-        collapsible.addEventListener('click', function() {
+        collapsible.addEventListener('click', function(e) {
+            // Verhindere Collapse-Toggle wenn auf Jahr-Navigation geklickt wird
+            if (e.target.closest('.year-navigation')) {
+                return;
+            }
+            
             this.classList.toggle('collapsed');
         });
         
