@@ -1,0 +1,311 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block head_title %}Statistik - Fallen Birdy{% endblock %}
+
+{% block header %}
+<style>
+    .stats-card {
+        background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+        border-radius: 15px;
+        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        transition: transform 0.3s ease, box-shadow 0.3s ease;
+    }
+    
+    .stats-card:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 8px 15px rgba(0, 0, 0, 0.2);
+    }
+    
+    .stats-number {
+        font-size: 2.5rem;
+        font-weight: bold;
+        color: #2c3e50;
+    }
+    
+    .chart-container {
+        position: relative;
+        height: 400px;
+        width: 100%;
+        margin: 20px 0;
+    }
+    
+    .bird-bar {
+        display: flex;
+        margin-bottom: 1%;
+        align-items: center;
+    }
+    
+    .bird-name {
+        width: 200px;
+        font-weight: bold;
+        text-align: right;
+        padding-right: 15px;
+        font-size: 0.9rem;
+    }
+    
+    .bar-container {
+        flex-grow: 1;
+        position: relative;
+        height: 30px;
+        background-color: #f8f9fa;
+        border-radius: 15px;
+        overflow: hidden;
+        border: 1px solid #dee2e6;
+    }
+    
+    .bar-rescued {
+        background: linear-gradient(90deg, #28a745, #20c997);
+        height: 100%;
+        float: left;
+        position: relative;
+    }
+    
+    .bar-deceased {
+        background: linear-gradient(90deg, #dc3545, #e74c3c);
+        height: 100%;
+        float: left;
+        position: relative;
+    }
+    
+    .bar-text {
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        color: white;
+        font-weight: bold;
+        font-size: 0.8rem;
+        text-shadow: 1px 1px 1px rgba(0,0,0,0.5);
+    }
+    
+    .bar-numbers {
+        width: 120px;
+        text-align: center;
+        font-size: 0.9rem;
+        padding-left: 10px;
+    }
+    
+    .legend {
+        display: flex;
+        justify-content: center;
+        gap: 30px;
+        margin: 20px 0;
+    }
+    
+    .legend-item {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+    }
+    
+    .legend-color {
+        width: 20px;
+        height: 20px;
+        border-radius: 4px;
+    }
+    
+    .legend-rescued {
+        background: linear-gradient(90deg, #28a745, #20c997);
+    }
+    
+    .legend-deceased {
+        background: linear-gradient(90deg, #dc3545, #e74c3c);
+    }
+    
+    .section-header {
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        color: white;
+        padding: 15px 20px;
+        border-radius: 10px;
+        margin: 30px 0 20px 0;
+    }
+    
+    .collapsible {
+        cursor: pointer;
+        user-select: none;
+    }
+    
+    .collapsible:hover {
+        background: linear-gradient(135deg, #5a6fd8 0%, #6a4190 100%);
+    }
+    
+    .collapsible::after {
+        content: ' ▼';
+        float: right;
+        transition: transform 0.3s ease;
+    }
+    
+    .collapsible.collapsed::after {
+        transform: rotate(-90deg);
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="container-fluid py-4">
+    <div class="row">
+        <div class="col-12">
+            <h1 class="text-center mb-4">
+                <i class="fas fa-chart-bar"></i> Statistik Übersicht
+            </h1>
+        </div>
+    </div>
+
+    <!-- 1. Übersicht aktuelles Jahr -->
+    <div class="section-header">
+        <h2 class="mb-0">
+            <i class="fas fa-calendar-alt"></i> Übersicht {{ current_year }}
+        </h2>
+    </div>
+    
+    <div class="row g-4 mb-4">
+        <div class="col-lg-4 col-md-6">
+            <div class="card stats-card h-100">
+                <div class="card-body text-center">
+                    <h5 class="card-title text-primary">Aufgenommene Patienten</h5>
+                    <div class="stats-number text-primary">{{ patients_this_year }}</div>
+                    <p class="card-text text-muted">dieses Jahr ({{ current_year }})</p>
+                </div>
+            </div>
+        </div>
+        <div class="col-lg-4 col-md-6">
+            <div class="card stats-card h-100">
+                <div class="card-body text-center">
+                    <h5 class="card-title text-warning">In Behandlung / Auswilderung</h5>
+                    <div class="stats-number text-warning">{{ in_treatment_or_release }}</div>
+                    <p class="card-text text-muted">aktuell aktive Fälle</p>
+                </div>
+            </div>
+        </div>
+        <div class="col-lg-4 col-md-6">
+            <div class="card stats-card h-100">
+                <div class="card-body text-center">
+                    <h5 class="card-title text-success">Gerettete Tiere</h5>
+                    <div class="stats-number text-success">{{ rescued_this_year }}</div>
+                    <p class="card-text text-muted">ausgewildert & übermittelt</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 2. Übersicht alle Jahre -->
+    <div class="section-header">
+        <h2 class="mb-0">
+            <i class="fas fa-globe"></i> Gesamtübersicht (alle Jahre)
+        </h2>
+    </div>
+    
+    <div class="row g-4 mb-4">
+        <div class="col-lg-6 col-md-6">
+            <div class="card stats-card h-100">
+                <div class="card-body text-center">
+                    <h5 class="card-title text-info">Patienten insgesamt</h5>
+                    <div class="stats-number text-info">{{ total_patients }}</div>
+                    <p class="card-text text-muted">seit Beginn der Aufzeichnungen</p>
+                </div>
+            </div>
+        </div>
+        <div class="col-lg-6 col-md-6">
+            <div class="card stats-card h-100">
+                <div class="card-body text-center">
+                    <h5 class="card-title text-success">Erfolgreiche Rettungen</h5>
+                    <div class="stats-number text-success">{{ total_rescued }}</div>
+                    <p class="card-text text-muted">
+                        {% if total_patients > 0 %}
+                            ({{ total_rescued|floatformat:0 }}/{{ total_patients }} = 
+                            {% widthratio total_rescued total_patients 100 %}%)
+                        {% endif %}
+                    </p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 3. Statistik pro Vogelart -->
+    <div class="section-header collapsible" data-bs-toggle="collapse" data-bs-target="#birdStatsSection" aria-expanded="false">
+        <h2 class="mb-0">
+            <i class="fas fa-dove"></i> Statistik pro Vogelart
+        </h2>
+    </div>
+    
+    <div class="collapse" id="birdStatsSection">
+        <div class="card">
+            <div class="card-body">
+                {% if bird_stats %}
+                    <div class="legend">
+                        <div class="legend-item">
+                            <div class="legend-color legend-rescued"></div>
+                            <span>Gerettet (ausgewildert + übermittelt)</span>
+                        </div>
+                        <div class="legend-item">
+                            <div class="legend-color legend-deceased"></div>
+                            <span>Verstorben</span>
+                        </div>
+                    </div>
+                    
+                    <div class="chart-container">
+                        {% for bird in bird_stats %}
+                            <div class="bird-bar">
+                                <div class="bird-name" title="{{ bird.species }}">
+                                    {{ bird.name }}
+                                    {% if bird.species and bird.species != 'Unbekannt' %}
+                                        <br><small class="text-muted">{{ bird.species }}</small>
+                                    {% endif %}
+                                </div>
+                                <div class="bar-container">
+                                    {% if bird.rescued > 0 %}
+                                        <div class="bar-rescued" style="width: {{ bird.rescued_percentage }}%;">
+                                            {% if bird.rescued_percentage > 15 %}
+                                                <div class="bar-text">{{ bird.rescued }}</div>
+                                            {% endif %}
+                                        </div>
+                                    {% endif %}
+                                    {% if bird.deceased > 0 %}
+                                        <div class="bar-deceased" style="width: {{ bird.deceased_percentage }}%;">
+                                            {% if bird.deceased_percentage > 15 %}
+                                                <div class="bar-text">{{ bird.deceased }}</div>
+                                            {% endif %}
+                                        </div>
+                                    {% endif %}
+                                </div>
+                                <div class="bar-numbers">
+                                    <strong>{{ bird.total }}</strong>
+                                    <br>
+                                    <small class="text-success">{{ bird.rescued }}</small> /
+                                    <small class="text-danger">{{ bird.deceased }}</small>
+                                </div>
+                            </div>
+                        {% endfor %}
+                    </div>
+                {% else %}
+                    <div class="text-center text-muted py-5">
+                        <i class="fas fa-info-circle fa-3x mb-3"></i>
+                        <h5>Keine Daten verfügbar</h5>
+                        <p>Es wurden noch keine Patienten erfasst.</p>
+                    </div>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    // Collapsible functionality
+    const collapsibles = document.querySelectorAll('.collapsible');
+    collapsibles.forEach(function(collapsible) {
+        collapsible.addEventListener('click', function() {
+            this.classList.toggle('collapsed');
+        });
+    });
+    
+    // Initially set collapsed state
+    const birdStatsSection = document.getElementById('birdStatsSection');
+    const birdStatsHeader = document.querySelector('[data-bs-target="#birdStatsSection"]');
+    if (birdStatsSection && birdStatsHeader) {
+        birdStatsHeader.classList.add('collapsed');
+    }
+});
+</script>
+{% endblock %}

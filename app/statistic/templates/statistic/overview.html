@@ -1,0 +1,662 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block head_title %}Statistik - Fallen Birdy{% endblock %}
+
+{% block header %}
+<style>
+    .stats-card {
+        background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+        border-radius: 15px;
+        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        transition: transform 0.3s ease, box-shadow 0.3s ease;
+    }
+    
+    .stats-card:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 8px 15px rgba(0, 0, 0, 0.2);
+    }
+    
+    .stats-number {
+        font-size: 2.5rem;
+        font-weight: bold;
+        color: #2c3e50;
+    }
+    
+    .chart-container {
+        display: none; /* Entfernt, da keine Charts mehr verwendet werden */
+    }
+    
+    .section-header {
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        color: white;
+        padding: 15px 20px;
+        border-radius: 10px;
+        margin: 30px 0 20px 0;
+        position: static;
+        z-index: 1;
+    }
+    
+    .collapsible {
+        cursor: pointer;
+        user-select: none;
+        position: static;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        overflow: visible;
+    }
+    
+    .collapsible:hover {
+        background: linear-gradient(135deg, #5a6fd8 0%, #6a4190 100%);
+    }
+    
+    .collapsible::after {
+        content: '▼';
+        font-size: 1.2rem;
+        font-weight: bold;
+        color: rgba(255, 255, 255, 0.9);
+        transition: transform 0.3s ease;
+        margin-left: 10px;
+    }
+    
+    .collapsible.collapsed::after {
+        transform: rotate(-90deg);
+    }
+    
+    .pie-chart {
+        width: 200px;
+        height: 200px;
+        border-radius: 50%;
+        margin: 0 auto;
+        position: relative;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        background: #f8f9fa;
+        border: 2px solid #dee2e6;
+    }
+    
+    .pie-legend {
+        margin-top: 20px;
+    }
+    
+    .pie-legend-item {
+        display: flex;
+        align-items: center;
+        margin-bottom: 8px;
+    }
+    
+    .pie-legend-color {
+        width: 16px;
+        height: 16px;
+        border-radius: 3px;
+        margin-right: 10px;
+    }
+    
+    .pie-legend-text {
+        flex-grow: 1;
+        font-weight: 500;
+    }
+    
+    .pie-legend-value {
+        font-weight: bold;
+        color: #495057;
+    }
+    
+    #birdStatsSection, #circumstancesSection {
+        margin-bottom: 30px;
+        clear: both;
+    }
+    
+    #birdStatsSection .card, #circumstancesSection .card {
+        margin-bottom: 20px;
+        overflow: visible;
+    }
+    
+    /* Segmentierte Balken für Vogelarten - neues horizontales Layout */
+    .bird-bar {
+        display: flex;
+        margin-bottom: 1%;
+        align-items: center;
+        clear: both;
+        overflow: hidden;
+    }
+    
+    .bird-bar:last-child {
+        border-bottom: none;
+    }
+    
+    .bird-name {
+        width: 200px;
+        font-weight: bold;
+        text-align: right;
+        padding-right: 15px;
+        font-size: 0.9rem;
+        flex-shrink: 0;
+    }
+    
+    .bird-bar-container {
+        flex-grow: 1;
+        height: 30px;
+        background: #e9ecef;
+        border-radius: 15px;
+        overflow: hidden;
+        position: relative;
+        margin: 0 15px;
+        box-shadow: inset 0 2px 4px rgba(0,0,0,0.1);
+    }
+    
+    .bird-bar-segments {
+        height: 100%;
+        display: flex;
+        border-radius: 15px;
+        overflow: hidden;
+    }
+    
+    .bird-bar-segment {
+        height: 100%;
+        transition: all 0.3s ease;
+        cursor: pointer;
+        position: relative;
+        min-width: 1px;
+        display: block;
+    }
+    
+    .bird-bar-segment:hover {
+        filter: brightness(110%);
+        box-shadow: 0 2px 4px rgba(0,0,0,0.2);
+    }
+    
+    .bird-legend {
+        width: 300px;
+        flex-shrink: 0;
+        font-size: 0.8rem;
+    }
+    
+    .legend-item-small {
+        display: flex;
+        align-items: center;
+        margin-bottom: 3px;
+        line-height: 1.3;
+    }
+    
+    .legend-color-small {
+        width: 12px;
+        height: 12px;
+        border-radius: 2px;
+        margin-right: 6px;
+        flex-shrink: 0;
+    }
+    
+    .total-info {
+        margin-bottom: 8px;
+        padding-top: 5px;
+        border-bottom: 1px solid #dee2e6;
+        font-size: 0.85rem;
+    }
+    
+    .bird-name-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 10px;
+    }
+    
+    .total-count {
+        font-size: 0.9rem;
+        color: #6c757d;
+        font-weight: normal;
+    }
+    
+    .segmented-bar-container {
+        width: 100%;
+        height: 30px;
+        background: #e9ecef;
+        border-radius: 15px;
+        overflow: hidden;
+        position: relative;
+        box-shadow: inset 0 2px 4px rgba(0,0,0,0.1);
+    }
+    
+    .segmented-bar {
+        height: 100%;
+        display: flex;
+        border-radius: 15px;
+        overflow: hidden;
+        min-width: 100%;
+    }
+    
+    .bar-segment {
+        height: 100%;
+        transition: all 0.3s ease;
+        cursor: pointer;
+        position: relative;
+    }
+    
+    .bar-segment:hover {
+        filter: brightness(110%);
+        box-shadow: 0 2px 4px rgba(0,0,0,0.2);
+    }
+    
+    .bird-summary {
+        margin-top: 15px;
+    }
+    
+    .summary-item {
+        display: flex;
+        align-items: center;
+        margin-bottom: 5px;
+        font-size: 0.85rem;
+    }
+    
+    .summary-color {
+        width: 12px;
+        height: 12px;
+        border-radius: 50%;
+        margin-right: 8px;
+        flex-shrink: 0;
+    }
+    
+    .summary-text {
+        color: #495057;
+    }
+    
+    .legend {
+        display: flex;
+        justify-content: center;
+        gap: 30px;
+        margin: 20px 0;
+        flex-wrap: wrap;
+    }
+    
+    .legend-item {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+    }
+    
+    .legend-color {
+        width: 20px;
+        height: 20px;
+        border-radius: 4px;
+    }
+    
+    /* Jahr-Navigation */
+    .year-navigation .btn {
+        border-radius: 50%;
+        width: 40px;
+        height: 40px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        transition: all 0.3s ease;
+    }
+    
+    .year-navigation .btn:hover:not(:disabled) {
+        background-color: rgba(255, 255, 255, 0.2);
+        transform: scale(1.1);
+    }
+    
+    .year-navigation .btn:disabled {
+        opacity: 0.5;
+        cursor: not-allowed;
+    }
+    
+    /* Responsive Jahr-Navigation */
+    @media (max-width: 768px) {
+        .section-header {
+            flex-direction: column;
+            gap: 15px;
+            text-align: center;
+        }
+        
+        .year-navigation {
+            order: 2;
+        }
+        
+        .collapsible::after {
+            order: 3;
+            margin-left: 0;
+        }
+    }
+    
+    /* CSS-Pfeile für Jahr-Navigation */
+    .arrow {
+        border: solid white;
+        border-width: 0 3px 3px 0;
+        display: inline-block;
+        padding: 3px;
+    }
+
+    .right {
+        transform: rotate(-45deg);
+        -webkit-transform: rotate(-45deg);
+    }
+
+    .left {
+        transform: rotate(135deg);
+        -webkit-transform: rotate(135deg);
+    }
+    
+    /* Pfeile für disabled buttons */
+    .btn:disabled .arrow {
+        border-color: rgba(255, 255, 255, 0.5);
+    }
+    
+    /* Pfeile für secondary buttons in Card-Header */
+    .btn-outline-secondary .arrow,
+    .btn-secondary .arrow {
+        border-color: #6c757d;
+    }
+    
+    .btn-outline-secondary:hover .arrow {
+        border-color: white;
+    }
+    
+    .btn-outline-secondary:disabled .arrow {
+        border-color: rgba(108, 117, 125, 0.5);
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="main-container">
+    <div class="container-fluid py-4">
+        <div class="row">
+            <div class="col-12">
+                <h1 class="text-center mb-4">
+                    <i class="fas fa-chart-bar"></i> Statistik Übersicht
+                </h1>
+            </div>
+        </div>
+
+        <!-- 1. Übersicht ausgewähltes Jahr mit Navigation -->
+        <div class="section-header d-flex justify-content-between align-items-center">
+            <h2 class="mb-0">
+                <i class="fas fa-calendar-alt"></i> Übersicht {{ selected_year }}
+            </h2>
+            <div class="year-navigation d-flex align-items-center">
+                {% if can_go_previous %}
+                    <a href="?year={{ previous_year }}" class="btn btn-outline-light me-2" title="Vorheriges Jahr ({{ previous_year }})">
+                        <i class="arrow left"></i>
+                    </a>
+                {% else %}
+                    <button class="btn btn-outline-light me-2" disabled title="Keine Daten vor {{ earliest_year }}">
+                        <i class="arrow left"></i>
+                    </button>
+                {% endif %}
+                
+                <span class="mx-3 fw-bold">{{ selected_year }}</span>
+                
+                {% if can_go_next %}
+                    <a href="?year={{ next_year }}" class="btn btn-outline-light ms-2" title="Nächstes Jahr ({{ next_year }})">
+                        <i class="arrow right"></i>
+                    </a>
+                {% else %}
+                    <button class="btn btn-outline-light ms-2" disabled title="Aktuelles Jahr erreicht">
+                        <i class="arrow right"></i>
+                    </button>
+                {% endif %}
+                
+                {% if selected_year != current_year %}
+                    <a href="?year={{ current_year }}" class="btn btn-light ms-3" title="Zurück zu {{ current_year }}">
+                        <i class="fas fa-calendar-day me-1"></i>{{ current_year }}
+                    </a>
+                {% endif %}
+            </div>
+        </div>
+        
+        <div class="row g-4 mb-4">
+            <div class="col-md-6 col-lg-3">
+                <div class="card stats-card h-100">
+                    <div class="card-body text-center">
+                        <h5 class="card-title text-primary">Patienten gesamt</h5>
+                        <div class="stats-number text-primary">{{ patients_this_year }}</div>
+                    </div>
+                </div>
+            </div>
+            
+            {% for group in year_summary %}
+            <div class="col-md-6 col-lg-3">
+                <div class="card stats-card h-100">
+                    <div class="card-body text-center">
+                        <h5 class="card-title" style="color: {{ group.color }};">{{ group.name }}</h5>
+                        <div class="stats-number" style="color: {{ group.color }};">{{ group.count }}</div>
+                        {% if config.show_percentages %}
+                        <div class="text-muted mt-1">{{ group.percentage }}%</div>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+
+        <!-- 2. Gesamtstatistik -->
+        {% if config.show_total_patients %}
+        <div class="section-header">
+            <h2 class="mb-0">
+                <i class="fas fa-globe"></i> Gesamtstatistik
+            </h2>
+        </div>
+        
+        <div class="row g-4 mb-4">
+            <div class="col-md-6 col-lg-3">
+                <div class="card stats-card h-100">
+                    <div class="card-body text-center">
+                        <h5 class="card-title text-info">Patienten gesamt</h5>
+                        <div class="stats-number text-info">{{ total_patients }}</div>
+                    </div>
+                </div>
+            </div>
+            
+            {% for group in total_summary %}
+            <div class="col-md-6 col-lg-3">
+                <div class="card stats-card h-100">
+                    <div class="card-body text-center">
+                        <h5 class="card-title" style="color: {{ group.color }};">{{ group.name }}</h5>
+                        <div class="stats-number" style="color: {{ group.color }};">{{ group.count }}</div>
+                        {% if config.show_percentages %}
+                        <div class="text-muted mt-1">{{ group.percentage }}%</div>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+        {% endif %}
+
+        <!-- 3. Statistik pro Vogelart -->
+        <div class="section-header collapsible collapsed" data-bs-toggle="collapse" data-bs-target="#birdStatsSection" aria-expanded="false">
+            <h2 class="mb-0">
+                <i class="fas fa-dove"></i> Statistik pro Vogelart
+            </h2>
+        </div>
+        
+        <div class="collapse" id="birdStatsSection">
+            {% if bird_stats %}
+                <div class="legend">
+                    {% for group in statistic_individuals %}
+                        <div class="legend-item">
+                            <div class="legend-color" style="background: {{ group.color }};"></div>
+                            <span>{{ group.name }}</span>
+                        </div>
+                    {% endfor %}
+                </div>
+                
+                <div class="row mb-4">
+                    <div class="col-12">
+                        {% for bird in bird_stats %}
+                        <div class="bird-bar">
+                            <!-- Vogelname links -->
+                            <div class="bird-name">
+                                {{ bird.name }}
+                            </div>
+                            
+                            <!-- Balkendiagramm in der Mitte -->
+                            <div class="bird-bar-container">
+                                <div class="bird-bar-segments">
+                                    {% for group_data in bird.groups %}
+                                    {% if group_data.count > 0 %}
+                                    <div class="bird-bar-segment" 
+                                         style="width: {{ group_data.absolute_width }}%; background-color: {{ group_data.color }};" 
+                                         title="{{ group_data.name }}: {{ group_data.count }} ({{ group_data.percentage }}%)">
+                                    </div>
+                                    {% endif %}
+                                    {% endfor %}
+                                </div>
+                            </div>
+                            
+                            <!-- Legende rechts -->
+                            <div class="bird-legend">
+                                {% for group_data in bird.groups %}
+                                {% if group_data.count > 0 %}
+                                <div class="legend-item-small">
+                                    <span class="legend-color-small" style="background-color: {{ group_data.color }};"></span>
+                                    {{ group_data.name }}: {{ group_data.count }} ({{ group_data.percentage }}%)
+                                </div>
+                                {% endif %}
+                                {% endfor %}
+                                <div class="total-info">
+                                    <strong>Gesamt: {{ bird.total }}</strong>
+                                </div>
+                            </div>
+                        </div>
+                        {% endfor %}
+                    </div>
+                </div>
+            {% else %}
+                <div class="text-center text-muted py-5">
+                    <i class="fas fa-info-circle fa-2x mb-3"></i>
+                    <h6>Keine Vogelarten mit Patienten gefunden</h6>
+                    <p>Sobald Patienten erfasst werden, erscheinen hier die Statistiken pro Vogelart.</p>
+                </div>
+            {% endif %}
+        </div>
+
+        <!-- 2. Fundumstände (ohne Tortendiagramme) -->
+        <div class="section-header collapsible collapsed" data-bs-toggle="collapse" data-bs-target="#circumstancesSection" aria-expanded="false">
+            <h2 class="mb-0">
+                <i class="fas fa-map-marker-alt"></i> Fundumstände
+            </h2>
+        </div>
+        
+        <div class="collapse" id="circumstancesSection">
+            <div class="row g-4 mb-4">
+                <div class="col-md-6">
+                    <div class="card">
+                        <div class="card-header">
+                            <h5 class="mb-0">{{ selected_year }}</h5>
+                        </div>
+                        <div class="card-body">
+                            {% if circumstances_this_year %}
+                                <div class="pie-legend">
+                                    {% for item in circumstances_this_year %}
+                                        <div class="pie-legend-item">
+                                            <div class="pie-legend-color" style="background-color: {{ item.color }};"></div>
+                                            <div class="pie-legend-text">{{ item.name }}</div>
+                                            <div class="pie-legend-value">{{ item.count }} ({{ item.percentage }}%)</div>
+                                        </div>
+                                    {% endfor %}
+                                </div>
+                            {% else %}
+                                <div class="text-center text-muted">
+                                    <p>Keine Daten für {{ selected_year }} verfügbar</p>
+                                </div>
+                            {% endif %}
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="col-md-6">
+                    <div class="card">
+                        <div class="card-header">
+                            <h5 class="mb-0">Alle Jahre</h5>
+                        </div>
+                        <div class="card-body">
+                            {% if circumstances_all_time %}
+                                <div class="pie-legend">
+                                    {% for item in circumstances_all_time %}
+                                        <div class="pie-legend-item">
+                                            <div class="pie-legend-color" style="background-color: {{ item.color }};"></div>
+                                            <div class="pie-legend-text">{{ item.name }}</div>
+                                            <div class="pie-legend-value">{{ item.count }} ({{ item.percentage }}%)</div>
+                                        </div>
+                                    {% endfor %}
+                                </div>
+                            {% else %}
+                                <div class="text-center text-muted">
+                                    <p>Keine Daten verfügbar</p>
+                                </div>
+                            {% endif %}
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    // Initialize Bootstrap collapse functionality
+    const collapsibles = document.querySelectorAll('.collapsible');
+    
+    collapsibles.forEach(function(collapsible) {
+        collapsible.addEventListener('click', function(e) {
+            // Verhindere Collapse-Toggle wenn auf Jahr-Navigation geklickt wird
+            if (e.target.closest('.year-navigation')) {
+                return;
+            }
+            
+            this.classList.toggle('collapsed');
+        });
+        
+        const targetId = collapsible.getAttribute('data-bs-target');
+        if (targetId) {
+            const targetElement = document.querySelector(targetId);
+            if (targetElement) {
+                targetElement.addEventListener('shown.bs.collapse', function() {
+                    collapsible.classList.remove('collapsed');
+                });
+                
+                targetElement.addEventListener('hidden.bs.collapse', function() {
+                    collapsible.classList.add('collapsed');
+                });
+            }
+        }
+    });
+    
+    // Tastatur-Navigation für Jahre
+    document.addEventListener('keydown', function(e) {
+        // Nur reagieren wenn kein Input-Element fokussiert ist
+        if (document.activeElement.tagName === 'INPUT' || document.activeElement.tagName === 'TEXTAREA') {
+            return;
+        }
+        
+        if (e.key === 'ArrowLeft') {
+            // Vorheriges Jahr
+            const prevButton = document.querySelector('a[href*="year={{ previous_year }}"]');
+            if (prevButton) {
+                window.location.href = prevButton.href;
+            }
+        } else if (e.key === 'ArrowRight') {
+            // Nächstes Jahr
+            const nextButton = document.querySelector('a[href*="year={{ next_year }}"]');
+            if (nextButton) {
+                window.location.href = nextButton.href;
+            }
+        } else if (e.key === 'Home') {
+            // Zurück zum aktuellen Jahr
+            const currentYearButton = document.querySelector('a[href*="year={{ current_year }}"]');
+            if (currentYearButton) {
+                window.location.href = currentYearButton.href;
+            } else {
+                // Falls schon im aktuellen Jahr, zur Statistik-Hauptseite
+                window.location.href = window.location.pathname;
+            }
+        }
+    });
+});
+</script>
+{% endblock %}

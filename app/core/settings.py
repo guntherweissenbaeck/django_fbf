@@ -43,7 +43,7 @@ SECURE_HSTS_PRELOAD = True
 # -----------------------------------
 # Allowed Hosts
 # -----------------------------------
-ALLOWED_HOSTS = [env("ALLOWED_HOSTS")]
+ALLOWED_HOSTS = env("ALLOWED_HOSTS").split(",") if env("ALLOWED_HOSTS") else []
 
 # -----------------------------------
 # Application definition
@@ -84,6 +84,7 @@ INSTALLED_APPS = [
     "bird",
     "contact",
     "costs",
+    "statistic",
     "export",
     "notizen",
     "reports",

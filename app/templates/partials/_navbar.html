@@ -29,6 +29,10 @@
                             href="{% url 'aviary_all' %}">Volieren</a>
                     </li>
                     <li class="nav-item">
+                        <a class="nav-link {% if '/statistics' in request.path %} active {% endif %}"
+                            href="{% url 'statistic:overview' %}">Statistik</a>
+                    </li>
+                    <li class="nav-item">
                         <a class="nav-link {% if '/costs/all' in request.path %} active {% endif %}"
                             href="{% url 'costs_all' %}">Kosten</a>
                     </li>
