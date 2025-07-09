@@ -24,12 +24,7 @@
     }
     
     .chart-container {
-        position: static;
-        min-height: 400px;
-        width: 100%;
-        margin: 20px 0;
-        overflow: visible;
-        clear: both;
+        display: none; /* Entfernt, da keine Charts mehr verwendet werden */
     }
     
     .section-header {
@@ -434,7 +429,7 @@
             {% endif %}
         </div>
 
-        <!-- 2. Fundumstände (Lazy loaded pie charts) -->
+        <!-- 2. Fundumstände (ohne Tortendiagramme) -->
         <div class="section-header collapsible collapsed" data-bs-toggle="collapse" data-bs-target="#circumstancesSection" aria-expanded="false">
             <h2 class="mb-0">
                 <i class="fas fa-map-marker-alt"></i> Fundumstände
@@ -449,16 +444,6 @@
                             <h5 class="mb-0">{{ current_year }}</h5>
                         </div>
                         <div class="card-body">
-                            <div class="chart-container">
-                                <div class="pie-chart" id="pieChartThisYear">
-                                    <!-- Lazy loading placeholder -->
-                                    <div style="display: flex; align-items: center; justify-content: center; height: 100%; color: #6c757d;">
-                                        <i class="fas fa-chart-pie fa-2x"></i>
-                                        <span style="margin-left: 10px;">Wird geladen...</span>
-                                    </div>
-                                </div>
-                            </div>
-                            
                             {% if circumstances_this_year %}
                                 <div class="pie-legend">
                                     {% for item in circumstances_this_year %}
@@ -468,6 +453,10 @@
                                             <div class="pie-legend-value">{{ item.count }} ({{ item.percentage }}%)</div>
                                         </div>
                                     {% endfor %}
+                                </div>
+                            {% else %}
+                                <div class="text-center text-muted">
+                                    <p>Keine Daten für {{ current_year }} verfügbar</p>
                                 </div>
                             {% endif %}
                         </div>
@@ -480,16 +469,6 @@
                             <h5 class="mb-0">Alle Jahre</h5>
                         </div>
                         <div class="card-body">
-                            <div class="chart-container">
-                                <div class="pie-chart" id="pieChartAllTime">
-                                    <!-- Lazy loading placeholder -->
-                                    <div style="display: flex; align-items: center; justify-content: center; height: 100%; color: #6c757d;">
-                                        <i class="fas fa-chart-pie fa-2x"></i>
-                                        <span style="margin-left: 10px;">Wird geladen...</span>
-                                    </div>
-                                </div>
-                            </div>
-                            
                             {% if circumstances_all_time %}
                                 <div class="pie-legend">
                                     {% for item in circumstances_all_time %}
@@ -499,6 +478,10 @@
                                             <div class="pie-legend-value">{{ item.count }} ({{ item.percentage }}%)</div>
                                         </div>
                                     {% endfor %}
+                                </div>
+                            {% else %}
+                                <div class="text-center text-muted">
+                                    <p>Keine Daten verfügbar</p>
                                 </div>
                             {% endif %}
                         </div>
@@ -533,129 +516,6 @@ document.addEventListener('DOMContentLoaded', function() {
             }
         }
     });
-
-    // Initialize collapsed state
-    const circumstancesSection = document.getElementById('circumstancesSection');
-    const circumstancesHeader = document.querySelector('[data-bs-target="#circumstancesSection"]');
-    if (circumstancesSection && circumstancesHeader) {
-        circumstancesHeader.classList.add('collapsed');
-    }
-
-    // SVG Pie Chart Creator
-    function createPieChart(elementId, data) {
-        const element = document.getElementById(elementId);
-        if (!element) {
-            console.error('Pie chart element not found:', elementId);
-            return;
-        }
-        
-        if (!data || data.length === 0) {
-            element.innerHTML = '<div style="display: flex; align-items: center; justify-content: center; height: 100%; color: #6c757d;">Keine Daten</div>';
-            return;
-        }
-
-        console.log('Creating SVG pie chart for:', elementId, data);
-        
-        const validData = data.filter(item => item.percentage > 0).sort((a, b) => b.percentage - a.percentage);
-        
-        if (validData.length === 0) {
-            element.innerHTML = '<div style="display: flex; align-items: center; justify-content: center; height: 100%; color: #6c757d;">Keine Daten</div>';
-            return;
-        }
-
-        const size = 200;
-        const radius = 80;
-        const centerX = size / 2;
-        const centerY = size / 2;
-        
-        let svg = `<svg width="${size}" height="${size}" viewBox="0 0 ${size} ${size}" style="transform: rotate(-90deg);">`;
-        
-        let currentAngle = 0;
-        
-        validData.forEach((item, index) => {
-            const angle = (item.percentage / 100) * 360;
-            const startAngle = currentAngle;
-            const endAngle = currentAngle + angle;
-            
-            const startRad = (startAngle * Math.PI) / 180;
-            const endRad = (endAngle * Math.PI) / 180;
-            
-            const x1 = centerX + radius * Math.cos(startRad);
-            const y1 = centerY + radius * Math.sin(startRad);
-            const x2 = centerX + radius * Math.cos(endRad);
-            const y2 = centerY + radius * Math.sin(endRad);
-            
-            const largeArcFlag = angle > 180 ? 1 : 0;
-            
-            const pathData = [
-                `M ${centerX} ${centerY}`,
-                `L ${x1} ${y1}`,
-                `A ${radius} ${radius} 0 ${largeArcFlag} 1 ${x2} ${y2}`,
-                'Z'
-            ].join(' ');
-            
-            svg += `<path d="${pathData}" fill="${item.color}" stroke="white" stroke-width="2">`;
-            svg += `<title>${item.name}: ${item.percentage}%</title>`;
-            svg += `</path>`;
-            
-            currentAngle = endAngle;
-        });
-        
-        svg += '</svg>';
-        
-        element.style.position = 'relative';
-        element.innerHTML = svg;
-    }
-
-    // Lazy loading function
-    function initializePieCharts() {
-        console.log('Initializing pie charts...');
-        
-        // Generate pie chart data for this year
-        {% if circumstances_this_year %}
-            const thisYearData = [
-                {% for item in circumstances_this_year %}
-                    {
-                        name: '{{ item.name|escapejs }}',
-                        percentage: {{ item.percentage }},
-                        color: '{{ item.color }}'
-                    }{% if not forloop.last %},{% endif %}
-                {% endfor %}
-            ];
-            console.log('This year data:', thisYearData);
-            createPieChart('pieChartThisYear', thisYearData);
-        {% endif %}
-
-        // Generate pie chart data for all time
-        {% if circumstances_all_time %}
-            const allTimeData = [
-                {% for item in circumstances_all_time %}
-                    {
-                        name: '{{ item.name|escapejs }}',
-                        percentage: {{ item.percentage }},
-                        color: '{{ item.color }}'
-                    }{% if not forloop.last %},{% endif %}
-                {% endfor %}
-            ];
-            console.log('All time data:', allTimeData);
-            createPieChart('pieChartAllTime', allTimeData);
-        {% endif %}
-    }
-
-    // LAZY LOADING: Initialize pie charts only when circumstances section is expanded
-    if (circumstancesSection) {
-        let chartsInitialized = false;
-        
-        circumstancesSection.addEventListener('shown.bs.collapse', function() {
-            console.log('Circumstances section expanded - lazy loading charts');
-            if (!chartsInitialized) {
-                setTimeout(initializePieCharts, 100);
-                chartsInitialized = true;
-            }
-        });
-    } else {
-        console.error('Circumstances section not found');
-    }
 });
 </script>
 {% endblock %}
