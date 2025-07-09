@@ -1,6 +1,6 @@
 from django.views.generic import TemplateView
 from django.contrib.auth.mixins import LoginRequiredMixin
-from django.db.models import Count, Q
+from django.db.models import Count, Q, Min
 from django.utils import timezone
 from datetime import datetime
 from bird.models import FallenBird, Bird, BirdStatus, Circumstance
@@ -13,8 +13,30 @@ class StatisticView(LoginRequiredMixin, TemplateView):
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         
-        # Aktuelles Jahr
+        # Jahr aus URL-Parameter oder aktuelles Jahr
+        selected_year = self.request.GET.get('year', timezone.now().year)
+        try:
+            selected_year = int(selected_year)
+        except (ValueError, TypeError):
+            selected_year = timezone.now().year
+        
         current_year = timezone.now().year
+        
+        # Stelle sicher, dass das ausgewählte Jahr nicht in der Zukunft liegt
+        if selected_year > current_year:
+            selected_year = current_year
+        
+        # Finde das früheste Jahr mit Daten
+        earliest_year_with_data = FallenBird.objects.aggregate(
+            earliest=Min('date_found__year')
+        )['earliest']
+        
+        if earliest_year_with_data is None:
+            earliest_year_with_data = current_year
+        
+        # Stelle sicher, dass das ausgewählte Jahr nicht vor dem frühesten Jahr liegt
+        if selected_year < earliest_year_with_data:
+            selected_year = earliest_year_with_data
         
         # Lade aktive Konfiguration
         try:
@@ -31,11 +53,17 @@ class StatisticView(LoginRequiredMixin, TemplateView):
         
         context['config'] = config
         context['current_year'] = current_year
+        context['selected_year'] = selected_year
+        context['earliest_year'] = earliest_year_with_data
+        context['can_go_previous'] = selected_year > earliest_year_with_data
+        context['can_go_next'] = selected_year < current_year
+        context['previous_year'] = selected_year - 1 if context['can_go_previous'] else None
+        context['next_year'] = selected_year + 1 if context['can_go_next'] else None
         
         # 1. Jahresstatistik
         if config.show_year_total_patients:
             patients_this_year = FallenBird.objects.filter(
-                date_found__year=current_year
+                date_found__year=selected_year
             ).count()
             context['patients_this_year'] = patients_this_year
         
@@ -46,7 +74,7 @@ class StatisticView(LoginRequiredMixin, TemplateView):
         for group in year_groups:
             status_ids = list(group.status_list.values_list('id', flat=True))
             year_count = FallenBird.objects.filter(
-                date_found__year=current_year,
+                date_found__year=selected_year,
                 status__id__in=status_ids
             ).count()
             
@@ -144,10 +172,10 @@ class StatisticView(LoginRequiredMixin, TemplateView):
         
         context['bird_stats'] = bird_stats
         
-        # 4. Fundumstände-Statistiken (unverändert)
-        # Fundumstände für aktuelles Jahr
+        # 4. Fundumstände-Statistiken
+        # Fundumstände für ausgewähltes Jahr
         circumstances_this_year = FallenBird.objects.filter(
-            date_found__year=current_year,
+            date_found__year=selected_year,
             find_circumstances__isnull=False
         ).values('find_circumstances__name', 'find_circumstances__description').annotate(
             count=Count('id')
