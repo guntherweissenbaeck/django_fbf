@@ -21,10 +21,6 @@
                             href="{% url 'bird_all' %}">Patienten</a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link {% if '/bird/create/' in request.path %} active {% endif %}"
-                            href="{% url 'bird_create' %}">neuer Patient</a>
-                    </li>
-                    <li class="nav-item">
                         <a class="nav-link {% if '/aviary/all' in request.path %} active {% endif %}"
                             href="{% url 'aviary_all' %}">Volieren</a>
                     </li>
@@ -43,10 +39,6 @@
                     <li class="nav-item">
                         <a class="nav-link {% if '/notizen' in request.path %} active {% endif %}"
                             href="{% url 'notizen:list' %}">Notizen</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link {% if '/bird/species' in request.path %} active {% endif %}"
-                            href="{% url 'bird_species_list' %}">Vogelarten</a>
                     </li>
 
                     {% if request.user|group_check:"data-export" %} 
