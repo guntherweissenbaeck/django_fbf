@@ -62,7 +62,7 @@ class Aviary(models.Model):
         verbose_name_plural = _("Volieren")
 
     def __str__(self):
-        return self.name
+        return self.name or self.description or f"Voliere {self.id}"
     
     def save(self, *args, **kwargs):
         """Override save to ensure name and location are set."""

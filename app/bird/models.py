@@ -117,7 +117,8 @@ class FallenBird(models.Model):
         verbose_name_plural = _("Gefallene Vögel")
 
     def __str__(self):
-        return f"Gefallener Vogel: {self.bird.name}"
+        bird_name = str(self.bird) if self.bird else "Unbekannt"
+        return f"Patient: {bird_name}"
 
 
 class Bird(models.Model):
@@ -214,7 +215,7 @@ class Bird(models.Model):
         ordering = ["name"]
 
     def __str__(self):
-        return self.name
+        return self.name or f"Bird {self.id}"
 
 
 class BirdStatus(models.Model):
@@ -231,7 +232,7 @@ class BirdStatus(models.Model):
         verbose_name_plural = _("Patientenstatus")
 
     def __str__(self):
-        return self.name if self.name else self.description
+        return self.name or self.description or f"BirdStatus {self.id}"
 
 
 class Circumstance(models.Model):
@@ -248,4 +249,4 @@ class Circumstance(models.Model):
         verbose_name_plural = _("Fundumstände")
 
     def __str__(self) -> str:
-        return self.name if self.name else self.description
+        return self.name or self.description or f"Circumstance {self.id}"
