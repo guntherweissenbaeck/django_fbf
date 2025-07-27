@@ -35,11 +35,55 @@ class AutomaticReport(models.Model):
         help_text=_("Vögel einschließen, die an Jagdbehörde gemeldet werden")
     )
     
+    # Column configuration for CSV export
+    include_date_found = models.BooleanField(
+        default=True,
+        verbose_name=_("Funddatum"),
+        help_text=_("Datum des Vogelfunds in den Bericht einschließen")
+    )
+    include_bird_species = models.BooleanField(
+        default=True,
+        verbose_name=_("Vogelart"),
+        help_text=_("Vogelart in den Bericht einschließen")
+    )
+    include_bird_status = models.BooleanField(
+        default=True,
+        verbose_name=_("Vogelstatus"),
+        help_text=_("Status des Vogels in den Bericht einschließen")
+    )
+    include_finder_info = models.BooleanField(
+        default=False,
+        verbose_name=_("Finder-Informationen"),
+        help_text=_("Informationen zum Finder in den Bericht einschließen")
+    )
+    include_aviary = models.BooleanField(
+        default=False,
+        verbose_name=_("Voliere"),
+        help_text=_("Voliere-Zuordnung in den Bericht einschließen")
+    )
+    include_circumstances = models.BooleanField(
+        default=True,
+        verbose_name=_("Fundumstände"),
+        help_text=_("Fundumstände in den Bericht einschließen")
+    )
+    include_location = models.BooleanField(
+        default=True,
+        verbose_name=_("Fundort"),
+        help_text=_("Fundort in den Bericht einschließen")
+    )
+    include_notes = models.BooleanField(
+        default=False,
+        verbose_name=_("Bemerkungen"),
+        help_text=_("Bemerkungen zum Vogel in den Bericht einschließen")
+    )
+    
     # Schedule settings
     frequency_choices = [
         ('weekly', _('Wöchentlich')),
         ('monthly', _('Monatlich')),
         ('quarterly', _('Vierteljährlich')),
+        ('biannually', _('Halbjährlich')),
+        ('annually', _('Jährlich')),
     ]
     frequency = models.CharField(
         max_length=20,
