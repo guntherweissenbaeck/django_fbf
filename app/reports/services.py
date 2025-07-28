@@ -12,11 +12,27 @@ from bird.models import FallenBird
 class ReportGenerator:
     """Service class for generating bird reports."""
     
-    def __init__(self, date_from, date_to, include_naturschutzbehoerde=True, include_jagdbehoerde=False):
+    def __init__(self, date_from, date_to, include_naturschutzbehoerde=True, include_jagdbehoerde=False, 
+                 column_config=None):
         self.date_from = date_from
         self.date_to = date_to
         self.include_naturschutzbehoerde = include_naturschutzbehoerde
         self.include_jagdbehoerde = include_jagdbehoerde
+        
+        # Column configuration (AutomaticReport instance or dict with column settings)
+        self.column_config = column_config or {
+            'include_date_found': True,
+            'include_bird_species': True,
+            'include_bird_status': True,
+            'include_finder_info': False,
+            'include_aviary': False,
+            'include_circumstances': True,
+            'include_location': True,
+            'include_notes': False,  # This refers to "Bemerkungen" (comment field)
+            'include_sent_to': False,
+            'include_release_location': False,
+            'include_close_date': False,
+        }
     
     def get_birds_queryset(self):
         """Get queryset of birds based on filters."""
@@ -49,37 +65,100 @@ class ReportGenerator:
         output = StringIO()
         writer = csv.writer(output, delimiter=';', quoting=csv.QUOTE_ALL)
         
-        # Header row
-        headers = [
-            'Vogel',
-            'Alter',
-            'Geschlecht',
-            'Gefunden am',
-            'Fundort',
-            'Fundumstände',
-            'Diagnose bei Fund',
-            'Status'
-        ]
+        # Build dynamic header row based on configuration
+        headers = []
+        if self._get_column_setting('include_date_found'):
+            headers.append('Gefunden am')
+        if self._get_column_setting('include_bird_species'):
+            headers.extend(['Vogelart', 'Alter', 'Geschlecht'])
+        if self._get_column_setting('include_bird_status'):
+            headers.extend(['Status', 'Diagnose bei Fund'])
+        if self._get_column_setting('include_location'):
+            headers.append('Fundort')
+        if self._get_column_setting('include_circumstances'):
+            headers.append('Fundumstände')
+        if self._get_column_setting('include_finder_info'):
+            headers.extend(['Finder Name', 'Finder Telefon', 'Finder Email'])
+        if self._get_column_setting('include_aviary'):
+            headers.append('Voliere')
+        if self._get_column_setting('include_notes'):
+            headers.append('Bemerkungen')
+        if self._get_column_setting('include_sent_to'):
+            headers.append('Übermittelt nach')
+        if self._get_column_setting('include_release_location'):
+            headers.append('Auswilderungsort')
+        if self._get_column_setting('include_close_date'):
+            headers.append('Akte geschlossen am')
+            
         writer.writerow(headers)
         
         # Data rows
         for bird in birds:
-            row = [
-                bird.bird.name if bird.bird else '',
-                bird.get_age_display() if bird.age else '',
-                bird.get_sex_display() if bird.sex else '',
-                bird.date_found.strftime('%d.%m.%Y') if bird.date_found else '',
-                bird.place or '',
-                bird.find_circumstances or '',
-                bird.diagnostic_finding or '',
-                bird.status.description if bird.status else '',
-            ]
+            row = []
+            
+            if self._get_column_setting('include_date_found'):
+                row.append(bird.date_found.strftime('%d.%m.%Y') if bird.date_found else '')
+                
+            if self._get_column_setting('include_bird_species'):
+                row.extend([
+                    bird.bird.name if bird.bird else '',
+                    bird.get_age_display() if bird.age else '',
+                    bird.get_sex_display() if bird.sex else '',
+                ])
+                
+            if self._get_column_setting('include_bird_status'):
+                row.extend([
+                    bird.status.description if bird.status else '',
+                    bird.diagnostic_finding or '',
+                ])
+                
+            if self._get_column_setting('include_location'):
+                row.append(bird.place or '')
+                
+            if self._get_column_setting('include_circumstances'):
+                row.append(bird.find_circumstances or '')
+                
+            if self._get_column_setting('include_finder_info'):
+                row.extend([
+                    f"{bird.finder_first_name or ''} {bird.finder_last_name or ''}".strip(),
+                    bird.finder_phone or '',
+                    bird.finder_email or '',
+                ])
+                
+            if self._get_column_setting('include_aviary'):
+                row.append(bird.aviary.description if bird.aviary else '')
+                
+            if self._get_column_setting('include_notes'):
+                # Use the comment field (Bemerkung) from FallenBird
+                row.append(bird.comment or '')
+                
+            if self._get_column_setting('include_sent_to'):
+                row.append(bird.sent_to or '')
+                
+            if self._get_column_setting('include_release_location'):
+                row.append(bird.release_location or '')
+                
+            if self._get_column_setting('include_close_date'):
+                # Use patient_file_close_date if available, otherwise fall back to updated date
+                close_date = bird.patient_file_close_date or bird.updated.date()
+                row.append(close_date.strftime('%d.%m.%Y') if close_date else '')
+                
             writer.writerow(row)
         
         csv_content = output.getvalue()
         output.close()
         
         return csv_content, bird_count
+    
+    def _get_column_setting(self, setting_name):
+        """Helper method to get column setting from config."""
+        if hasattr(self.column_config, setting_name):
+            # AutomaticReport instance
+            return getattr(self.column_config, setting_name)
+        elif isinstance(self.column_config, dict):
+            # Dictionary config
+            return self.column_config.get(setting_name, False)
+        return False
     
     def get_filename(self):
         """Generate filename for the report."""
@@ -185,3 +264,16 @@ class ReportGenerator:
         )
         
         return report_log
+    
+    @classmethod
+    def generate_csv_report(cls, date_from, date_to, automatic_report=None):
+        """Class method to generate CSV report with column configuration."""
+        generator = cls(
+            date_from=date_from,
+            date_to=date_to,
+            include_naturschutzbehoerde=getattr(automatic_report, 'include_naturschutzbehörde', True),
+            include_jagdbehoerde=getattr(automatic_report, 'include_jagdbehörde', False),
+            column_config=automatic_report
+        )
+        csv_content, bird_count = generator.generate_csv()
+        return csv_content

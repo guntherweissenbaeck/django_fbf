@@ -3,7 +3,7 @@
 {% load crispy_forms_tags %}
 {% block content %}
 
-<h3>Einen Patienten anlegen</h3>
+<h3>Einen oder mehrere Patienten anlegen</h3>
 <div class="row">
   <div class="col-lg-6 mb-3">
     <form method="post" enctype="multipart/form-data">
@@ -16,6 +16,17 @@
   </div>
 
   <div class="col-lg-4">
+    <h4>Mehrere Patienten</h4>
+    <p>
+      <strong>Anzahl Patienten:</strong> Geben Sie die Anzahl der Patienten an, die mit den gleichen Daten angelegt werden sollen. Dies ist nützlich, wenn ein Nest mit mehreren Vögeln abgestürzt ist und alle die gleichen Umstände haben.
+    </p>
+    <p>
+      <strong>Eindeutige Kennungen:</strong> Bei mehreren Patienten wird automatisch eine Nummer an die Basis-Kennung angehängt (z.B. "Kaitlin-1", "Kaitlin-2", etc.). Jeder Patient kann später individuell bearbeitet werden.
+    </p>
+    <p>
+      <strong>E-Mail-Benachrichtigungen:</strong> Für jeden erstellten Patienten wird eine separate E-Mail-Benachrichtigung an die entsprechenden Behörden versendet.
+    </p>
+
     <h4>Kennung</h4>
     <p>
       Die Kennung, oder auch Patientennummer, wird sowohl für uns bei der
@@ -41,5 +52,50 @@
 </div>
 
 <script src="{% static 'js/find_circumstances.js' %}"></script>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const anzahlField = document.querySelector('#id_anzahl_patienten');
+    const identifierField = document.querySelector('#id_bird_identifier');
+    const identifierLabel = document.querySelector('label[for="id_bird_identifier"]');
+    
+    function updateIdentifierLabel() {
+        const anzahl = parseInt(anzahlField.value) || 1;
+        if (anzahl > 1) {
+            identifierLabel.innerHTML = 'Kennung (Basis) <span class="text-muted">(wird automatisch nummeriert)</span>';
+            
+            // Show preview of identifiers
+            const currentValue = identifierField.value || 'Beispiel';
+            let previewText = `<small class="text-muted">Beispiel-Kennungen: `;
+            for (let i = 1; i <= Math.min(anzahl, 3); i++) {
+                previewText += `${currentValue}-${i}`;
+                if (i < Math.min(anzahl, 3)) previewText += ', ';
+            }
+            if (anzahl > 3) previewText += `, ... (${anzahl} insgesamt)`;
+            previewText += '</small>';
+            
+            // Remove existing preview
+            const existingPreview = document.querySelector('#identifier-preview');
+            if (existingPreview) existingPreview.remove();
+            
+            // Add new preview
+            const previewDiv = document.createElement('div');
+            previewDiv.id = 'identifier-preview';
+            previewDiv.innerHTML = previewText;
+            identifierField.parentNode.appendChild(previewDiv);
+        } else {
+            identifierLabel.innerHTML = 'Kennung (Basis)';
+            const existingPreview = document.querySelector('#identifier-preview');
+            if (existingPreview) existingPreview.remove();
+        }
+    }
+    
+    if (anzahlField && identifierField) {
+        anzahlField.addEventListener('input', updateIdentifierLabel);
+        identifierField.addEventListener('input', updateIdentifierLabel);
+        updateIdentifierLabel(); // Initial call
+    }
+});
+</script>
 
 {% endblock content %}

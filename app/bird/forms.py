@@ -11,6 +11,19 @@ class DateInput(forms.DateInput):
 
 
 class BirdAddForm(forms.ModelForm):
+    # Add field for number of patients to create
+    anzahl_patienten = forms.IntegerField(
+        initial=1,
+        min_value=1,
+        max_value=50,
+        label=_("Anzahl Patienten"),
+        help_text=_("Geben Sie an, wie viele Patienten mit den gleichen Daten angelegt werden sollen. Jeder Patient erhält eine eindeutige Kennung."),
+        widget=forms.NumberInput(attrs={
+            'class': 'form-control',
+            'style': 'width: 100px;'
+        })
+    )
+
     class Meta:
         widgets = {
             "date_found": DateInput(
@@ -31,7 +44,7 @@ class BirdAddForm(forms.ModelForm):
             "comment",
         ]
         labels = {
-            "bird_identifier": _("Kennung"),
+            "bird_identifier": _("Kennung (Basis)"),
             "bird": _("Vogel"),
             "age": _("Alter"),
             "sex": _("Geschlecht"),
@@ -42,6 +55,13 @@ class BirdAddForm(forms.ModelForm):
             "comment": _("Bermerkung"),
             "finder": _("Finder"),
         }
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        # Update help text for identifier field
+        self.fields['bird_identifier'].help_text = _(
+            "Basis-Kennung für die Patienten. Bei mehreren Patienten wird automatisch eine Nummer angehängt (z.B. Kaitlin-1, Kaitlin-2, etc.)"
+        )
 
 
 class BirdEditForm(forms.ModelForm):
@@ -57,6 +77,7 @@ class BirdEditForm(forms.ModelForm):
             "status",
             "aviary",
             "sent_to",
+            "release_location",
             "find_circumstances",
             "diagnostic_finding",
             "finder",
@@ -70,6 +91,7 @@ class BirdEditForm(forms.ModelForm):
             "status": _("Status"),
             "aviary": _("Voliere"),
             "sent_to": _("Übermittelt nach"),
+            "release_location": _("Auswilderungsort"),
             "find_circumstances": _("Fundumstände"),
             "diagnostic_finding": _("Diagnose bei Fund"),
             "finder": _("Finder"),

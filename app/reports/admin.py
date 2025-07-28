@@ -9,6 +9,89 @@ from .models import AutomaticReport, ReportLog
 from .services import ReportGenerator
 
 
+def calculate_report_period(frequency, today=None):
+    """
+    Calculate date range for different report frequencies according to fixed periods.
+    
+    Quarterly reports: Sent on 01.04, 01.07, 01.10, 01.01
+    - Q1 (01.04): 01.01 - 31.03
+    - Q2 (01.07): 01.04 - 30.06  
+    - Q3 (01.10): 01.07 - 30.09
+    - Q4 (01.01): 01.10 - 31.12 (previous year)
+    
+    Biannual reports: Sent on 01.01 and 01.07
+    - H1 (01.07): 01.01 - 30.06
+    - H2 (01.01): 01.07 - 31.12 (previous year)
+    
+    Annual reports: Sent on 01.01
+    - Contains full previous year: 01.01 - 31.12
+    """
+    if today is None:
+        today = date.today()
+    
+    if frequency == 'weekly':
+        date_from = today - timedelta(days=7)
+        date_to = today
+        description = "letzte 7 Tage"
+        
+    elif frequency == 'monthly':
+        # Previous month
+        if today.month == 1:
+            date_from = today.replace(year=today.year-1, month=12, day=1)
+            date_to = today.replace(year=today.year-1, month=12, day=31)
+        else:
+            date_from = today.replace(month=today.month-1, day=1)
+            # Last day of previous month
+            last_day = (today.replace(day=1) - timedelta(days=1)).day
+            date_to = today.replace(month=today.month-1, day=last_day)
+        description = "letzter Monat"
+        
+    elif frequency == 'quarterly':
+        # Determine current quarter and get previous quarter
+        current_month = today.month
+        if current_month in [1, 2, 3]:  # Q1 -> Previous Q4
+            date_from = date(today.year-1, 10, 1)
+            date_to = date(today.year-1, 12, 31)
+            description = "Q4 des Vorjahres"
+        elif current_month in [4, 5, 6]:  # Q2 -> Previous Q1
+            date_from = date(today.year, 1, 1)
+            date_to = date(today.year, 3, 31)
+            description = "Q1 des aktuellen Jahres"
+        elif current_month in [7, 8, 9]:  # Q3 -> Previous Q2
+            date_from = date(today.year, 4, 1)
+            date_to = date(today.year, 6, 30)
+            description = "Q2 des aktuellen Jahres"
+        else:  # Q4 -> Previous Q3
+            date_from = date(today.year, 7, 1)
+            date_to = date(today.year, 9, 30)
+            description = "Q3 des aktuellen Jahres"
+            
+    elif frequency == 'biannually':
+        # Determine current half and get previous half
+        current_month = today.month
+        if current_month <= 6:  # First half -> Previous second half
+            date_from = date(today.year-1, 7, 1)
+            date_to = date(today.year-1, 12, 31)
+            description = "2. Halbjahr des Vorjahres"
+        else:  # Second half -> Previous first half
+            date_from = date(today.year, 1, 1)
+            date_to = date(today.year, 6, 30)
+            description = "1. Halbjahr des aktuellen Jahres"
+            
+    elif frequency == 'annually':
+        # Previous full year
+        date_from = date(today.year-1, 1, 1)
+        date_to = date(today.year-1, 12, 31)
+        description = f"Jahr {today.year-1}"
+        
+    else:
+        date_from = today - timedelta(days=30)
+        date_to = today
+        description = "letzte 30 Tage"
+    
+    return date_from, date_to, description
+
+
 @admin.register(AutomaticReport)
 class AutomaticReportAdmin(admin.ModelAdmin):
     list_display = [
@@ -34,6 +117,15 @@ class AutomaticReportAdmin(admin.ModelAdmin):
         }),
         (_('Filter-Einstellungen'), {
             'fields': ('include_naturschutzbehoerde', 'include_jagdbehoerde')
+        }),
+        (_('Spalten-Konfiguration'), {
+            'fields': (
+                'include_date_found', 'include_bird_species', 'include_bird_status',
+                'include_finder_info', 'include_aviary', 'include_circumstances',
+                'include_location', 'include_notes', 'include_sent_to', 
+                'include_release_location', 'include_close_date'
+            ),
+            'description': _('Wählen Sie, welche Spalten in den CSV-Export eingeschlossen werden sollen.')
         }),
         (_('Zeitplan'), {
             'fields': ('frequency',)
@@ -81,36 +173,18 @@ class AutomaticReportAdmin(admin.ModelAdmin):
             # Get email addresses
             email_addresses = [addr.email_address for addr in report.email_addresses.all()]
             
-            # Calculate date range based on frequency
+            # Calculate date range based on frequency using new fixed periods
             today = date.today()
-            if report.frequency == 'weekly':
-                date_from = today - timedelta(days=7)
-                range_description = "letzte 7 Tage"
-            elif report.frequency == 'monthly':
-                # Go back one month
-                if today.month == 1:
-                    date_from = today.replace(year=today.year-1, month=12, day=1)
-                else:
-                    date_from = today.replace(month=today.month-1, day=1)
-                range_description = "letzter Monat"
-            elif report.frequency == 'quarterly':
-                # Go back three months
-                if today.month <= 3:
-                    date_from = today.replace(year=today.year-1, month=today.month+9, day=1)
-                else:
-                    date_from = today.replace(month=today.month-3, day=1)
-                range_description = "letztes Quartal"
-            else:
-                date_from = today - timedelta(days=30)  # Default to 30 days
-                range_description = "letzte 30 Tage"
+            date_from, date_to, range_description = calculate_report_period(report.frequency, today)
             
             # Generate and send report
             try:
                 generator = ReportGenerator(
                     date_from=date_from,
-                    date_to=today,
+                    date_to=date_to,
                     include_naturschutzbehoerde=report.include_naturschutzbehoerde,
-                    include_jagdbehoerde=report.include_jagdbehoerde
+                    include_jagdbehoerde=report.include_jagdbehoerde,
+                    column_config=report  # Pass the entire report object for column configuration
                 )
                 
                 report_log, success, error_msg = generator.send_email_report(

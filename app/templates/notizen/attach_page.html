@@ -3,7 +3,7 @@
 {% load crispy_forms_tags %}
 
 {% block content %}
-<div class="container">
+<div class="container-fluid">
     <div class="row">
         <div class="col-lg-8">
             <h3>Notiz zu "{{ page.name }}" hinzufügen</h3>
@@ -54,4 +54,23 @@
         </div>
     </div>
 </div>
+{% endblock %}
+
+{% block extra_css %}
+{{ block.super }}
+<link rel="stylesheet" href="{% static 'django_ckeditor_5/dist/styles.css' %}">
+<style>
+/* Ensure CKEditor uses full width */
+.ck-editor {
+    width: 100% !important;
+}
+.ck-editor__editable {
+    min-height: 400px !important;
+}
+</style>
+{% endblock %}
+
+{% block extra_js %}
+{{ block.super }}
+<script src="{% static 'django_ckeditor_5/dist/bundle.js' %}"></script>
 {% endblock %}

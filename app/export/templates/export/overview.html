@@ -10,13 +10,51 @@
     <div class="col-lg-8 mb-3">
         <h3>Datenexport <i class="fa-solid fa-file-csv"></i></h3>
         <p>
-            Anbei finden Sie mehrere Möglichkeiten die Daten der Anwendung zu
-            exportieren.
+            Hier finden Sie verschiedene Möglichkeiten, die Daten der Anwendung zu exportieren.
+            Alle Exporte werden als CSV-Dateien bereitgestellt.
         </p>
-        <ul>
-            <li>alle Patienten: <a href="{% url 'export_birds' %}"><i class="fa-solid fa-file-export"></i></a></li>
-            <li>alle Kosten: <a href="{% url 'export_costs' %}"><i class="fa-solid fa-file-export"></i></a></li>
-        </ul>
+        
+        <div class="card mb-4">
+            <div class="card-header">
+                <h5 class="card-title mb-0">
+                    <i class="fa-solid fa-database"></i> Vollständiger Export
+                </h5>
+            </div>
+            <div class="card-body">
+                <p class="card-text">
+                    Exportiert alle Patienten-Datensätze mit erweiterten Feldern inklusive 
+                    "Übermittelt nach", "Auswilderungsort" und "Schließungsdatum".
+                </p>
+                <a href="{% url 'export_birds_all' %}" class="btn btn-primary">
+                    <i class="fa-solid fa-download"></i> Alle Patienten exportieren
+                </a>
+            </div>
+        </div>
+        
+        <div class="card mb-4">
+            <div class="card-header">
+                <h5 class="card-title mb-0">
+                    <i class="fa-solid fa-sliders"></i> Angepasster Export
+                </h5>
+            </div>
+            <div class="card-body">
+                <p class="card-text">
+                    Konfigurieren Sie Ihren Export individuell: Wählen Sie den Zeitraum, 
+                    die gewünschten Spalten und ob nur jagdbare Arten exportiert werden sollen.
+                </p>
+                <a href="{% url 'export_birds_custom' %}" class="btn btn-success">
+                    <i class="fa-solid fa-gear"></i> Angepassten Export konfigurieren
+                </a>
+            </div>
+        </div>
+        
+        <div class="alert alert-info">
+            <i class="fa-solid fa-info-circle"></i>
+            <strong>Hinweis:</strong> 
+            Alle Exporte verwenden das CSV-Format mit Semikolon als Trennzeichen. 
+            Das Datumsformat ist YYYY-MM-DD. Wenn das Schließungsdatum der Patientenakte 
+            nicht vorhanden ist, wird das Datum der letzten Änderung verwendet.
+        </div>
     </div>
 </div>
 {% endblock content %}

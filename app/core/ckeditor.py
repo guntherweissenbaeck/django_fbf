@@ -43,11 +43,16 @@ CKEDITOR_5_CONFIGS = {
             '|',
             'blockQuote',
         ],
-        'toolbar': ['heading', '|', 'outdent', 'indent', '|', 'bold', 'italic', 'link', 'underline', 'strikethrough',
-        'code','subscript', 'superscript', 'highlight', '|', 'codeBlock', 'sourceEditing', 'insertImage',
-                    'bulletedList', 'numberedList', 'todoList', '|',  'blockQuote', 'imageUpload', '|',
-                    'fontSize', 'fontFamily', 'fontColor', 'fontBackgroundColor', 'mediaEmbed', 'removeFormat',
-                    'insertTable',],
+        'toolbar': [
+            'heading', '|', 
+            'bold', 'italic', 'underline', '|',
+            'bulletedList', 'numberedList', '|',
+            'insertTable', '|',
+            'link', 'blockQuote', '|',
+            'outdent', 'indent', '|',
+            'fontSize', 'fontColor', 'fontBackgroundColor', '|',
+            'removeFormat', 'undo', 'redo'
+        ],
         'image': {
             'toolbar': ['imageTextAlternative', '|', 'imageStyle:alignLeft',
                         'imageStyle:alignRight', 'imageStyle:alignCenter', 'imageStyle:side',  ],
@@ -78,6 +83,33 @@ CKEDITOR_5_CONFIGS = {
                 { 'model': 'heading2', 'view': 'h2', 'title': 'Heading 2', 'class': 'ck-heading_heading2' },
                 { 'model': 'heading3', 'view': 'h3', 'title': 'Heading 3', 'class': 'ck-heading_heading3' }
             ]
+        }
+    },
+    'notizen': {
+        'language': 'de',
+        'toolbar': [
+            'heading', '|', 
+            'bold', 'italic', 'underline', '|',
+            'bulletedList', 'numberedList', '|',
+            'insertTable', '|',
+            'link', 'blockQuote', '|',
+            'fontSize', 'fontColor', '|',
+            'removeFormat', '|',
+            'undo', 'redo'
+        ],
+        'table': {
+            'contentToolbar': [ 'tableColumn', 'tableRow', 'mergeTableCells' ],
+        },
+        'heading' : {
+            'options': [
+                { 'model': 'paragraph', 'title': 'Paragraph', 'class': 'ck-heading_paragraph' },
+                { 'model': 'heading1', 'view': 'h1', 'title': 'Überschrift 1', 'class': 'ck-heading_heading1' },
+                { 'model': 'heading2', 'view': 'h2', 'title': 'Überschrift 2', 'class': 'ck-heading_heading2' },
+                { 'model': 'heading3', 'view': 'h3', 'title': 'Überschrift 3', 'class': 'ck-heading_heading3' }
+            ]
+        },
+        'fontSize': {
+            'options': [ 9, 10, 11, 12, 13, 14, 15, 16, 18, 20, 22, 24, 26, 28, 30, 32, 34, 36 ]
         }
     },
     'list': {

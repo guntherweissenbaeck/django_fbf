@@ -14,7 +14,7 @@ class NotizForm(forms.ModelForm):
                 'class': 'form-control',
                 'placeholder': 'Name der Notiz eingeben...'
             }),
-            'inhalt': CKEditor5Widget(config_name='extends')
+            'inhalt': CKEditor5Widget(config_name='notizen')
         }
     
     def __init__(self, *args, **kwargs):
@@ -33,7 +33,7 @@ class NotizAttachForm(forms.ModelForm):
                 'class': 'form-control',
                 'placeholder': 'Name der Notiz eingeben...'
             }),
-            'inhalt': CKEditor5Widget(config_name='extends')
+            'inhalt': CKEditor5Widget(config_name='notizen')
         }
     
     def __init__(self, *args, **kwargs):
