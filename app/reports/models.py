@@ -76,6 +76,11 @@ class AutomaticReport(models.Model):
         verbose_name=_("Bemerkungen"),
         help_text=_("Bemerkungen zum Vogel in den Bericht einschließen")
     )
+    include_sent_to = models.BooleanField(
+        default=False,
+        verbose_name=_("Übermittelt nach"),
+        help_text=_("Information über Übermittlung in den Bericht einschließen")
+    )
     include_release_location = models.BooleanField(
         default=False,
         verbose_name=_("Auswilderungsort"),

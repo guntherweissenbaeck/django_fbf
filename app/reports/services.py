@@ -29,6 +29,7 @@ class ReportGenerator:
             'include_circumstances': True,
             'include_location': True,
             'include_notes': False,  # This refers to "Bemerkungen" (comment field)
+            'include_sent_to': False,
             'include_release_location': False,
             'include_close_date': False,
         }
@@ -82,6 +83,8 @@ class ReportGenerator:
             headers.append('Voliere')
         if self._get_column_setting('include_notes'):
             headers.append('Bemerkungen')
+        if self._get_column_setting('include_sent_to'):
+            headers.append('Übermittelt nach')
         if self._get_column_setting('include_release_location'):
             headers.append('Auswilderungsort')
         if self._get_column_setting('include_close_date'):
@@ -128,6 +131,9 @@ class ReportGenerator:
             if self._get_column_setting('include_notes'):
                 # Use the comment field (Bemerkung) from FallenBird
                 row.append(bird.comment or '')
+                
+            if self._get_column_setting('include_sent_to'):
+                row.append(bird.sent_to or '')
                 
             if self._get_column_setting('include_release_location'):
                 row.append(bird.release_location or '')

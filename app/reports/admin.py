@@ -122,7 +122,8 @@ class AutomaticReportAdmin(admin.ModelAdmin):
             'fields': (
                 'include_date_found', 'include_bird_species', 'include_bird_status',
                 'include_finder_info', 'include_aviary', 'include_circumstances',
-                'include_location', 'include_notes'
+                'include_location', 'include_notes', 'include_sent_to', 
+                'include_release_location', 'include_close_date'
             ),
             'description': _('Wählen Sie, welche Spalten in den CSV-Export eingeschlossen werden sollen.')
         }),
