@@ -119,8 +119,8 @@ class FallenBird(models.Model):
     )
 
     class Meta:
-        verbose_name = _("Gefallener Vogel")
-        verbose_name_plural = _("Gefallene Vögel")
+        verbose_name = _("Patient")
+        verbose_name_plural = _("Patienten")
 
     def save(self, *args, **kwargs):
         """Override save to automatically set patient_file_close_date when status changes to closed states."""
