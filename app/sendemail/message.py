@@ -1,9 +1,11 @@
-def messagebody(date, bird, place, diagnosis,) -> str:
+def messagebody(date, bird, place, diagnosis, patient_identifier=None) -> str:
     """Returns the body of the message to be sent to UNB."""
+    identifier_text = f" (Kennung: {patient_identifier})" if patient_identifier else ""
+    
     body = f"""
 Sehr geehrte Damen und Herren,
 
-am {date} wurde in der NABU Wildvogelhilfe ein Vogel der Art {bird} aufgenommen.
+am {date} wurde in der NABU Wildvogelhilfe ein Vogel der Art {bird} aufgenommen{identifier_text}.
 Der Fundort laut Finder*in war: {place}.
 Die Diagnose bei Fund lautet: {diagnosis}.
 
