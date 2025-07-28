@@ -1,0 +1,214 @@
+{% extends "base.html" %}
+{% load static %}
+{% load crispy_forms_tags %}
+
+{% block header %}
+<!-- Font Awesome -->
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+<style>
+    .column-group {
+        border: 1px solid #dee2e6;
+        border-radius: 0.375rem;
+        padding: 1rem;
+        margin-bottom: 1rem;
+        background-color: #f8f9fa;
+    }
+    .column-group h6 {
+        margin-bottom: 0.75rem;
+        color: #495057;
+        font-weight: 600;
+    }
+    .form-check {
+        margin-bottom: 0.5rem;
+    }
+    .export-preview {
+        background-color: #e7f3ff;
+        border: 1px solid #b3d9ff;
+        border-radius: 0.375rem;
+        padding: 1rem;
+        margin-top: 1rem;
+    }
+</style>
+{% endblock header %}
+
+{% block content %}
+<div class="row">
+    <div class="col-lg-10">
+        <div class="d-flex align-items-center mb-4">
+            <a href="{% url 'site_exports' %}" class="btn btn-outline-secondary me-3">
+                <i class="fa-solid fa-arrow-left"></i> Zurück
+            </a>
+            <h3 class="mb-0">
+                <i class="fa-solid fa-sliders"></i> {{ title }}
+            </h3>
+        </div>
+        
+        <div class="alert alert-info">
+            <i class="fa-solid fa-info-circle"></i>
+            <strong>Hinweis:</strong> 
+            Konfigurieren Sie hier Ihren individuellen Datenexport. Wählen Sie den gewünschten 
+            Zeitraum, die Spalten und Filter für Ihren Export.
+        </div>
+
+        <form method="post" novalidate>
+            {% csrf_token %}
+            
+            <!-- Date Range Section -->
+            <div class="card mb-4">
+                <div class="card-header">
+                    <h5 class="card-title mb-0">
+                        <i class="fa-solid fa-calendar-range"></i> Zeitraum
+                    </h5>
+                </div>
+                <div class="card-body">
+                    <div class="row">
+                        <div class="col-md-6">
+                            {{ form.date_from|as_crispy_field }}
+                        </div>
+                        <div class="col-md-6">
+                            {{ form.date_to|as_crispy_field }}
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Filter Section -->
+            <div class="card mb-4">
+                <div class="card-header">
+                    <h5 class="card-title mb-0">
+                        <i class="fa-solid fa-filter"></i> Filter
+                    </h5>
+                </div>
+                <div class="card-body">
+                    {{ form.filter_huntable_species|as_crispy_field }}
+                </div>
+            </div>
+
+            <!-- Column Selection Section -->
+            <div class="card mb-4">
+                <div class="card-header">
+                    <h5 class="card-title mb-0">
+                        <i class="fa-solid fa-columns"></i> Spalten-Auswahl
+                    </h5>
+                </div>
+                <div class="card-body">
+                    <div class="row">
+                        <!-- Basic Information -->
+                        <div class="col-lg-6">
+                            <div class="column-group">
+                                <h6><i class="fa-solid fa-info"></i> Grundinformationen</h6>
+                                {{ form.include_date_found|as_crispy_field }}
+                                {{ form.include_bird_species|as_crispy_field }}
+                                {{ form.include_bird_details|as_crispy_field }}
+                                {{ form.include_bird_status|as_crispy_field }}
+                            </div>
+                        </div>
+
+                        <!-- Location & Circumstances -->
+                        <div class="col-lg-6">
+                            <div class="column-group">
+                                <h6><i class="fa-solid fa-location-dot"></i> Ort & Umstände</h6>
+                                {{ form.include_location|as_crispy_field }}
+                                {{ form.include_circumstances|as_crispy_field }}
+                                {{ form.include_diagnosis|as_crispy_field }}
+                                {{ form.include_finder_info|as_crispy_field }}
+                            </div>
+                        </div>
+
+                        <!-- Status & Processing -->
+                        <div class="col-lg-6">
+                            <div class="column-group">
+                                <h6><i class="fa-solid fa-clipboard-check"></i> Status & Verarbeitung</h6>
+                                {{ form.include_aviary|as_crispy_field }}
+                                {{ form.include_sent_to|as_crispy_field }}
+                                {{ form.include_release_location|as_crispy_field }}
+                                {{ form.include_close_date|as_crispy_field }}
+                            </div>
+                        </div>
+
+                        <!-- Additional Information -->
+                        <div class="col-lg-6">
+                            <div class="column-group">
+                                <h6><i class="fa-solid fa-plus"></i> Zusätzliche Informationen</h6>
+                                {{ form.include_notes|as_crispy_field }}
+                                {{ form.include_timestamps|as_crispy_field }}
+                                {{ form.include_user_info|as_crispy_field }}
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Action Buttons -->
+            <div class="d-flex justify-content-between">
+                <a href="{% url 'site_exports' %}" class="btn btn-secondary">
+                    <i class="fa-solid fa-times"></i> Abbrechen
+                </a>
+                <div>
+                    <button type="button" class="btn btn-outline-primary me-2" onclick="selectAllColumns()">
+                        <i class="fa-solid fa-check-double"></i> Alle Spalten auswählen
+                    </button>
+                    <button type="button" class="btn btn-outline-secondary me-2" onclick="clearAllColumns()">
+                        <i class="fa-solid fa-square"></i> Alle Spalten abwählen
+                    </button>
+                    <button type="submit" class="btn btn-success">
+                        <i class="fa-solid fa-download"></i> Export starten
+                    </button>
+                </div>
+            </div>
+        </form>
+    </div>
+</div>
+
+<script>
+function selectAllColumns() {
+    document.querySelectorAll('input[type="checkbox"][id^="id_include_"]').forEach(function(checkbox) {
+        checkbox.checked = true;
+    });
+}
+
+function clearAllColumns() {
+    document.querySelectorAll('input[type="checkbox"][id^="id_include_"]').forEach(function(checkbox) {
+        checkbox.checked = false;
+    });
+}
+
+// Form validation feedback
+document.addEventListener('DOMContentLoaded', function() {
+    const form = document.querySelector('form');
+    const dateFromInput = document.getElementById('id_date_from');
+    const dateToInput = document.getElementById('id_date_to');
+    
+    // Date range validation
+    function validateDateRange() {
+        if (dateFromInput.value && dateToInput.value) {
+            const dateFrom = new Date(dateFromInput.value);
+            const dateTo = new Date(dateToInput.value);
+            
+            if (dateFrom > dateTo) {
+                dateToInput.setCustomValidity('Das Enddatum muss nach dem Startdatum liegen.');
+            } else {
+                dateToInput.setCustomValidity('');
+            }
+        }
+    }
+    
+    if (dateFromInput && dateToInput) {
+        dateFromInput.addEventListener('change', validateDateRange);
+        dateToInput.addEventListener('change', validateDateRange);
+    }
+    
+    // Column selection validation
+    form.addEventListener('submit', function(e) {
+        const columnCheckboxes = document.querySelectorAll('input[type="checkbox"][id^="id_include_"]');
+        const anyChecked = Array.from(columnCheckboxes).some(cb => cb.checked);
+        
+        if (!anyChecked) {
+            e.preventDefault();
+            alert('Bitte wählen Sie mindestens eine Spalte für den Export aus.');
+            return false;
+        }
+    });
+});
+</script>
+{% endblock content %}

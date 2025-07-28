@@ -100,7 +100,13 @@ class FallenBird(models.Model):
         verbose_name=_("Voliere"),
     )
     sent_to = models.CharField(
-        max_length=256, null=True, blank=True, verbose_name=_("Übersandt nach")
+        max_length=256, null=True, blank=True, verbose_name=_("Übermittelt nach")
+    )
+    release_location = models.CharField(
+        max_length=256, null=True, blank=True, verbose_name=_("Auswilderungsort")
+    )
+    patient_file_close_date = models.DateField(
+        null=True, blank=True, verbose_name=_("Patientenakte geschlossen am")
     )
     comment = models.TextField(
         blank=True, null=True, verbose_name=_("Bemerkung")
@@ -113,8 +119,32 @@ class FallenBird(models.Model):
     )
 
     class Meta:
-        verbose_name = _("Gefallener Vogel")
-        verbose_name_plural = _("Gefallene Vögel")
+        verbose_name = _("Patient")
+        verbose_name_plural = _("Patienten")
+
+    def save(self, *args, **kwargs):
+        """Override save to automatically set patient_file_close_date when status changes to closed states."""
+        # Define status IDs that should close the patient file
+        CLOSED_STATUS_IDS = [3, 4, 5]  # Ausgewildert, Übermittelt, Verstorben
+        
+        # Check if this is an update (not a new instance)
+        if self.pk:
+            try:
+                # Get the old instance from database
+                old_instance = FallenBird.objects.get(pk=self.pk)
+                
+                # Check if status changed to a closed status and file_close_date is not set
+                if (self.status_id in CLOSED_STATUS_IDS and 
+                    old_instance.status_id != self.status_id and 
+                    not self.patient_file_close_date):
+                    
+                    self.patient_file_close_date = date.today()
+                    
+            except FallenBird.DoesNotExist:
+                # This shouldn't happen in normal circumstances, but handle gracefully
+                pass
+        
+        super().save(*args, **kwargs)
 
     def __str__(self):
         bird_name = str(self.bird) if self.bird else "Unbekannt"
