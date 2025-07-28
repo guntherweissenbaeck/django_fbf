@@ -76,6 +76,16 @@ class AutomaticReport(models.Model):
         verbose_name=_("Bemerkungen"),
         help_text=_("Bemerkungen zum Vogel in den Bericht einschließen")
     )
+    include_release_location = models.BooleanField(
+        default=False,
+        verbose_name=_("Auswilderungsort"),
+        help_text=_("Auswilderungsort in den Bericht einschließen")
+    )
+    include_close_date = models.BooleanField(
+        default=False,
+        verbose_name=_("Schließungsdatum"),
+        help_text=_("Datum der Aktenschließung in den Bericht einschließen")
+    )
     
     # Schedule settings
     frequency_choices = [

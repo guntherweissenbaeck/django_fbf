@@ -29,6 +29,8 @@ class ReportGenerator:
             'include_circumstances': True,
             'include_location': True,
             'include_notes': False,  # This refers to "Bemerkungen" (comment field)
+            'include_release_location': False,
+            'include_close_date': False,
         }
     
     def get_birds_queryset(self):
@@ -80,6 +82,10 @@ class ReportGenerator:
             headers.append('Voliere')
         if self._get_column_setting('include_notes'):
             headers.append('Bemerkungen')
+        if self._get_column_setting('include_release_location'):
+            headers.append('Auswilderungsort')
+        if self._get_column_setting('include_close_date'):
+            headers.append('Akte geschlossen am')
             
         writer.writerow(headers)
         
@@ -122,6 +128,14 @@ class ReportGenerator:
             if self._get_column_setting('include_notes'):
                 # Use the comment field (Bemerkung) from FallenBird
                 row.append(bird.comment or '')
+                
+            if self._get_column_setting('include_release_location'):
+                row.append(bird.release_location or '')
+                
+            if self._get_column_setting('include_close_date'):
+                # Use patient_file_close_date if available, otherwise fall back to updated date
+                close_date = bird.patient_file_close_date or bird.updated.date()
+                row.append(close_date.strftime('%d.%m.%Y') if close_date else '')
                 
             writer.writerow(row)
         
@@ -244,3 +258,16 @@ class ReportGenerator:
         )
         
         return report_log
+    
+    @classmethod
+    def generate_csv_report(cls, date_from, date_to, automatic_report=None):
+        """Class method to generate CSV report with column configuration."""
+        generator = cls(
+            date_from=date_from,
+            date_to=date_to,
+            include_naturschutzbehoerde=getattr(automatic_report, 'include_naturschutzbehörde', True),
+            include_jagdbehoerde=getattr(automatic_report, 'include_jagdbehörde', False),
+            column_config=automatic_report
+        )
+        csv_content, bird_count = generator.generate_csv()
+        return csv_content

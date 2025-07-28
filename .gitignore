@@ -186,3 +186,5 @@ app/media/reports/csv/*
 
 TODO.md
 *.sql
+*.DS_Store
+*backup_live

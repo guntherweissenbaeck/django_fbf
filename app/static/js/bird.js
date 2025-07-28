@@ -1,28 +1,41 @@
 function showBirdEditFields() {
     let statusField = document.getElementById("id_status");
+    if (!statusField) return; // Sicherheitscheck
+    
     let statusText = statusField.options[statusField.selectedIndex].text;
     let aviaryField = document.getElementById("div_id_aviary");
     let sentToField = document.getElementById("div_id_sent_to");
+    let releaseLocationField = document.getElementById("div_id_release_location");
 
-    aviaryField.hidden = true
-    sentToField.hidden = true
+    // Alle Felder erstmal verstecken
+    if (aviaryField) aviaryField.style.display = 'none';
+    if (sentToField) sentToField.style.display = 'none';
+    if (releaseLocationField) releaseLocationField.style.display = 'none';
 
+    // Je nach Status entsprechende Felder anzeigen
     if (statusText == 'In Auswilderung') {
-        aviaryField.hidden = false
+        if (aviaryField) aviaryField.style.display = 'block';
     } else if (statusText == 'Übermittelt') {
-        sentToField.hidden = false
+        if (sentToField) sentToField.style.display = 'block';
+    } else if (statusText == 'Ausgewildert') {
+        if (releaseLocationField) releaseLocationField.style.display = 'block';
     }
-    else {
-        aviaryField.hidden = true
-        sentToField.hidden = true
-    }
+    
+    console.log(`Status: ${statusText}, Aviary visible: ${aviaryField ? aviaryField.style.display !== 'none' : 'not found'}, SentTo visible: ${sentToField ? sentToField.style.display !== 'none' : 'not found'}, ReleaseLocation visible: ${releaseLocationField ? releaseLocationField.style.display !== 'none' : 'not found'}`);
 }
 
-
-// Load function on windows load.
-(showBirdEditFields)();
-
-// Load function on change.
-document.getElementById("id_status").addEventListener("change", (event) => {
-    showBirdEditFields()
+// DOM-bereit warten
+document.addEventListener('DOMContentLoaded', function() {
+    // Initialer Aufruf nach kurzer Verzögerung, damit das Form vollständig geladen ist
+    setTimeout(function() {
+        showBirdEditFields();
+    }, 100);
+    
+    // Event listener für Status-Änderungen
+    const statusField = document.getElementById("id_status");
+    if (statusField) {
+        statusField.addEventListener("change", function(event) {
+            showBirdEditFields();
+        });
+    }
 });
