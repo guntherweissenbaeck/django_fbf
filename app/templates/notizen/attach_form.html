@@ -1,12 +1,13 @@
 {% extends "base.html" %}
 {% load crispy_forms_tags %}
+{% load static %}
 
 {% block title %}{{ title }} - Notizen{% endblock %}
 
 {% block content %}
 <div class="container-fluid">
     <div class="row">
-        <div class="col-lg-8 mx-auto">
+        <div class="col-12">
             <div class="d-flex justify-content-between align-items-center mb-4">
                 <h1>
                     <i class="fas fa-paperclip text-primary"></i>
@@ -72,4 +73,27 @@
         </div>
     </div>
 </div>
+{% endblock %}
+
+{% block extra_css %}
+{{ block.super }}
+<link rel="stylesheet" href="{% static 'django_ckeditor_5/dist/styles.css' %}">
+<style>
+/* Ensure CKEditor uses full width */
+.ck-editor {
+    width: 100% !important;
+}
+.ck-editor__editable {
+    min-height: 400px !important;
+}
+/* Make the form card take full width */
+.card {
+    width: 100%;
+}
+</style>
+{% endblock %}
+
+{% block extra_js %}
+{{ block.super }}
+<script src="{% static 'django_ckeditor_5/dist/bundle.js' %}"></script>
 {% endblock %}

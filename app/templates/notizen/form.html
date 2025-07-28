@@ -1,12 +1,13 @@
 {% extends "base.html" %}
 {% load crispy_forms_tags %}
+{% load static %}
 
 {% block title %}{{ title }} - Notizen{% endblock %}
 
 {% block content %}
 <div class="container-fluid">
     <div class="row">
-        <div class="col-lg-8 mx-auto">
+        <div class="col-12">
             <div class="d-flex justify-content-between align-items-center mb-4">
                 <h1>
                     <i class="fas fa-sticky-note text-primary"></i>
@@ -83,15 +84,86 @@
 </div>
 {% endblock %}
 
+{% block extra_css %}
+{{ block.super }}
+<link rel="stylesheet" href="{% static 'django_ckeditor_5/dist/styles.css' %}">
+<style>
+/* Ensure CKEditor uses full width */
+.ck-editor {
+    width: 100% !important;
+}
+.ck-editor__editable {
+    min-height: 400px !important;
+}
+/* Make the form card take full width */
+.card {
+    width: 100%;
+}
+</style>
+{% endblock %}
+
 {% block extra_js %}
 {{ block.super }}
+<script src="{% static 'django_ckeditor_5/dist/bundle.js' %}"></script>
 <script>
 document.addEventListener('DOMContentLoaded', function() {
-    // Auto-save draft functionality could be added here
-    const form = document.querySelector('form');
-    const nameField = document.querySelector('#id_name');
-    
+    // Initialize CKEditor5 manually
+    const textareaElement = document.querySelector('#id_inhalt');
+    if (textareaElement) {
+        // CKEditor5 Configuration
+        const editorConfig = {
+            language: 'de',
+            toolbar: [
+                'heading', '|', 
+                'bold', 'italic', 'underline', '|',
+                'bulletedList', 'numberedList', '|',
+                'insertTable', '|',
+                'link', 'blockQuote', '|',
+                'fontSize', 'fontColor', '|',
+                'removeFormat', '|',
+                'undo', 'redo'
+            ],
+            table: {
+                contentToolbar: [ 'tableColumn', 'tableRow', 'mergeTableCells' ],
+            },
+            heading: {
+                options: [
+                    { model: 'paragraph', title: 'Paragraph', class: 'ck-heading_paragraph' },
+                    { model: 'heading1', view: 'h1', title: 'Überschrift 1', class: 'ck-heading_heading1' },
+                    { model: 'heading2', view: 'h2', title: 'Überschrift 2', class: 'ck-heading_heading2' },
+                    { model: 'heading3', view: 'h3', title: 'Überschrift 3', class: 'ck-heading_heading3' }
+                ]
+            },
+            fontSize: {
+                options: [ 9, 10, 11, 12, 13, 14, 15, 16, 18, 20, 22, 24, 26, 28, 30, 32, 34, 36 ]
+            }
+        };
+
+        // Create CKEditor5 instance
+        window.ClassicEditor
+            .create(textareaElement, editorConfig)
+            .then(editor => {
+                // Store editor instance
+                window.editor = editor;
+                
+                // Hide the original textarea
+                textareaElement.style.display = 'none';
+                
+                // Sync editor content with textarea on form submit
+                const form = textareaElement.closest('form');
+                if (form) {
+                    form.addEventListener('submit', function() {
+                        textareaElement.value = editor.getData();
+                    });
+                }
+            })
+            .catch(error => {
+                console.error('Error creating CKEditor:', error);
+            });
+    }
+
     // Auto-focus on name field for new notes
+    const nameField = document.querySelector('#id_name');
     if (nameField && !nameField.value) {
         nameField.focus();
     }
