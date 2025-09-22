@@ -143,7 +143,7 @@ class FallenBirdModelTests(TestCase):
     
     def test_fallen_bird_str_representation(self):
         """Test the string representation of fallen bird."""
-        expected = f"Gefallener Vogel: {self.bird.name}"
+        expected = f"Patient: {self.bird.name}"
         self.assertEqual(str(self.fallen_bird), expected)
     
     def test_fallen_bird_relationship(self):

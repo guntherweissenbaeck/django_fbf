@@ -5,8 +5,8 @@
 {% block title %}{{ title }} - Notizen{% endblock %}
 
 {% block content %}
-<div class="container-fluid">
-    <div class="row">
+<div class="container-fluid notizen-editor-container px-0">
+    <div class="row g-0">
         <div class="col-12">
             <div class="d-flex justify-content-between align-items-center mb-4">
                 <h1>
@@ -18,35 +18,35 @@
                 </a>
             </div>
             
-            <div class="card">
-                <div class="card-body">
+            <div class="card border-0 shadow-none">
+                <div class="card-body p-0">
                     <form method="post" novalidate>
                         {% csrf_token %}
                         
-                        <div class="mb-3">
+                        <div class="mb-3 px-3 px-md-4 px-lg-5">
                             {{ form.name|as_crispy_field }}
                         </div>
                         
-                        <div class="mb-4">
+                        <div class="mb-4 editor-wrapper">
                             {{ form.inhalt|as_crispy_field }}
                         </div>
                         
-                        <div class="d-flex justify-content-between">
-                            <div>
+                        <div class="d-flex justify-content-between flex-wrap gap-2 px-3 px-md-4 px-lg-5 pb-4">
+                            <div class="d-flex flex-wrap gap-2">
                                 <button type="submit" class="btn btn-primary">
                                     <i class="fas fa-save"></i> Speichern
                                 </button>
-                                <a href="{% url 'notizen:list' %}" class="btn btn-outline-secondary ms-2">
+                                <a href="{% url 'notizen:list' %}" class="btn btn-outline-secondary">
                                     <i class="fas fa-times"></i> Abbrechen
                                 </a>
                             </div>
                             
                             {% if notiz %}
-                                <div>
+                                <div class="d-flex flex-wrap gap-2">
                                     <a href="{% url 'notizen:detail' notiz.pk %}" class="btn btn-outline-info">
                                         <i class="fas fa-eye"></i> Vorschau
                                     </a>
-                                    <a href="{% url 'notizen:delete' notiz.pk %}" class="btn btn-outline-danger ms-2">
+                                    <a href="{% url 'notizen:delete' notiz.pk %}" class="btn btn-outline-danger">
                                         <i class="fas fa-trash"></i> Löschen
                                     </a>
                                 </div>
@@ -57,7 +57,7 @@
             </div>
             
             {% if notiz %}
-                <div class="card mt-4">
+                <div class="card mt-4 border-0 shadow-sm">
                     <div class="card-header">
                         <h5 class="mb-0">
                             <i class="fas fa-info-circle"></i> Notiz-Informationen
@@ -88,17 +88,27 @@
 {{ block.super }}
 <link rel="stylesheet" href="{% static 'django_ckeditor_5/dist/styles.css' %}">
 <style>
-/* Ensure CKEditor uses full width */
-.ck-editor {
+.notizen-editor-container {
+    max-width: 100vw;
+}
+.notizen-editor-container .editor-wrapper {
+    padding: 0;
+}
+.notizen-editor-container .ck-editor {
     width: 100% !important;
 }
-.ck-editor__editable {
-    min-height: 400px !important;
+.notizen-editor-container .ck-editor__editable {
+    min-height: 500px !important;
 }
-/* Make the form card take full width */
-.card {
-    width: 100%;
+.notizen-editor-container .ck-editor__main {
+    width: 100% !important;
 }
+.notizen-editor-container .ck-editor__editable_inline {
+    width: 100% !important;
+    padding: 1.5rem !important;
+    box-sizing: border-box;
+}
+</style>
 </style>
 {% endblock %}
 

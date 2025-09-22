@@ -1,154 +1,92 @@
-"""
-Unit tests for Aviary forms.
-"""
-import pytest
-from django.test import TestCase
+"""Unit tests for the current AviaryEditForm implementation."""
+from datetime import date, timedelta
+
 from django.contrib.auth.models import User
+from django.test import TestCase
 
 from aviary.forms import AviaryEditForm
+from aviary.models import Aviary
 
 
 class AviaryEditFormTests(TestCase):
-    """Test cases for AviaryEditForm."""
-    
+    """Ensure the form mirrors the simplified aviary editing workflow."""
+
     def setUp(self):
-        """Set up test data."""
         self.user = User.objects.create_user(
-            username='testuser',
-            email='test@example.com',
-            password='testpass123'
+            username="testuser",
+            email="test@example.com",
+            password="testpass123",
         )
-        
         self.valid_form_data = {
-            'name': 'Test Aviary',
-            'location': 'Test Location',
-            'description': 'Test description',
-            'capacity': 50,
-            'current_occupancy': 10,
-            'contact_person': 'Jane Doe',
-            'contact_phone': '987654321',
-            'contact_email': 'jane@example.com',
-            'notes': 'Test notes'
+            "description": "Pflegestation Nord",
+            "condition": "Offen",
+            "last_ward_round": date.today().isoformat(),
+            "comment": "Alles im grünen Bereich",
         }
-    
-    def test_aviary_edit_form_valid_data(self):
-        """Test that form is valid with correct data."""
+
+    def test_form_accepts_valid_payload(self):
         form = AviaryEditForm(data=self.valid_form_data)
-        self.assertTrue(form.is_valid(), f"Form errors: {form.errors}")
-    
-    def test_aviary_edit_form_save(self):
-        """Test that form saves correctly."""
+        self.assertTrue(form.is_valid(), msg=form.errors)
+
+    def test_form_persists_changes(self):
         form = AviaryEditForm(data=self.valid_form_data)
-        if form.is_valid():
-            aviary = form.save(commit=False)
-            aviary.created_by = self.user
-            aviary.save()
-            
-            self.assertEqual(aviary.name, 'Test Aviary')
-            self.assertEqual(aviary.location, 'Test Location')
-            self.assertEqual(aviary.capacity, 50)
-            self.assertEqual(aviary.current_occupancy, 10)
-    
-    def test_aviary_edit_form_required_fields(self):
-        """Test form validation with missing required fields."""
-        form = AviaryEditForm(data={})
+        self.assertTrue(form.is_valid(), msg=form.errors)
+
+        aviary = form.save(commit=False)
+        aviary.created_by = self.user
+        aviary.save()
+
+        self.assertEqual(aviary.description, "Pflegestation Nord")
+        self.assertEqual(aviary.condition, "Offen")
+        self.assertEqual(aviary.comment, "Alles im grünen Bereich")
+        self.assertEqual(aviary.last_ward_round, date.fromisoformat(self.valid_form_data["last_ward_round"]))
+
+    def test_required_fields_enforced(self):
+        form = AviaryEditForm(data={"comment": "Nur Kommentar"})
         self.assertFalse(form.is_valid())
-        
-        # Check that required fields have errors
-        required_fields = ['name', 'location']
-        for field in required_fields:
-            if field in form.fields and form.fields[field].required:
-                self.assertIn(field, form.errors)
-    
-    def test_aviary_edit_form_invalid_capacity(self):
-        """Test form validation with invalid capacity."""
-        invalid_data = self.valid_form_data.copy()
-        invalid_data['capacity'] = -5  # Negative capacity
-        
+        self.assertIn("description", form.errors)
+        self.assertIn("condition", form.errors)
+        self.assertIn("last_ward_round", form.errors)
+
+    def test_condition_must_match_choice(self):
+        invalid_data = self.valid_form_data | {"condition": "Ungültig"}
         form = AviaryEditForm(data=invalid_data)
         self.assertFalse(form.is_valid())
-        if 'capacity' in form.errors:
-            self.assertIn('capacity', form.errors)
-    
-    def test_aviary_edit_form_invalid_occupancy(self):
-        """Test form validation with invalid occupancy."""
-        invalid_data = self.valid_form_data.copy()
-        invalid_data['current_occupancy'] = -1  # Negative occupancy
-        
+        self.assertIn("condition", form.errors)
+
+    def test_last_ward_round_requires_valid_date(self):
+        invalid_data = self.valid_form_data | {"last_ward_round": "31-12-2024"}
         form = AviaryEditForm(data=invalid_data)
         self.assertFalse(form.is_valid())
-        if 'current_occupancy' in form.errors:
-            self.assertIn('current_occupancy', form.errors)
-    
-    def test_aviary_edit_form_occupancy_exceeds_capacity(self):
-        """Test form validation when occupancy exceeds capacity."""
-        invalid_data = self.valid_form_data.copy()
-        invalid_data['capacity'] = 10
-        invalid_data['current_occupancy'] = 15  # More than capacity
-        
-        form = AviaryEditForm(data=invalid_data)
-        # This should be caught by form validation or model validation
-        if form.is_valid():
-            # If form validation doesn't catch it, model validation should
-            with self.assertRaises(Exception):  # Could be ValidationError
-                aviary = form.save(commit=False)
-                aviary.created_by = self.user
-                aviary.full_clean()
-        else:
-            # Form validation caught the issue
-            self.assertTrue('current_occupancy' in form.errors or 
-                           'capacity' in form.errors or 
-                           '__all__' in form.errors)
-    
-    def test_aviary_edit_form_invalid_email(self):
-        """Test form validation with invalid email."""
-        invalid_data = self.valid_form_data.copy()
-        invalid_data['contact_email'] = 'invalid-email'
-        
-        form = AviaryEditForm(data=invalid_data)
-        self.assertFalse(form.is_valid())
-        self.assertIn('contact_email', form.errors)
-    
-    def test_aviary_edit_form_optional_fields(self):
-        """Test form with only required fields."""
-        minimal_data = {
-            'name': 'Minimal Aviary',
-            'location': 'Minimal Location'
-        }
-        
-        form = AviaryEditForm(data=minimal_data)
-        if form.is_valid():
-            aviary = form.save(commit=False)
-            aviary.created_by = self.user
-            aviary.save()
-            
-            self.assertEqual(aviary.name, 'Minimal Aviary')
-            self.assertEqual(aviary.location, 'Minimal Location')
-        else:
-            # Print errors for debugging if needed
-            print(f"Minimal form errors: {form.errors}")
-    
-    def test_aviary_edit_form_field_types(self):
-        """Test that form fields have correct types."""
+        self.assertIn("last_ward_round", form.errors)
+
+    def test_initial_last_ward_round_default(self):
         form = AviaryEditForm()
-        
-        # Check field types
-        if 'capacity' in form.fields:
-            self.assertEqual(form.fields['capacity'].__class__.__name__, 'IntegerField')
-        
-        if 'current_occupancy' in form.fields:
-            self.assertEqual(form.fields['current_occupancy'].__class__.__name__, 'IntegerField')
-        
-        if 'contact_email' in form.fields:
-            self.assertEqual(form.fields['contact_email'].__class__.__name__, 'EmailField')
-    
-    def test_aviary_edit_form_help_text(self):
-        """Test that form fields have appropriate help text."""
-        form = AviaryEditForm()
-        
-        # Check if help text is provided for important fields
-        if 'capacity' in form.fields and form.fields['capacity'].help_text:
-            self.assertIsInstance(form.fields['capacity'].help_text, str)
-        
-        if 'current_occupancy' in form.fields and form.fields['current_occupancy'].help_text:
-            self.assertIsInstance(form.fields['current_occupancy'].help_text, str)
+        widget_value = form.fields["last_ward_round"].widget.attrs.get("value")
+        # Meta widgets configure a callable default; fall back to the field initial when present.
+        if widget_value is None:
+            initial = form.fields["last_ward_round"].initial
+            widget_value = initial
+
+        self.assertIsNotNone(widget_value)
+        resolved = widget_value() if callable(widget_value) else widget_value
+        self.assertEqual(resolved, date.today())
+
+    def test_comment_is_optional(self):
+        data = self.valid_form_data.copy()
+        data.pop("comment")
+        form = AviaryEditForm(data=data)
+        self.assertTrue(form.is_valid(), msg=form.errors)
+
+    def test_existing_instance_updates(self):
+        aviary = Aviary.objects.create(
+            description="Altbestand",
+            condition="Geschlossen",
+            last_ward_round=date.today() - timedelta(days=7),
+            created_by=self.user,
+        )
+        form = AviaryEditForm(data=self.valid_form_data, instance=aviary)
+        self.assertTrue(form.is_valid(), msg=form.errors)
+        updated = form.save()
+        self.assertEqual(updated.description, "Pflegestation Nord")
+        self.assertEqual(updated.condition, "Offen")

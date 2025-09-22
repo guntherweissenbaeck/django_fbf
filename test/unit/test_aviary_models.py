@@ -73,34 +73,34 @@ class AviaryModelTests(TestCase):
     
     def test_aviary_occupancy_validation(self):
         """Test that current occupancy is validated."""
-        # Test negative occupancy
         with self.assertRaises(ValidationError):
             aviary = Aviary(
                 name="Invalid Aviary",
                 location="Test Location",
                 current_occupancy=-1,
-                created_by=self.user
+                created_by=self.user,
             )
             aviary.full_clean()
     
     def test_aviary_occupancy_exceeds_capacity(self):
-        """Test validation when occupancy exceeds capacity."""
-        # Test occupancy exceeding capacity
+        """Occupancy must not be greater than capacity."""
         with self.assertRaises(ValidationError):
             aviary = Aviary(
                 name="Overcrowded Aviary",
                 location="Test Location",
                 capacity=10,
                 current_occupancy=15,
-                created_by=self.user
+                created_by=self.user,
             )
             aviary.full_clean()
-    
+
     def test_aviary_required_fields(self):
-        """Test that required fields are validated."""
-        with self.assertRaises(ValidationError):
-            aviary = Aviary()
-            aviary.full_clean()
+        """Name and location are auto-populated when missing."""
+        aviary = Aviary(description="Ohne expliziten Namen", created_by=self.user)
+        aviary.full_clean()
+        aviary.save()
+        self.assertEqual(aviary.name, "Ohne expliziten Namen")
+        self.assertEqual(aviary.location, "Standardort")
     
     def test_aviary_email_validation(self):
         """Test that email field is validated."""
@@ -118,23 +118,26 @@ class AviaryModelTests(TestCase):
         self.assertEqual(self.aviary.created_by, self.user)
     
     def test_aviary_is_full_property(self):
-        """Test the is_full property."""
-        # Create aviary at capacity
+        """Test the computed is_full property."""
         full_aviary = Aviary.objects.create(
             name="Full Aviary",
             location="Test Location",
             capacity=5,
             current_occupancy=5,
-            created_by=self.user
+            created_by=self.user,
         )
-        
-        # Check if we can add a property method to test
-        self.assertEqual(full_aviary.capacity, full_aviary.current_occupancy)
-        
-        # Check partial occupancy
-        self.assertLess(self.aviary.current_occupancy, self.aviary.capacity)
-    
+        self.assertTrue(full_aviary.is_full)
+
+        partial = Aviary.objects.create(
+            name="Teilbelegt",
+            location="Test Location",
+            capacity=10,
+            current_occupancy=3,
+            created_by=self.user,
+        )
+        self.assertFalse(partial.is_full)
+
     def test_aviary_available_space(self):
-        """Test calculating available space."""
+        """Test the available_space helper property."""
         expected_available = self.aviary.capacity - self.aviary.current_occupancy
-        self.assertEqual(expected_available, 40)  # 50 - 10 = 40
+        self.assertEqual(self.aviary.available_space, expected_available)

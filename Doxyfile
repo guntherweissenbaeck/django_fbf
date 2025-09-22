@@ -1,0 +1,84 @@
+# Doxygen configuration for django_fbf project
+
+#---------------------------------------------------------------------------
+# Project related configuration options
+#---------------------------------------------------------------------------
+PROJECT_NAME           = "django_fbf"
+PROJECT_BRIEF          = "Wildvogelhilfe Jena portal"
+OUTPUT_DIRECTORY       = docs/doxygen
+CREATE_SUBDIRS         = YES
+OUTPUT_LANGUAGE        = German
+BRIEF_MEMBER_DESC      = YES
+REPEAT_BRIEF           = YES
+ALWAYS_DETAILED_SEC    = NO
+FULL_PATH_NAMES        = NO
+STRIP_FROM_PATH        = app
+
+#---------------------------------------------------------------------------
+# Build related configuration options
+#---------------------------------------------------------------------------
+EXTRACT_ALL            = YES
+EXTRACT_PRIVATE        = NO
+EXTRACT_STATIC         = NO
+EXTRACT_LOCAL_CLASSES  = NO
+EXTRACT_LOCAL_METHODS  = NO
+HIDE_UNDOC_MEMBERS     = NO
+HIDE_UNDOC_CLASSES     = NO
+HIDE_FRIEND_COMPOUNDS  = YES
+HIDE_IN_BODY_DOCS      = NO
+INTERNAL_DOCS          = NO
+CASE_SENSE_NAMES       = NO
+SHOW_INCLUDE_FILES     = NO
+INLINE_INFO            = YES
+SORT_MEMBER_DOCS       = YES
+SORT_BRIEF_DOCS        = YES
+SORT_GROUP_NAMES       = YES
+SORT_BY_SCOPE_NAME     = YES
+GENERATE_TODOLIST      = YES
+GENERATE_BUGLIST       = YES
+WARN_IF_UNDOCUMENTED   = YES
+WARN_IF_DOC_ERROR      = YES
+WARN_NO_PARAMDOC       = YES
+QUIET                  = NO
+WARNINGS               = YES
+WARN_LOGFILE           = docs/doxygen/doxygen-warnings.log
+
+#---------------------------------------------------------------------------
+# Input related configuration options
+#---------------------------------------------------------------------------
+INPUT                  = README.md docs ER_Diagramm.md app test
+FILE_PATTERNS          = *.py *.md
+RECURSIVE              = YES
+EXCLUDE                = app/static app/staticfiles app/media app/templates *.pyc
+EXCLUDE_PATTERNS       = */migrations/* */__pycache__/*
+INPUT_ENCODING         = UTF-8
+
+#---------------------------------------------------------------------------
+# Python configuration
+#---------------------------------------------------------------------------
+EXTENSION_MAPPING      = py=Python
+MARKDOWN_SUPPORT       = YES
+USE_MDFILE_AS_MAINPAGE = README.md
+OPTIMIZE_OUTPUT_FOR_C  = NO
+OPTIMIZE_OUTPUT_JAVA   = NO
+OPTIMIZE_FOR_FORTRAN   = NO
+OPTIMIZE_OUTPUT_VHDL   = NO
+EXTENDED_ENUM_VALUES   = YES
+
+#---------------------------------------------------------------------------
+# Output formats
+#---------------------------------------------------------------------------
+GENERATE_HTML          = YES
+HTML_OUTPUT            = html
+HTML_TIMESTAMP         = YES
+HTML_DYNAMIC_SECTIONS  = YES
+GENERATE_LATEX         = NO
+GENERATE_XML           = YES
+XML_OUTPUT             = xml
+GENERATE_MAN           = NO
+
+#---------------------------------------------------------------------------
+# Dot / Graphviz settings (optional)
+#---------------------------------------------------------------------------
+HAVE_DOT               = NO
+

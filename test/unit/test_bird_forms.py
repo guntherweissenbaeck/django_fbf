@@ -1,228 +1,159 @@
-"""
-Unit tests for Bird forms.
-"""
-import pytest
-from django.test import TestCase
-from django.contrib.auth.models import User
-from django.utils import timezone
-from decimal import Decimal
+"""Current unit tests for BirdAddForm and BirdEditForm."""
+from datetime import date
 
-from bird.forms import BirdAddForm, BirdEditForm
-from bird.models import Bird, BirdStatus, Circumstance
+from django.contrib.auth.models import User
+from django.test import TestCase
+
 from aviary.models import Aviary
+from bird.forms import BirdAddForm, BirdEditForm
+from bird.models import Bird, BirdStatus, Circumstance, FallenBird
 
 
 class BirdAddFormTests(TestCase):
-    """Test cases for BirdAddForm."""
-    
+    """Validate the simplified bulk-intake form for new patients."""
+
     def setUp(self):
-        """Set up test data."""
         self.user = User.objects.create_user(
-            username='testuser',
-            email='test@example.com',
-            password='testpass123'
+            username="form-user",
+            email="user@example.com",
+            password="secret",
         )
-        
         self.aviary = Aviary.objects.create(
-            name="Test Aviary",
-            location="Test Location",
-            created_by=self.user
+            name="Pflegestation",
+            location="Jena",
+            created_by=self.user,
         )
-        
-        self.bird_status = BirdStatus.objects.create(
-            name="Gesund",
-            description="Healthy bird"
-        )
-        
-        self.circumstance = Circumstance.objects.create(
-            name="Gefunden",
-            description="Found bird"
-        )
-        
-        # Create a Bird instance for the FallenBird foreign key
+        self.status = BirdStatus.objects.create(description="In Behandlung")
+        self.circumstance = Circumstance.objects.create(name="Fensterkollision", description="Fund am Fenster")
         self.bird = Bird.objects.create(
-            name="Test Bird Species",
-            species="Test Species",
-            created_by=self.user
+            name="Mauersegler",
+            species="Apus apus",
+            status=self.status,
+            aviary=self.aviary,
+            created_by=self.user,
         )
-        
-        self.valid_form_data = {
-            'bird_identifier': 'TB001',
-            'bird': self.bird.id,
-            'age': 'Adult',
-            'sex': 'Unbekannt',
-            'date_found': timezone.now().date(),
-            'place': 'Test Location',
-            'find_circumstances': self.circumstance.id,
-            'diagnostic_finding': 'Test diagnosis',
-            'finder': 'John Doe\nTest Street 123\nTest City',
-            'comment': 'Test comment'
+        self.valid_payload = {
+            "bird_identifier": "MS-001",
+            "bird": self.bird.id,
+            "age": "Adult",
+            "sex": "Unbekannt",
+            "date_found": date.today().isoformat(),
+            "place": "Jena",
+            "find_circumstances": self.circumstance.id,
+            "diagnostic_finding": "Schwäche",
+            "finder": "Finder Name\nStraße 1\nJena",
+            "comment": "Erstaufnahme",
+            "anzahl_patienten": 1,
         }
-    
-    def test_bird_add_form_valid_data(self):
-        """Test that form is valid with correct data."""
-        form = BirdAddForm(data=self.valid_form_data)
-        self.assertTrue(form.is_valid(), f"Form errors: {form.errors}")
-    
-    def test_bird_add_form_save(self):
-        """Test that form saves correctly."""
-        form = BirdAddForm(data=self.valid_form_data)
-        if form.is_valid():
-            fallen_bird = form.save(commit=False)
-            fallen_bird.user = self.user
-            fallen_bird.save()
-            
-            self.assertEqual(fallen_bird.bird_identifier, 'TB001')
-            self.assertEqual(fallen_bird.bird, self.bird)
-            self.assertEqual(fallen_bird.age, 'Adult')
-            self.assertEqual(fallen_bird.sex, 'Unbekannt')
-            self.assertEqual(fallen_bird.place, 'Test Location')
-    
-    def test_bird_add_form_required_fields(self):
-        """Test form validation with missing required fields."""
-        # Test with empty data
+
+    def test_valid_payload_passes(self):
+        form = BirdAddForm(data=self.valid_payload)
+        self.assertTrue(form.is_valid(), msg=form.errors)
+
+    def test_save_creates_patient(self):
+        form = BirdAddForm(data=self.valid_payload)
+        self.assertTrue(form.is_valid(), msg=form.errors)
+        patient = form.save(commit=False)
+        patient.user = self.user
+        patient.save()
+        self.assertEqual(patient.bird, self.bird)
+        self.assertEqual(patient.bird_identifier, "MS-001")
+
+    def test_missing_required_fields(self):
         form = BirdAddForm(data={})
         self.assertFalse(form.is_valid())
+        self.assertIn("bird", form.errors)
+        self.assertIn("anzahl_patienten", form.errors)
 
-        # Check that required fields have errors
-        required_fields = ['bird']  # Only bird is truly required in FallenBird model
-        for field in required_fields:
-            self.assertIn(field, form.errors)
-    
-    def test_bird_add_form_invalid_weight(self):
-        """Test form validation with invalid weight."""
-        # BirdAddForm doesn't have weight field, so test with invalid diagnostic_finding instead
-        invalid_data = self.valid_form_data.copy()
-        invalid_data['diagnostic_finding'] = 'A' * 500  # Too long for CharField(max_length=256)
+    def test_patient_count_bounds(self):
+        too_low = self.valid_payload | {"anzahl_patienten": 0}
+        form = BirdAddForm(data=too_low)
+        self.assertFalse(form.is_valid())
+        self.assertIn("anzahl_patienten", form.errors)
 
-        form = BirdAddForm(data=invalid_data)
-        # This might still be valid if Django doesn't enforce max_length in forms
-        # The important thing is that the test doesn't crash
-        form.is_valid()  # Just call it, don't assert the result
-    
-    def test_bird_add_form_invalid_email(self):
-        """Test form validation with invalid email."""
-        # BirdAddForm doesn't have email fields, so this test should check
-        # that the form is still valid when non-form fields are invalid
-        invalid_data = self.valid_form_data.copy()
-        # Since there's no email field in FallenBird form, just test that 
-        # the form is still valid with the regular data
-        form = BirdAddForm(data=invalid_data)
-        self.assertTrue(form.is_valid())
-    
-    def test_bird_add_form_invalid_choices(self):
-        """Test form validation with invalid choice fields."""
-        invalid_data = self.valid_form_data.copy()
-        invalid_data['age'] = 'invalid_age'
-        
-        form = BirdAddForm(data=invalid_data)
+        too_high = self.valid_payload | {"anzahl_patienten": 100}
+        form = BirdAddForm(data=too_high)
         self.assertFalse(form.is_valid())
-        self.assertIn('age', form.errors)
-        
-        invalid_data = self.valid_form_data.copy()
-        invalid_data['sex'] = 'invalid_sex'
-        
-        form = BirdAddForm(data=invalid_data)
+        self.assertIn("anzahl_patienten", form.errors)
+
+    def test_invalid_choice_values(self):
+        payload = self.valid_payload | {"age": "falsch"}
+        form = BirdAddForm(data=payload)
         self.assertFalse(form.is_valid())
-        self.assertIn('sex', form.errors)
+        self.assertIn("age", form.errors)
+
+        payload = self.valid_payload | {"sex": "falsch"}
+        form = BirdAddForm(data=payload)
+        self.assertFalse(form.is_valid())
+        self.assertIn("sex", form.errors)
 
 
 class BirdEditFormTests(TestCase):
-    """Test cases for BirdEditForm."""
-    
+    """Ensure editing an existing patient honours current business rules."""
+
     def setUp(self):
-        """Set up test data."""
         self.user = User.objects.create_user(
-            username='testuser',
-            email='test@example.com',
-            password='testpass123'
+            username="edit-user",
+            email="edit@example.com",
+            password="secret",
         )
-        
         self.aviary = Aviary.objects.create(
-            name="Test Aviary",
-            location="Test Location",
-            created_by=self.user
+            name="Innenvoliere",
+            location="Jena",
+            created_by=self.user,
         )
-        
-        self.bird_status = BirdStatus.objects.create(
-            name="Gesund",
-            description="Healthy bird"
-        )
-        
-        self.circumstance = Circumstance.objects.create(
-            name="Gefunden",
-            description="Found bird"
-        )
-        
-        # Create a Bird instance for the FallenBird foreign key  
+        self.status = BirdStatus.objects.create(description="Verletzter Patient")
+        self.circumstance = Circumstance.objects.create(name="Katze", description="Von Katze gebracht")
         self.bird = Bird.objects.create(
-            name="Test Bird Species",
-            species="Test Species", 
-            created_by=self.user
+            name="Turmfalke",
+            species="Falco tinnunculus",
+            status=self.status,
+            aviary=self.aviary,
+            created_by=self.user,
         )
-        
-        self.valid_form_data = {
-            'bird_identifier': 'TB002',
-            'bird': self.bird.id,
-            'sex': 'Weiblich',
-            'date_found': timezone.now().date(),
-            'place': 'Updated Location',
-            'status': self.bird_status.id,
-            'aviary': self.aviary.id,
-            'find_circumstances': self.circumstance.id,
-            'diagnostic_finding': 'Updated diagnosis',
-            'finder': 'Jane Doe\nUpdated Street 456\nUpdated City',
-            'comment': 'Updated comment'
+        self.patient = FallenBird.objects.create(
+            bird=self.bird,
+            date_found=date.today(),
+            place="Jena",
+            status=self.status,
+            find_circumstances=self.circumstance,
+            user=self.user,
+        )
+        self.valid_update = {
+            "bird_identifier": "TF-2025",
+            "bird": self.bird.id,
+            "sex": "Weiblich",
+            "date_found": date.today().isoformat(),
+            "place": "Pflegestation",
+            "status": self.status.id,
+            "aviary": self.aviary.id,
+            "find_circumstances": self.circumstance.id,
+            "diagnostic_finding": "Flügelbruch",
+            "finder": "Finder Team",
+            "comment": "Stabil",
         }
-    
-    def test_bird_edit_form_valid_data(self):
-        """Test that edit form is valid with correct data."""
-        form = BirdEditForm(data=self.valid_form_data)
-        self.assertTrue(form.is_valid(), f"Form errors: {form.errors}")
-    
-    def test_bird_edit_form_partial_update(self):
-        """Test that edit form works with partial data."""
-        partial_data = {
-            'bird': self.bird.id,
-            'place': 'Partially Updated Location',
-            'species': 'Test Species',
-            'aviary': self.aviary.id,
-            'status': self.bird_status.id,
-        }
-        
-        form = BirdEditForm(data=partial_data)
-        # Check if form is valid with minimal required fields
-        # This depends on your form's actual requirements
-        if not form.is_valid():
-            # Print errors for debugging
-            print(f"Partial update form errors: {form.errors}")
-    
-    def test_bird_edit_form_required_fields(self):
-        """Test edit form validation with missing required fields."""
-        form = BirdEditForm(data={})
+
+    def test_update_payload_valid(self):
+        form = BirdEditForm(data=self.valid_update, instance=self.patient)
+        self.assertTrue(form.is_valid(), msg=form.errors)
+        updated = form.save()
+        self.assertEqual(updated.bird_identifier, "TF-2025")
+        self.assertEqual(updated.place, "Pflegestation")
+
+    def test_missing_bird_reference_invalid(self):
+        payload = self.valid_update.copy()
+        payload.pop("bird")
+        form = BirdEditForm(data=payload, instance=self.patient)
         self.assertFalse(form.is_valid())
-        
-        # Check that required fields have errors
-        # Edit form might have different required fields than add form
-        if 'name' in form.fields and form.fields['name'].required:
-            self.assertIn('name', form.errors)
-    
-    def test_bird_edit_form_field_differences(self):
-        """Test differences between add and edit forms."""
-        add_form = BirdAddForm()
-        edit_form = BirdEditForm()
-        
-        # Edit form might exclude certain fields that shouldn't be editable
-        # For example, date_found might not be editable after creation
-        add_fields = set(add_form.fields.keys())
-        edit_fields = set(edit_form.fields.keys())
-        
-        # Check if age is excluded from edit form (it is)
-        if 'age' in add_fields and 'age' not in edit_fields:
-            self.assertNotIn('age', edit_form.fields)
-        
-        # Both forms should have core FallenBird fields
-        core_fields = ['bird_identifier', 'bird', 'sex', 'date_found']
-        for field in core_fields:
-            self.assertIn(field, add_form.fields)
-            self.assertIn(field, edit_form.fields)
+        self.assertIn("bird", form.errors)
+
+    def test_optional_fields_can_be_cleared(self):
+        payload = self.valid_update | {"comment": "", "diagnostic_finding": ""}
+        form = BirdEditForm(data=payload, instance=self.patient)
+        self.assertTrue(form.is_valid(), msg=form.errors)
+
+    def test_invalid_status_choice(self):
+        payload = self.valid_update | {"status": 9999}
+        form = BirdEditForm(data=payload, instance=self.patient)
+        self.assertFalse(form.is_valid())
+        self.assertIn("status", form.errors)

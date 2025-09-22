@@ -1,228 +1,87 @@
-# The Fallen Birdy Form
+# Fallen Birdy Form
 
-## 🚀 Schneller Einstieg
+## Inhaltsverzeichnis
+1. [Über dieses Projekt](#über-dieses-projekt)
+2. [Schnellstart](#schnellstart)
+3. [Entwicklungsumgebung einrichten](#entwicklungsumgebung-einrichten)
+4. [Tests ausführen](#tests-ausführen)
+5. [Dokumentation erzeugen](#dokumentation-erzeugen)
+6. [Troubleshooting](#troubleshooting)
+7. [Spendenlink](#spendenlink)
 
-Für einen schnellen Start des Projekts verwenden Sie die bereitgestellten Skripte:
+## Über dieses Projekt
+Fallen Birdy Form ist das Verwaltungsportal der NABU Wildvogelhilfe Jena. Das System unterstützt ehrenamtliche Helferinnen und Helfer bei der Erfassung, Pflege und Auswertung von Patientenvögeln. Wichtige Arbeitsbereiche sind unter anderem:
+- Aufnahmeformulare für neue Patienten (inklusive Mehrfachanlage und automatischer Benachrichtigungen)
+- Verwaltung von Volieren, Kosten, Kontakten sowie Berichten
+- Umfangreiche Statistik- und Exportfunktionen für Behördenmeldungen
 
-### Start des Projekts
-```bash
-./start_project.sh
-```
+Technische Eckdaten:
+- Backend: Django 5, PostgreSQL, Docker Compose
+- Frontend: Django Templates, Jazzmin für das Admin-Interface
+- Tests: Django Test Runner und Pytest (Unit-, Integrations- und Funktionstests)
 
-Das Start-Skript führt automatisch folgende Schritte aus:
-- Erstellt eine `.env` Datei mit Entwicklungseinstellungen
-- Baut und startet alle Docker Container (Web, Datenbank, Traefik)
-- Führt Django Migrations aus
-- Lädt Testdaten (Fixtures)
-- Erstellt einen Admin-Benutzer
-- Sammelt statische Dateien
+## Schnellstart
+1. Voraussetzungen installieren: Docker Desktop (inkl. Compose) sowie OpenSSL für das Startskript.
+2. Repository klonen und in das Projektverzeichnis wechseln.
+3. Projekt starten:
+   ```bash
+   ./start_project.sh
+   ```
+   Das Skript erstellt bei Bedarf eine `.env`, baut Container, führt Migrationen aus, lädt optional Fixtures, legt einen Admin-Benutzer (`admin` / `admin`) an und sammelt statische Dateien.
+4. Nach erfolgreichem Start stehen zur Verfügung:
+   - Anwendung: http://localhost:8008
+   - Admin-Backend: http://localhost:8008/admin
 
-**Nach dem Start ist die Anwendung verfügbar unter:**
-- **Hauptanwendung**: [http://localhost:8008](http://localhost:8008)
-- **Admin-Panel**: [http://localhost:8008/admin](http://localhost:8008/admin)
-
-**Standard Admin-Zugang:**
-- Benutzername: `admin`
-- Passwort: `admin`
-
-### Stop des Projekts
+Projekt stoppen:
 ```bash
 ./stop_project.sh
 ```
 
-Das Stop-Skript stoppt alle Container und räumt auf.
+## Entwicklungsumgebung einrichten
+- Standardbenutzer anlegen: Im Startskript wird ein Test-Admin erstellt. Eigene Zugangsdaten lassen sich über `docker compose exec web python manage.py createsuperuser` erzeugen.
+- Testdaten laden:
+  ```bash
+  docker compose exec web python manage.py loaddata fixtures/data.json
+  ```
+- Zusätzliche Umgebungsschalter (z. B. Mailserver, CSRF) lassen sich über `.env` setzen. Eine Beispielkonfiguration liegt in `.env.example`.
 
----
-
-## 🧪 Tests ausführen
-
-Das Projekt verfügt über eine umfassende Test-Suite mit verschiedenen Test-Arten:
-
-### Einfachster Weg (Empfohlen)
-Verwenden Sie das bereitgestellte Test-Skript für einen vollständigen Test-Durchlauf:
+## Tests ausführen
+Empfohlener Komplettlauf:
 ```bash
 ./start_test.sh
 ```
+Das Skript prüft zunächst, ob die Container laufen, und führt dann nacheinander aus:
+- `docker compose exec web python manage.py test`
+- `python3 -m pytest test/ -v`
+Anschließend wird ein HTML-Coverage-Report unter `htmlcov/index.html` generiert (aktuelle Gesamtabdeckung: 45 %).
 
-Das Test-Skript führt automatisch folgende Tests aus:
-- Django Tests (13 Tests im Docker Container)
-- Pytest Unit Tests (77 Tests)
-- Pytest Integration Tests (11 Tests) 
-- Pytest Functional Tests (6 Tests)
-- Generiert einen HTML Coverage Report
-
-### Django Tests (im Docker Container)
-Führen Sie die Standard Django Tests aus:
+Einzelläufe:
 ```bash
-docker exec django_fbf_web_1 python manage.py test
+# Django Tests
+docker compose exec web python manage.py test
+
+# Pytest gesamt
+PYTHONPATH=app python3 -m pytest test/ -v
+
+# Nur Unit-Tests
+PYTHONPATH=app python3 -m pytest test/unit/ -v
 ```
 
-### Komplette Test-Suite (Unit, Integration, Functional)
-Für die vollständige Test-Suite (94 Tests):
+## Dokumentation erzeugen
+Alle relevanten Module enthalten Doxygen-fähige Docstrings. Zur Generierung der HTML-Dokumentation:
 ```bash
-python3 -m pytest test/ -v
+doxygen Doxyfile
 ```
+Das Ergebnis liegt unter `docs/doxygen/html/index.html`. XML-Artefakte für weiterführende Toolchains entstehen im Verzeichnis `docs/doxygen/xml/`.
 
-### Nur Unit Tests
-```bash
-python3 -m pytest test/unit/ -v
-```
+## Troubleshooting
+- **Docker-Container starten nicht:** Prüfen, ob Ports 8000, 8008 und 8081 frei sind. Bei Konflikten Ports in `docker-compose.yaml` anpassen.
+- **`start_project.sh` bricht ab:** Stellen Sie sicher, dass OpenSSL verfügbar ist (für die Secret-Key-Erzeugung) und Docker Desktop läuft.
+- **Tests schlagen fehl, weil Django nicht gefunden wird:** Beim lokalen Pytest-Lauf `PYTHONPATH=app` setzen oder das Projektpaket installieren.
+- **E-Mails werden nicht verschickt:** In der Entwicklung kommt der Konsolen-Backend zum Einsatz. Für reale SMTP-Verbindungen die entsprechenden Variablen (`EMAIL_HOST`, `EMAIL_HOST_USER`, `EMAIL_HOST_PASSWORD`, `DEFAULT_FROM_EMAIL`) in `.env` pflegen.
+- **Statische Dateien fehlen im Testlauf:** Das Startskript führt `collectstatic` aus. Bei manueller Ausführung `docker compose exec web python manage.py collectstatic` starten.
 
-### Nur Integration Tests
-```bash
-python3 -m pytest test/integration/ -v
-```
-
-### Nur Functional Tests
-```bash
-python3 -m pytest test/functional/ -v
-```
-
-### Test-Coverage Report
-Um einen Bericht über die Test-Abdeckung zu erhalten:
-```bash
-python3 -m pytest test/ --cov=app --cov-report=html
-```
-
-**Hinweis:** Stellen Sie sicher, dass das Projekt läuft (`./start_project.sh`) bevor Sie die Tests ausführen.
-
----
-
-## 📊 Reports System
-
-Das Django FBF verfügt über ein vollständiges Reports-System für die Wildvogelhilfe Jena:
-
-### Features
-- **Manuelle Reports**: Interaktive Erstellung mit Datumsbereich und Filteroptionen
-- **Automatische Reports**: Wiederkehrende Reports (wöchentlich/monatlich/quartalsweise)
-- **E-Mail-Versand**: Professional formatierte E-Mails mit CSV-Anhang
-- **Report-Protokoll**: Vollständige Audit-Spur aller generierten Reports
-- **Admin-Integration**: Nahtlose Integration in Django Admin
-
-### Verwendung
-1. **Admin-Panel öffnen**: [http://localhost:8008/admin/reports/](http://localhost:8008/admin/reports/)
-2. **Manuelle Reports**: "Report erstellen" → Datum wählen → Filter setzen → Herunterladen/E-Mail
-3. **Automatische Reports**: Wiederkehrende Reports konfigurieren mit E-Mail-Verteilern
-4. **Report-Logs**: Verlauf aller Reports mit Download-Möglichkeit
-
-### CSV-Export
-Reports enthalten folgende Felder: Vogel, Alter, Geschlecht, Gefunden am, Fundort, Fundumstände, Diagnose bei Fund, Status
-
----
-
-## Throw old database
-In case you've got an preexisting database, delete it and do the following:
-
-```bash
-python3 manage.py makemigrations
-python3 manage.py migrate
-```
-
-## Add Test Data
-To add testdata, use the loaddata functionality of django:
-
-```bash
-python3 manage.py loaddata fixtures/data.json
-```
-
-## Test Account
-The test account you can use:
-
-- user: admin
-- password: abcdef
-
-## Deployment
-This is a little reminder what you will need to deploy the app.
-
-### Secret Key
-Generate Secret Key:
-```bash
-openssl rand -base64 36
-```
-
-### Environment
-```
-# .env
-# URL
-APP_URL='fbf.nabu-jena.de'
-
-# Switch off debugging in production
-DEBUG=False
-
-# Security from checks
-SECRET_KEY='LaLaLa'
-SECURE_SSL_REDIRECT=True
-SESSION_COOKIE_SECURE=True
-CSRF_COOKIE_SECURE=True
-CSRF_TRUSTED_ORIGINS='https://fbf.nabu-jena.de'
-
-# Email
-EMAIL_BACKEND='django.core.mail.backends.smtp.EmailBackend'
-EMAIL_HOST='smtp.strato.de'
-EMAIL_PORT=587
-EMAIL_USE_TLS=True
-EMAIL_HOST_USER='postmaster@nabu-jena.de'
-EMAIL_HOST_PASSWORD='LaLaLa'
-DEFAULT_FROM_EMAIL="fbf-admin@nabu-jena.de"% 
-```
-
-### Settings in Django Core
-```
-import os
-...
-DEBUG = False
-ALLOWED_HOSTS = ['*']
-...
-STATICFILES_DIRS = [BASE_DIR / "static", ]
-STATIC_ROOT = '/static/'
-STATIC_URL = '/static/'
-...
-# Email backend
-EMAIL_BACKEND = os.getenv('EMAIL_BACKEND')
-EMAIL_HOST=os.getenv('EMAIL_HOST')
-EMAIL_PORT=os.getenv('EMAIL_PORT')
-EMAIL_USE_TLS=os.getenv('EMAIL_USE_TLS')
-EMAIL_HOST_USER=os.getenv('EMAIL_HOST_USER')
-EMAIL_HOST_PASSWORD=os.getenv('EMAIL_HOST_PASSWORD')
-DEFAULT_FROM_EMAIL=os.getenv('DEFAULT_FROM_EMAIL')
-
-# CSRF
-CSRF_TRUSTED_ORIGINS=[os.getenv('CSRF_TRUSTED_ORIGINS')]
-```
-
-## How to use this project?
-
-### Einfachster Weg (Empfohlen)
-Verwenden Sie die bereitgestellten Skripte für einen schnellen Start:
-```bash
-./start_project.sh  # Projekt starten
-./stop_project.sh   # Projekt stoppen
-```
-
-### Manueller Weg
-
-#### Development
-
-Build the images and spin up the containers:
-
-```sh
-$ docker-compose up -d --build
-```
-
-Test it out:
-
-1. [http://localhost:8008/](http://localhost:8008/) - Hauptanwendung
-1. [http://localhost:8081/](http://localhost:8081/) - Traefik Dashboard
-
-### Production
-
-Update the domain in *docker-compose.prod.yml*, and add your email to *traefik.prod.toml*.
-
-Build the images and run the containers:
-
-```sh
-$ docker-compose -f docker-compose.prod.yml up -d --build
-```
-
-https://testdriven.io/blog/django-docker-traefik/
-
+## Spendenlink
+Unterstützen Sie die Arbeit der NABU Wildvogelhilfe Jena mit einer Spende:
+- NABU Kreisverband Jena e. V. – Wildvogelhilfe Jena
+- Spendenportal: https://wildvogelhilfe-jena.de/spenden

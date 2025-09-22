@@ -49,6 +49,9 @@ LOCAL_APPS = [
     'contact',
     'costs',
     'export',
+    'reports',
+    'statistic',
+    'notizen',
     'sendemail',
 ]
 

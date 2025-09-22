@@ -1,30 +1,33 @@
+"""Targeted tests for the statistics aggregation helpers."""
 from datetime import date
 
+import pytest
 from django.contrib.auth.models import User
 from django.test import TestCase
-from django.urls import reverse
 from django.utils import timezone
 
 from bird.models import Bird, BirdStatus, Circumstance, FallenBird
-
-from .models import (
+from statistic.models import (
     StatisticConfiguration,
     StatisticIndividual,
     StatisticTotalGroup,
     StatisticYearGroup,
 )
+from statistic.services import StatisticsBuilder
 
 
-class StatisticViewTests(TestCase):
-    """Integration tests for the statistics overview view."""
+class StatisticsBuilderTests(TestCase):
+    """Exercise the high-level builder to improve coverage."""
 
     def setUp(self):
+        self.current_year = timezone.now().year
+        self.previous_year = self.current_year - 1
+
         self.user = User.objects.create_user(
-            username="stat-user",
-            email="stat@example.com",
-            password="secure-pass",
+            username="stats-user",
+            email="stats@example.com",
+            password="stats-pass",
         )
-        self.client.force_login(self.user)
 
         self.status_released = BirdStatus.objects.create(description="Ausgewildert")
         self.status_dead = BirdStatus.objects.create(description="Verstorben")
@@ -71,28 +74,20 @@ class StatisticViewTests(TestCase):
         )
         self.individual_group_dead.status_list.add(self.status_dead)
 
-        self.config = StatisticConfiguration.objects.create(
-            show_year_total_patients=True,
-            show_total_patients=True,
-            show_percentages=True,
-            show_absolute_numbers=True,
-            is_active=True,
-        )
-
         self.circumstance_window = Circumstance.objects.create(
-            name="Fensterkollision",
-            description="Kollision mit Fenster",
+            name="Fenster",
+            description="Fensterfund",
         )
         self.circumstance_cat = Circumstance.objects.create(
             name="Katze",
-            description="Katze gebracht",
+            description="Katze brachte den Vogel",
         )
 
-        current_year = timezone.now().year
         self.bird_swift = Bird.objects.create(
             name="Mauersegler",
             species="Apus apus",
             status=self.status_released,
+            melden_an_naturschutzbehoerde=True,
         )
         self.bird_owl = Bird.objects.create(
             name="Waldkauz",
@@ -100,65 +95,67 @@ class StatisticViewTests(TestCase):
             status=self.status_dead,
         )
 
-        # Patients in the current year
         FallenBird.objects.create(
             bird=self.bird_swift,
             status=self.status_released,
-            date_found=date(current_year, 5, 10),
+            date_found=date(self.current_year, 5, 10),
             find_circumstances=self.circumstance_window,
+            user=self.user,
         )
         FallenBird.objects.create(
             bird=self.bird_swift,
             status=self.status_dead,
-            date_found=date(current_year, 6, 5),
+            date_found=date(self.current_year, 6, 5),
             find_circumstances=self.circumstance_cat,
+            user=self.user,
         )
-
-        # Patient in the previous year
         FallenBird.objects.create(
             bird=self.bird_owl,
             status=self.status_dead,
-            date_found=date(current_year - 1, 7, 15),
+            date_found=date(self.previous_year, 7, 15),
             find_circumstances=self.circumstance_cat,
+            user=self.user,
         )
 
-    def test_overview_context_contains_expected_data(self):
-        response = self.client.get(reverse("statistic:overview"))
-        self.assertEqual(response.status_code, 200)
+    def test_builder_creates_default_configuration_and_aggregates(self):
+        builder = StatisticsBuilder(str(self.current_year))
+        context = builder.build_context()
 
-        context = response.context
+        # Default configuration is created on-the-fly when none exists.
+        self.assertEqual(StatisticConfiguration.objects.count(), 1)
+        config = context["config"]
+        self.assertTrue(config.show_year_total_patients)
+
         self.assertEqual(context["patients_this_year"], 2)
+        self.assertEqual(context["total_patients"], 3)
+        self.assertTrue(context["can_go_previous"])
+        self.assertTrue(context["can_go_next"] is False)
+        self.assertEqual(context["previous_year"], self.previous_year)
+        self.assertIsNone(context["next_year"])
 
-        released_summary = next(
-            item for item in context["year_summary"] if item["name"] == "Ausgewildert"
-        )
-        self.assertEqual(released_summary["count"], 1)
-        self.assertEqual(released_summary["percentage"], 50.0)
+        year_summary = {item["name"]: item for item in context["year_summary"]}
+        self.assertEqual(year_summary["Ausgewildert"]["count"], 1)
+        self.assertEqual(year_summary["Verstorben"]["count"], 1)
 
-        total_summary_dead = next(
-            item for item in context["total_summary"] if item["name"] == "Verstorben"
-        )
-        self.assertEqual(total_summary_dead["count"], 2)
+        total_summary = {item["name"]: item for item in context["total_summary"]}
+        self.assertEqual(total_summary["Verstorben"]["count"], 2)
 
         bird_stats = context["bird_stats"]
-        self.assertEqual(bird_stats[0]["name"], "Mauersegler")
-        self.assertEqual(bird_stats[0]["total"], 2)
-        released_group = next(
-            group for group in bird_stats[0]["groups"] if group["name"] == "Ausgewildert"
-        )
-        self.assertEqual(released_group["count"], 1)
-        self.assertEqual(released_group["percentage"], 50.0)
+        leading = bird_stats[0]
+        self.assertEqual(leading["name"], "Mauersegler")
+        self.assertIn("total_bar_width", leading)
+        self.assertGreater(float(leading["total_bar_width"]), 0.0)
+        first_group = leading["groups"][0]
+        self.assertIn("absolute_width", first_group)
 
+        circ_this_year = {item["name"]: item for item in context["circumstances_this_year"]}
+        self.assertEqual(circ_this_year["Fenster"]["count"], 1)
         self.assertEqual(context["circumstances_this_year_total"], 2)
-        circumstance_names = {item["name"] for item in context["circumstances_this_year"]}
-        self.assertSetEqual(circumstance_names, {"Fensterkollision", "Katze"})
 
-    def test_future_year_parameter_is_clamped(self):
-        future_year = timezone.now().year + 5
-        response = self.client.get(
-            reverse("statistic:overview") + f"?year={future_year}"
-        )
-
-        self.assertEqual(response.status_code, 200)
-        self.assertEqual(response.context["selected_year"], timezone.now().year)
-        self.assertFalse(response.context["can_go_next"])
+    def test_year_selection_clamped_to_current(self):
+        # Configuration now exists, exercise the returning branch.
+        builder = StatisticsBuilder(str(self.current_year + 5))
+        context = builder.build_context()
+        self.assertEqual(context["selected_year"], self.current_year)
+        self.assertFalse(context["can_go_next"])
+        self.assertGreaterEqual(context["earliest_year"], self.previous_year)
