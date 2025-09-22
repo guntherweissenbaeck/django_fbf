@@ -84,4 +84,4 @@ Das Ergebnis liegt unter `docs/doxygen/html/index.html`. XML-Artefakte für weit
 ## Spendenlink
 Unterstützen Sie die Arbeit der NABU Wildvogelhilfe Jena mit einer Spende:
 - NABU Kreisverband Jena e. V. – Wildvogelhilfe Jena
-- Spendenportal: https://wildvogelhilfe-jena.de/spenden
+- Spendenportal: https://www.nabu-jena.de/spenden/wvh/
