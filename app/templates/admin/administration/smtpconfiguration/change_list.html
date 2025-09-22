@@ -1,0 +1,37 @@
+{% extends "admin/change_list.html" %}
+{% load i18n %}
+
+{% block content_title %}
+<h1>{% trans "SMTP-Konfigurationen" %}</h1>
+{% endblock %}
+
+{% block object-tools %}
+{{ block.super }}
+<div class="module mt-3">
+    <h2>{% trans "Standard-SMTP-Konto auswählen" %}</h2>
+    <form method="post" class="form-inline">
+        {% csrf_token %}
+        <select name="activate" class="form-control">
+            {% for config in smtp_configurations %}
+                <option value="{{ config.pk }}" {% if active_configuration and config.pk == active_configuration.pk %}selected{% endif %}>
+                    {{ config.name }} – {{ config.host }}
+                </option>
+            {% endfor %}
+        </select>
+        <button type="submit" class="button btn btn-primary">{% trans "Als Standard festlegen" %}</button>
+    </form>
+</div>
+<div class="module mt-3">
+    <h2>{% trans "Aktuelle Einstellungen (aus .env / Docker)" %}</h2>
+    <table class="table">
+        <tbody>
+            <tr><th>{% trans "Host" %}</th><td>{{ settings_configuration.EMAIL_HOST }}</td></tr>
+            <tr><th>{% trans "Port" %}</th><td>{{ settings_configuration.EMAIL_PORT }}</td></tr>
+            <tr><th>{% trans "Benutzer" %}</th><td>{{ settings_configuration.EMAIL_HOST_USER }}</td></tr>
+            <tr><th>{% trans "TLS" %}</th><td>{{ settings_configuration.EMAIL_USE_TLS|yesno:"Ja,Nein" }}</td></tr>
+            <tr><th>{% trans "SSL" %}</th><td>{{ settings_configuration.EMAIL_USE_SSL|yesno:"Ja,Nein" }}</td></tr>
+            <tr><th>{% trans "Standardadresse" %}</th><td>{{ settings_configuration.DEFAULT_FROM_EMAIL }}</td></tr>
+        </tbody>
+    </table>
+</div>
+{% endblock %}

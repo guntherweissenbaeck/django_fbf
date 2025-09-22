@@ -48,7 +48,6 @@ class SMTPConfigurationAdminForm(forms.ModelForm):
             "use_ssl",
             "default_from_email",
             "timeout",
-            "is_active",
         ]
 
     def clean(self):

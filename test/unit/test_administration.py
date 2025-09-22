@@ -94,3 +94,38 @@ def test_smtp_configuration_applies_settings(settings):
     assert settings.EMAIL_HOST == "smtp.example.com"
     assert settings.EMAIL_USE_SSL is True
     assert settings.DEFAULT_FROM_EMAIL == "mailer@example.com"
+
+
+@pytest.mark.django_db
+def test_smtp_admin_dropdown_activation():
+    user = User.objects.create_superuser("admin", "admin@example.com", "pass")
+    client = Client()
+    client.force_login(user)
+
+    active = SMTPConfiguration.objects.create(
+        name="Alt",
+        host="old.example.com",
+        port=25,
+        is_active=True,
+    )
+    new = SMTPConfiguration.objects.create(
+        name="Neu",
+        host="new.example.com",
+        port=587,
+        use_tls=True,
+        default_from_email="infra@example.com",
+    )
+
+    response = client.get(reverse("admin:administration_smtpconfiguration_changelist"))
+    assert response.status_code == 200
+
+    response = client.post(
+        reverse("admin:administration_smtpconfiguration_changelist"),
+        {"activate": new.pk},
+        follow=True,
+    )
+    assert response.status_code == 200
+    new.refresh_from_db()
+    active.refresh_from_db()
+    assert new.is_active
+    assert not active.is_active

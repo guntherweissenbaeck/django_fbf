@@ -179,3 +179,15 @@ class SMTPConfiguration(models.Model):
     @classmethod
     def get_active(cls) -> Optional[SMTPConfiguration]:
         return cls.objects.filter(is_active=True).first()
+
+    @classmethod
+    def set_active(cls, pk: int) -> Optional[SMTPConfiguration]:
+        try:
+            target = cls.objects.get(pk=pk)
+        except cls.DoesNotExist:
+            return None
+        target.is_active = True
+        target.save(update_fields=["is_active", "updated_at"])
+        cls.objects.exclude(pk=target.pk).update(is_active=False)
+        target.apply_to_settings()
+        return target
