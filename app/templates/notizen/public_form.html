@@ -1,0 +1,103 @@
+{% extends "base.html" %}
+{% load crispy_forms_tags %}
+{% load static %}
+
+{% block head_title %}Öffentliche Notiz – {{ notiz.name }}{% endblock %}
+
+{% block navbar %}
+<nav class="navbar navbar-dark bg-primary public-navbar">
+    <div class="container-fluid justify-content-start">
+        <a class="navbar-brand" href="{% url 'account_login' %}">
+            <img src="{% static 'img/favicon/l.png' %}" alt="Wildvogelhilfe Logo" width="40" height="40">
+        </a>
+    </div>
+</nav>
+{% endblock %}
+
+{% block footer %}{% endblock %}
+
+{% block content %}
+<div class="container-fluid public-notiz-container px-0">
+    <div class="row g-0">
+        <div class="col-12">
+            <div class="public-header py-3 px-4 px-lg-5">
+                <h1 class="display-6 mb-0">{{ notiz.name }}</h1>
+                <p class="text-muted mb-0">Öffentlich bearbeitbare Notiz der NABU Wildvogelhilfe Jena</p>
+            </div>
+
+            {% if save_success %}
+                <div class="alert alert-success rounded-0" role="alert">
+                    Änderungen wurden gespeichert.
+                </div>
+            {% endif %}
+
+            <div class="public-form-wrapper px-3 px-md-4 px-lg-5 py-4">
+                <form method="post" novalidate>
+                    {% csrf_token %}
+                    {{ form.non_field_errors }}
+                    <div class="mb-4 editor-wrapper">
+                        {{ form.inhalt|as_crispy_field }}
+                    </div>
+                    {{ form.is_public }}
+                    {{ form.name }}
+                    <div class="d-flex justify-content-between align-items-center flex-wrap gap-2">
+                        <button type="submit" class="btn btn-primary btn-lg">Änderungen speichern</button>
+                        <small class="text-muted">Zuletzt aktualisiert: {{ notiz.geaendert_am|date:"d.m.Y H:i" }}</small>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_css %}
+{{ block.super }}
+<link rel="stylesheet" href="{% static 'django_ckeditor_5/dist/styles.css' %}">
+<style>
+.container-lg {
+    max-width: 100% !important;
+    padding: 0;
+}
+.public-navbar .navbar-brand img {
+    border-radius: 4px;
+}
+.public-notiz-container .editor-wrapper .ck-editor {
+    width: 100% !important;
+}
+.public-notiz-container .ck-editor__editable {
+    min-height: 600px !important;
+    padding: 1.5rem !important;
+}
+.public-form-wrapper {
+    background: #f8f9fa;
+}
+</style>
+{% endblock %}
+
+{% block extra_js %}
+{{ block.super }}
+<script src="{% static 'django_ckeditor_5/dist/bundle.js' %}"></script>
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        const textareaElement = document.querySelector('#id_inhalt');
+        if (!textareaElement) {
+            return;
+        }
+        window.ClassicEditor
+            .create(textareaElement, {
+                language: 'de'
+            })
+            .then(editor => {
+                window.editor = editor;
+                textareaElement.style.display = 'none';
+                const form = textareaElement.closest('form');
+                if (form) {
+                    form.addEventListener('submit', function() {
+                        textareaElement.value = editor.getData();
+                    });
+                }
+            });
+    });
+</script>
+{% endblock %}

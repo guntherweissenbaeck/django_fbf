@@ -8,7 +8,7 @@ class NotizForm(forms.ModelForm):
     
     class Meta:
         model = Notiz
-        fields = ['name', 'inhalt']
+        fields = ['name', 'inhalt', 'is_public']
         widgets = {
             'name': forms.TextInput(attrs={
                 'class': 'form-control',
@@ -20,6 +20,10 @@ class NotizForm(forms.ModelForm):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         self.fields['name'].widget.attrs.update({'autofocus': True})
+        if 'is_public' in self.fields:
+            self.fields['is_public'].widget.attrs.update({'class': 'form-check-input'})
+            self.fields['is_public'].label = 'Notiz öffentlich verfügbar machen'
+            self.fields['is_public'].help_text = 'Aktivieren Sie diese Option, um einen Bearbeitungslink ohne Login zu erstellen.'
 
 
 class NotizAttachForm(forms.ModelForm):

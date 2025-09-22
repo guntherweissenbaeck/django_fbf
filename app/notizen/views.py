@@ -208,3 +208,42 @@ def attach_page_notiz(request, page_identifier):
         'page_identifier': page_identifier,
     }
     return render(request, 'notizen/attach_page.html', context)
+
+
+def notiz_public_edit(request, token):
+    """Public editing view for a shared note."""
+    notiz = get_object_or_404(Notiz, public_token=token, is_public=True)
+    original_name = notiz.name
+
+    save_success = False
+    if request.method == 'POST':
+        form = NotizForm(request.POST, instance=notiz)
+        form.fields['name'].widget = form.fields['name'].hidden_widget()
+        form.fields['name'].initial = notiz.name
+        form.fields['name'].required = False
+        form.fields['is_public'].widget = form.fields['is_public'].hidden_widget()
+        form.fields['is_public'].initial = True
+        form.fields['is_public'].required = False
+        if form.is_valid():
+            instance = form.save(commit=False)
+            instance.name = original_name
+            instance.is_public = True
+            instance.save()
+            save_success = True
+    else:
+        form = NotizForm(instance=notiz)
+        form.fields['name'].widget = form.fields['name'].hidden_widget()
+        form.fields['name'].initial = notiz.name
+        form.fields['name'].required = False
+        form.fields['is_public'].widget = form.fields['is_public'].hidden_widget()
+        form.fields['is_public'].initial = True
+        form.fields['is_public'].required = False
+
+    context = {
+        'form': form,
+        'notiz': notiz,
+        'public_view': True,
+        'save_success': save_success,
+        'public_url': request.build_absolute_uri(notiz.get_public_url()),
+    }
+    return render(request, 'notizen/public_form.html', context)

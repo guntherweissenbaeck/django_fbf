@@ -1,3 +1,5 @@
+import uuid
+
 from django.db import models
 from django.contrib.auth.models import User
 from django.urls import reverse
@@ -86,6 +88,18 @@ class Notiz(models.Model):
         auto_now=True,
         verbose_name="Geändert am"
     )
+
+    is_public = models.BooleanField(
+        default=False,
+        verbose_name="Öffentlich zugänglich",
+        help_text="Ermöglicht den Zugriff über einen öffentlichen Link ohne Anmeldung."
+    )
+    public_token = models.UUIDField(
+        default=uuid.uuid4,
+        editable=False,
+        unique=True,
+        verbose_name="Öffentlicher Zugriffstoken"
+    )
     
     class Meta:
         verbose_name = "Notiz"
@@ -100,6 +114,11 @@ class Notiz(models.Model):
     
     def get_edit_url(self):
         return reverse('notizen:edit', kwargs={'pk': self.pk})
+
+    def get_public_url(self):
+        if not self.is_public:
+            return None
+        return reverse('notizen:public_edit', kwargs={'token': str(self.public_token)})
     
     @property
     def attached_to_model_name(self):
