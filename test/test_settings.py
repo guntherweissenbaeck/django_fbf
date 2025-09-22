@@ -52,6 +52,7 @@ LOCAL_APPS = [
     'reports',
     'statistic',
     'notizen',
+    'administration',
     'sendemail',
 ]
 

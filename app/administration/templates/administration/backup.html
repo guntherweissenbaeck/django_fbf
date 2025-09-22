@@ -1,0 +1,96 @@
+{% extends "admin/base_site.html" %}
+{% load i18n %}
+
+{% block title %}{% trans "Backups" %} | {{ block.super }}{% endblock %}
+
+{% block breadcrumbs %}
+<div class="breadcrumbs">
+    <a href="{% url 'admin:index' %}">{% trans 'Startseite' %}</a>
+    &rsaquo; {% trans 'Administration' %}
+    &rsaquo; {% trans 'Backups' %}
+</div>
+{% endblock %}
+
+{% block content %}
+<div class="card">
+    <div class="card-header"><strong>{% trans "Backup erstellen" %}</strong></div>
+    <div class="card-body">
+        <form method="post" class="form-horizontal">
+            {% csrf_token %}
+            {{ backup_form.non_field_errors }}
+            <div class="mb-3">
+                {{ backup_form.destination.label_tag }}
+                {{ backup_form.destination }}
+                {% if backup_form.destination.help_text %}
+                    <p class="help">{{ backup_form.destination.help_text }}</p>
+                {% endif %}
+                {{ backup_form.destination.errors }}
+            </div>
+            <button type="submit" name="run_backup" class="btn btn-primary">
+                {% trans "Backup erstellen" %}
+            </button>
+        </form>
+    </div>
+</div>
+
+<div class="card mt-4">
+    <div class="card-header"><strong>{% trans "Backup einspielen" %}</strong></div>
+    <div class="card-body">
+        <form method="post" enctype="multipart/form-data" class="form-horizontal">
+            {% csrf_token %}
+            {{ restore_form.non_field_errors }}
+            <div class="mb-3">
+                {{ restore_form.backup_file.label_tag }}
+                {{ restore_form.backup_file }}
+                {% if restore_form.backup_file.help_text %}
+                    <p class="help">{{ restore_form.backup_file.help_text }}</p>
+                {% endif %}
+                {{ restore_form.backup_file.errors }}
+            </div>
+            <button type="submit" name="restore_backup" class="btn btn-danger" onclick="return confirm('{% trans "Sind Sie sicher, dass Sie dieses Backup einspielen möchten?" %}')">
+                {% trans "Backup einspielen" %}
+            </button>
+        </form>
+    </div>
+</div>
+
+<div class="card mt-4">
+    <div class="card-header"><strong>{% trans "Zuletzt ausgeführte Aktionen" %}</strong></div>
+    <div class="card-body table-responsive">
+        {% if logs %}
+        <table class="table table-striped">
+            <thead>
+                <tr>
+                    <th>{% trans "Zeitpunkt" %}</th>
+                    <th>{% trans "Aktion" %}</th>
+                    <th>{% trans "Status" %}</th>
+                    <th>{% trans "Ziel" %}</th>
+                    <th>{% trans "Datei" %}</th>
+                    <th>{% trans "Nachricht" %}</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for log in logs %}
+                <tr>
+                    <td>{{ log.created_at|date:"d.m.Y H:i" }}</td>
+                    <td>{{ log.get_action_display }}</td>
+                    <td>
+                        {% if log.status == 'success' %}
+                            <span class="badge bg-success">{{ log.get_status_display }}</span>
+                        {% else %}
+                            <span class="badge bg-danger">{{ log.get_status_display }}</span>
+                        {% endif %}
+                    </td>
+                    <td>{{ log.destination|default:"-" }}</td>
+                    <td>{{ log.file_name|default:"-" }}</td>
+                    <td>{{ log.message|default:"-" }}</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+        {% else %}
+            <p class="text-muted mb-0">{% trans "Noch keine Einträge vorhanden." %}</p>
+        {% endif %}
+    </div>
+</div>
+{% endblock %}

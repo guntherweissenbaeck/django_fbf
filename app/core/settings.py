@@ -89,6 +89,7 @@ INSTALLED_APPS = [
     "notizen",
     "reports",
     "sendemail",
+    "administration",
 ]
 
 MIDDLEWARE = [

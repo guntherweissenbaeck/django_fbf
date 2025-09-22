@@ -12,4 +12,6 @@ gunicorn>=20.1
 markdown>=3.4
 names>=0.3.0
 psycopg2-binary>=2.9
+requests>=2.31
+paramiko>=3.4
 whitenoise>=6.5

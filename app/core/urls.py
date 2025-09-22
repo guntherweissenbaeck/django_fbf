@@ -15,6 +15,7 @@ urlpatterns = [
     path("export/", include("export.urls")),
     path("notizen/", include("notizen.urls")),
     # Admin
+    path("admin/administration/", include("administration.urls")),
     path("admin/", admin.site.urls),
     path("admin/reports/", include("reports.urls", namespace="reports")),
     # Allauth
