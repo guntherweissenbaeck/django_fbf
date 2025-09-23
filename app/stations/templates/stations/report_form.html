@@ -1,0 +1,219 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Neue Wildvogelhilfe vorschlagen</title>
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"
+          integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY="
+          crossorigin=""/>
+    <link rel="stylesheet" href="{% static 'stations/css/style.css' %}">
+    <style>
+        main.form-page {
+            padding: 2rem 0 4rem;
+            background: var(--primary-bg-light);
+        }
+        form .form-group {
+            margin-bottom: 1.25rem;
+        }
+        form label {
+            font-weight: 600;
+            display: block;
+            margin-bottom: 0.35rem;
+        }
+        form input[type="text"],
+        form input[type="email"],
+        form input[type="tel"],
+        form input[type="url"],
+        form textarea {
+            width: 100%;
+            padding: 0.65rem 0.75rem;
+            border: 1px solid var(--gray-300);
+            border-radius: 6px;
+            font-size: 0.95rem;
+        }
+        form textarea {
+            resize: vertical;
+        }
+        .form-actions {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 1rem;
+            align-items: center;
+        }
+        .form-actions button {
+            background: linear-gradient(135deg, var(--primary-color), var(--primary-light));
+            color: var(--white);
+            border: none;
+            padding: 0.75rem 1.6rem;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 1rem;
+            font-weight: 600;
+        }
+        .back-link {
+            color: var(--primary-color);
+            text-decoration: none;
+            font-weight: 600;
+        }
+        .messages {
+            margin-bottom: 1.5rem;
+        }
+        .messages .message {
+            padding: 0.75rem 1rem;
+            border-radius: 6px;
+            background: var(--primary-lighter);
+            color: var(--primary-color);
+            font-weight: 500;
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <div class="container">
+            <h1>🆕 Neue Wildvogelhilfe vorschlagen</h1>
+            <div class="note">
+                <p><small>Vielen Dank für Ihre Unterstützung! Bitte tragen Sie so viele Informationen wie möglich ein, damit wir die Station schnell prüfen können.</small></p>
+            </div>
+        </div>
+    </header>
+
+    <main class="form-page">
+        <div class="container">
+            {% if messages %}
+                <div class="messages">
+                    {% for message in messages %}
+                        <div class="message">{{ message }}</div>
+                    {% endfor %}
+                </div>
+            {% endif %}
+
+            <form method="post" class="station-report-form">
+                {% csrf_token %}
+                {{ form.non_field_errors }}
+
+                <section class="form-section">
+                    <h2>Stationsdaten</h2>
+                    <div class="form-group">
+                        <label for="id_name">Stationsname *</label>
+                        {{ form.name }}
+                        {{ form.name.errors }}
+                    </div>
+                    <div class="form-group">
+                        <label for="id_specialization">Spezialisierung / Tierarten</label>
+                        {{ form.specialization }}
+                        {{ form.specialization.errors }}
+                    </div>
+                    <div class="form-group">
+                        <label for="id_description">Weitere Beschreibung</label>
+                        {{ form.description }}
+                        {{ form.description.errors }}
+                    </div>
+                    <div class="form-group">
+                        <label for="id_note">Hinweise für die Öffentlichkeit</label>
+                        {{ form.note }}
+                        {{ form.note.errors }}
+                    </div>
+                </section>
+
+                <section class="form-section">
+                    <h2>Adresse &amp; Kontakt</h2>
+                    <div class="form-group">
+                        <label for="id_address">Anfahrtsinformationen</label>
+                        {{ form.address }}
+                        {{ form.address.errors }}
+                    </div>
+                    <div class="form-group">
+                        <label for="id_postal_code">Postleitzahl *</label>
+                        {{ form.postal_code }}
+                        {{ form.postal_code.errors }}
+                    </div>
+                    <div class="form-group">
+                        <label for="id_city">Ort</label>
+                        {{ form.city }}
+                        {{ form.city.errors }}
+                    </div>
+                    <div class="form-group">
+                        <label for="id_state">Bundesland / Kanton</label>
+                        {{ form.state }}
+                        {{ form.state.errors }}
+                    </div>
+                    <div class="form-group">
+                        <label for="id_country">Land</label>
+                        {{ form.country }}
+                        {{ form.country.errors }}
+                    </div>
+                    <div class="form-group">
+                        <label for="id_phone">Telefon</label>
+                        {{ form.phone }}
+                        {{ form.phone.errors }}
+                    </div>
+                    <div class="form-group">
+                        <label for="id_email">E-Mail</label>
+                        {{ form.email }}
+                        {{ form.email.errors }}
+                    </div>
+                    <div class="form-group">
+                        <label for="id_website">Website</label>
+                        {{ form.website }}
+                        {{ form.website.errors }}
+                    </div>
+                </section>
+
+                <section class="form-section">
+                    <h2>Koordinaten (optional)</h2>
+                    <div class="form-group">
+                        <label for="id_latitude">Breitengrad</label>
+                        {{ form.latitude }}
+                        {{ form.latitude.errors }}
+                    </div>
+                    <div class="form-group">
+                        <label for="id_longitude">Längengrad</label>
+                        {{ form.longitude }}
+                        {{ form.longitude.errors }}
+                    </div>
+                </section>
+
+                <section class="form-section">
+                    <h2>Ihre Kontaktdaten</h2>
+                    <div class="form-group">
+                        <label for="id_reporter_name">Ihr Name</label>
+                        {{ form.reporter_name }}
+                        {{ form.reporter_name.errors }}
+                    </div>
+                    <div class="form-group">
+                        <label for="id_reporter_email">Ihre E-Mail Adresse *</label>
+                        {{ form.reporter_email }}
+                        {{ form.reporter_email.errors }}
+                    </div>
+                    <div class="form-group">
+                        <label for="id_reporter_phone">Ihre Telefonnummer</label>
+                        {{ form.reporter_phone }}
+                        {{ form.reporter_phone.errors }}
+                    </div>
+                </section>
+
+                <div class="form-group">
+                    <label class="checkbox">
+                        {{ form.privacy_confirmed }}
+                        <span>Ich bestätige, dass die gemeldeten Daten nach einer Prüfung auf der öffentlichen Karte erscheinen dürfen.</span>
+                    </label>
+                    {{ form.privacy_confirmed.errors }}
+                </div>
+
+                <div class="form-actions">
+                    <button type="submit">Vorschlag senden</button>
+                    <a class="back-link" href="{% url 'stations:map' %}">Zurück zur Karte</a>
+                </div>
+            </form>
+        </div>
+    </main>
+
+    <footer>
+        <div class="container">
+            <p>Vielen Dank für Ihre Unterstützung der Wildvogelhilfe!</p>
+        </div>
+    </footer>
+</body>
+</html>

@@ -6,8 +6,10 @@
 3. [Entwicklungsumgebung einrichten](#entwicklungsumgebung-einrichten)
 4. [Tests ausführen](#tests-ausführen)
 5. [Dokumentation erzeugen](#dokumentation-erzeugen)
-6. [Troubleshooting](#troubleshooting)
-7. [Spendenlink](#spendenlink)
+6. [Wildvogelhilfen-Karte](#wildvogelhilfen-karte)
+7. [Troubleshooting](#troubleshooting)
+8. [Spendenlink](#spendenlink)
+9. [Progressive Web App](#progressive-web-app)
 
 ## Über dieses Projekt
 Fallen Birdy Form ist das Verwaltungsportal der NABU Wildvogelhilfe Jena. Das System unterstützt ehrenamtliche Helferinnen und Helfer bei der Erfassung, Pflege und Auswertung von Patientenvögeln. Wichtige Arbeitsbereiche sind unter anderem:
@@ -74,12 +76,31 @@ doxygen Doxyfile
 ```
 Das Ergebnis liegt unter `docs/doxygen/html/index.html`. XML-Artefakte für weiterführende Toolchains entstehen im Verzeichnis `docs/doxygen/xml/`.
 
+Die neue App `stations` (Route `/stationen`) ist vollständig mit Doxygen-kompatiblen Docstrings versehen und wird automatisch durch den bestehenden Dokumentationslauf erfasst.
+
+## Wildvogelhilfen-Karte
+- Öffentliche Karte unter `https://<SERVER>/stationen` mit Leaflet-Frontend und JSON-Daten aus dem neuen Modell `WildbirdHelpStation`.
+- Auf der Login-Seite führt ein zusätzlicher Button direkt zur Karte, sodass keine Zugangsdaten erforderlich sind.
+- Pflege der Stationen erfolgt über das Django-Admin (`Wildvogelhilfe-Stationen`). Über die Werkzeugleiste steht eine Schaltfläche **CSV importieren** bereit.
+- Für Imports können beliebige semikolon-separierte CSV-Dateien im beschriebenen Format genutzt werden; bestehende Datensätze werden anhand von Name, Ort und Land aktualisiert.
+- Ein CSV-Export steht als Admin-Aktion **„Auswahl als CSV exportieren“** zur Verfügung und entspricht dem Importformat (Semikolon-getrennt, UTF-8).
+- Besucher können über `/stationen/report` neue Stationen vorschlagen; eingehende Vorschläge landen im Admin unter `/admin/stations/reports` und lassen sich dort prüfen, übernehmen oder ablehnen.
+- Im selben Admin-Bereich kann optional eine Benachrichtigungsadresse gepflegt werden, die bei neuen Vorschlägen automatisch informiert wird.
+- Koordinaten lassen sich pro Station oder gesammelt über die Admin-Aktion **„Koordinaten automatisch ermitteln“** sowie via Management Command `python manage.py geocode_stations` bestimmen.
+
 ## Troubleshooting
 - **Docker-Container starten nicht:** Prüfen, ob Ports 8000, 8008 und 8081 frei sind. Bei Konflikten Ports in `docker-compose.yaml` anpassen.
 - **`start_project.sh` bricht ab:** Stellen Sie sicher, dass OpenSSL verfügbar ist (für die Secret-Key-Erzeugung) und Docker Desktop läuft.
 - **Tests schlagen fehl, weil Django nicht gefunden wird:** Beim lokalen Pytest-Lauf `PYTHONPATH=app` setzen oder das Projektpaket installieren.
 - **E-Mails werden nicht verschickt:** In der Entwicklung kommt der Konsolen-Backend zum Einsatz. Für reale SMTP-Verbindungen die entsprechenden Variablen (`EMAIL_HOST`, `EMAIL_HOST_USER`, `EMAIL_HOST_PASSWORD`, `DEFAULT_FROM_EMAIL`) in `.env` pflegen.
 - **Statische Dateien fehlen im Testlauf:** Das Startskript führt `collectstatic` aus. Bei manueller Ausführung `docker compose exec web python manage.py collectstatic` starten.
+
+## Progressive Web App
+Die Fallen Birdy Form kann als Progressive Web App (PWA) installiert und offline verwendet werden. Seiten wie das Dashboard, die Login-Maske und die Offline-Hinweisseite werden vom Service Worker vorgehalten.
+
+- **Android (Chrome):** Anwendung im Chrome-Browser öffnen, über das Drei-Punkte-Menü `App installieren` oder `Zum Startbildschirm hinzufügen` auswählen und bestätigen.
+- **iOS (Safari):** Anwendung in Safari öffnen, Teilen-Symbol antippten und `Zum Home-Bildschirm` auswählen; optional Namen anpassen und hinzufügen.
+- **Desktop:** Moderne Browser (Chrome, Edge, Firefox) zeigen in der Adressleiste einen Installationshinweis oder Menüpunkt `Installieren`. Darüber kann eine Desktop-PWA erstellt werden.
 
 ## Spendenlink
 Unterstützen Sie die Arbeit der NABU Wildvogelhilfe Jena mit einer Spende:

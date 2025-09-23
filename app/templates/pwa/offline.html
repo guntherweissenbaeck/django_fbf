@@ -1,0 +1,24 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="de">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Offline | Fallen Birdy Form</title>
+  <link rel="stylesheet" href="https://bootswatch.com/5/cosmo/bootstrap.min.css">
+  <link rel="stylesheet" href="{% static 'css/style.css' %}">
+  <style>
+    body { display: flex; align-items: center; justify-content: center; min-height: 100vh; text-align: center; }
+    .offline-card { max-width: 28rem; }
+  </style>
+</head>
+<body>
+  <div class="card shadow offline-card">
+    <div class="card-body">
+      <h1 class="h4 mb-3">Sie sind offline</h1>
+      <p>Es besteht aktuell keine Internetverbindung. Die zuletzt besuchten Seiten stehen weiterhin eingeschränkt zur Verfügung.</p>
+      <p class="mb-0">Bitte verbinden Sie sich erneut mit dem Internet, um aktuelle Daten zu laden.</p>
+    </div>
+  </div>
+</body>
+</html>

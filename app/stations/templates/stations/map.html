@@ -1,0 +1,87 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Wildvogelhilfen – Interaktive Karte</title>
+    <link rel="icon" href="{% static 'img/favicon/m.png' %}">
+    <link rel="apple-touch-icon" sizes="128x128" href="{% static 'img/appicon/appiconfbf.png' %}">
+
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"
+          integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY="
+          crossorigin=""/>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/leaflet.locatecontrol@0.79.0/dist/L.Control.Locate.min.css" />
+    <link rel="stylesheet" href="{% static 'stations/css/style.css' %}">
+
+    <script>
+        window.stationMapConfig = {
+            dataUrl: "{% url 'stations:data' %}",
+            reportUrl: "{% url 'stations:report' %}",
+            stationCount: {{ station_count|default:0 }},
+        };
+    </script>
+</head>
+<body>
+    <header>
+        <div class="container">
+            <h1>🦅 Wildvogelhilfen – Interaktive Karte</h1>
+            <div class="note">
+                <p><small><strong>Hinweis:</strong> Die Daten werden redaktionell gepflegt und können unvollständig sein.</small></p>
+            </div>
+        </div>
+    </header>
+
+    <main>
+        <div class="container">
+            <div class="search-bar">
+                <input id="search-input" type="text" placeholder="Ort oder PLZ suchen..." aria-label="Ort oder Postleitzahl" />
+                <button id="search-btn" type="button">Suchen</button>
+                <button id="clear-btn" type="button" title="Filter zurücksetzen">✕</button>
+                <div id="search-results" class="search-results" aria-live="polite"></div>
+            </div>
+            <div id="map"></div>
+
+            <div class="info-panel">
+                <h3>Über diese Karte</h3>
+                <p>Diese interaktive Karte zeigt Wildvogelhilfen und Auffangstationen in Deutschland,
+                   Österreich, der Schweiz und angrenzenden Regionen. Klicken Sie auf einen Marker, um
+                   Kontaktinformationen und Details zu erhalten.</p>
+
+                <div class="note">
+                    <p><small><strong>Hinweis:</strong> Viele Stationen arbeiten ehrenamtlich. Bitte vorab telefonisch die Verfügbarkeit klären.</small></p>
+                </div>
+
+                <div class="download-section">
+                    <div class="action-buttons">
+                        <button id="report-btn" class="report-button" type="button">
+                            🆕 Neue Station vorschlagen
+                        </button>
+                        <button id="download-btn" class="download-button" type="button">
+                            📂 JSON-Daten herunterladen
+                        </button>
+                    </div>
+                    <p><small>Melden Sie fehlerhafte Daten oder laden Sie die vollständige Datenbank herunter.</small></p>
+                </div>
+
+                <div class="stats">
+                    <span id="station-count">{{ station_count }} Wildvogelhilfen gefunden</span>
+                </div>
+
+            </div>
+        </div>
+    </main>
+
+    <footer>
+        <div class="container">
+            <p>Quellen: <a href="https://wp.wildvogelhilfe.org/auffangstationen/karte-der-auffangstationen/" target="_blank" rel="noopener">wildvogelhilfe.org</a> &amp; <a href="https://www.nabu.de/tiere-und-pflanzen/artenschutz/01946.html" target="_blank" rel="noopener">NABU</a></p>
+        </div>
+    </footer>
+
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"
+            integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo="
+            crossorigin=""></script>
+    <script src="https://cdn.jsdelivr.net/npm/leaflet.locatecontrol@0.79.0/dist/L.Control.Locate.min.js" charset="utf-8"></script>
+    <script src="{% static 'stations/js/map.js' %}"></script>
+</body>
+</html>

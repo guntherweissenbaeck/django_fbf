@@ -1,0 +1,42 @@
+{% extends "admin/change_form.html" %}
+{% load i18n %}
+
+{% block extrastyle %}
+    {{ block.super }}
+    <style>
+        .submit-row.geocode-row {
+            display: flex;
+            justify-content: flex-end;
+            gap: 0.75rem;
+        }
+
+        .submit-row.geocode-row .geocode-button {
+            background: linear-gradient(135deg, #0068b4, #1a86d9);
+            color: #fff;
+            border: none;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+
+        .submit-row.geocode-row .geocode-button:hover {
+            filter: brightness(1.05);
+        }
+    </style>
+{% endblock %}
+
+{% block submit_buttons_top %}
+    {{ block.super }}
+    <div class="submit-row geocode-row">
+        <button type="submit" name="_geocode" class="button default geocode-button" value="1">
+            {% trans "Koordinaten automatisch ermitteln" %}
+        </button>
+    </div>
+{% endblock %}
+
+{% block submit_buttons_bottom %}
+    {{ block.super }}
+    <div class="submit-row geocode-row">
+        <button type="submit" name="_geocode" class="button default geocode-button" value="1">
+            {% trans "Koordinaten automatisch ermitteln" %}
+        </button>
+    </div>
+{% endblock %}

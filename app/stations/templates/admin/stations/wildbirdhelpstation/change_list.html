@@ -1,0 +1,37 @@
+{% extends "admin/change_list.html" %}
+{% load i18n %}
+
+{% block object-tools-items %}
+    {{ block.super }}
+    <li>
+        <a href="{{ import_action }}" class="addlink">{% trans "CSV importieren" %}</a>
+    </li>
+{% endblock %}
+
+{% block content %}
+    {% if import_form %}
+        <div class="module" id="station-import">
+            <h2>{% trans "CSV-Import" %}</h2>
+            <form method="post" enctype="multipart/form-data" action="{{ import_action }}" class="form-inline">
+                {% csrf_token %}
+                {{ import_form.non_field_errors }}
+                <div class="form-row">
+                    {{ import_form.csv_file.errors }}
+                    <label class="required" for="id_csv_file">{{ import_form.csv_file.label }}</label>
+                    {{ import_form.csv_file }}
+                </div>
+                <div class="form-row">
+                    {{ import_form.update_existing.errors }}
+                    <label for="id_update_existing">{{ import_form.update_existing.label }}</label>
+                    {{ import_form.update_existing }}
+                    <p class="help">{{ import_form.update_existing.help_text }}</p>
+                </div>
+                <div class="submit-row">
+                    <button type="submit" class="button default">{% trans "Import starten" %}</button>
+                </div>
+                <p class="help">{{ import_form.csv_file.help_text }}</p>
+            </form>
+        </div>
+    {% endif %}
+    {{ block.super }}
+{% endblock %}

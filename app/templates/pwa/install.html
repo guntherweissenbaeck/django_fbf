@@ -1,0 +1,34 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block head_title %}PWA Installation{% endblock head_title %}
+
+{% block content %}
+<div class="row justify-content-center py-5">
+  <div class="col-lg-8">
+    <h1 class="mb-4">Fallen Birdy Form als App nutzen</h1>
+    <p class="lead">Folgen Sie den untenstehenden Schritten, um die Webanwendung auf Ihrem Smartphone oder Tablet als App auf dem Homescreen abzulegen.</p>
+
+    <h2 class="h4 mt-4">Android (Chrome)</h2>
+    <ol>
+      <li>Öffnen Sie die Seite <strong>Fallen Birdy Form</strong> im Chrome-Browser.</li>
+      <li>Tippen Sie auf das Drei-Punkte-Menü oben rechts und wählen Sie <em>„App installieren“</em> oder <em>„Zum Startbildschirm hinzufügen“</em>.</li>
+      <li>Bestätigen Sie den Dialog. Die App erscheint nun auf dem Homescreen und kann wie eine native Anwendung gestartet werden.</li>
+    </ol>
+
+    <h2 class="h4 mt-4">iOS (Safari)</h2>
+    <ol>
+      <li>Öffnen Sie die Anwendung in Safari.</li>
+      <li>Tippen Sie auf das Teilen-Symbol und wählen Sie anschließend <em>„Zum Home-Bildschirm“</em>.</li>
+      <li>Optional können Sie den Namen anpassen. Tippen Sie auf <em>Hinzufügen</em>, um die App auf dem Home-Bildschirm zu platzieren.</li>
+    </ol>
+
+    <h2 class="h4 mt-4">Desktop</h2>
+    <p>Auch am Desktop können moderne Browser eine Installation anbieten. Achten Sie auf eine Schaltfläche oder einen Installations-Hinweis in der Adressleiste.</p>
+
+    <div class="alert alert-info mt-4" role="alert">
+      <strong>Tipp:</strong> Stellen Sie sicher, dass beim ersten Aufruf eine stabile Internetverbindung besteht, damit alle Inhalte für die Offline-Verwendung geladen werden können.
+    </div>
+  </div>
+</div>
+{% endblock content %}

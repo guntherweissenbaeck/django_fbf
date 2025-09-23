@@ -90,6 +90,7 @@ INSTALLED_APPS = [
     "reports",
     "sendemail",
     "administration",
+    "stations",
 ]
 
 MIDDLEWARE = [

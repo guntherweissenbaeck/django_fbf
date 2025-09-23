@@ -1,0 +1,30 @@
+{% extends "admin/change_list.html" %}
+{% load i18n %}
+
+{% block content %}
+    {% if settings_form %}
+        <div class="module" id="station-report-settings">
+            <h2>{% trans "Benachrichtigungen" %}</h2>
+            <form method="post" novalidate>
+                {% csrf_token %}
+                {{ settings_form.non_field_errors }}
+                {% for field in settings_form %}
+                    <div class="form-row">
+                        {{ field.errors }}
+                        <label for="{{ field.id_for_label }}">{{ field.label }}</label>
+                        {{ field }}
+                        {% if field.help_text %}
+                            <p class="help">{{ field.help_text }}</p>
+                        {% endif %}
+                    </div>
+                {% endfor %}
+                <div class="submit-row">
+                    <button type="submit" class="button default" name="settings_submit" value="1">
+                        {% trans "Einstellungen speichern" %}
+                    </button>
+                </div>
+            </form>
+        </div>
+    {% endif %}
+    {{ block.super }}
+{% endblock %}

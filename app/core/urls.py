@@ -3,6 +3,7 @@ from django.urls import path, include
 from django.conf import settings
 from django.conf.urls.static import static
 from bird import views
+from core import views as core_views
 
 urlpatterns = [
     # Dynamic sites
@@ -11,9 +12,15 @@ urlpatterns = [
     path("bird/", include("bird.urls")),
     path("contacts/", include("contact.urls")),
     path("costs/", include("costs.urls")),
+    path("stationen/", include("stations.urls", namespace="stations")),
     path("statistics/", include("statistic.urls")),
     path("export/", include("export.urls")),
     path("notizen/", include("notizen.urls")),
+    # PWA support
+    path("manifest.webmanifest", core_views.ManifestView.as_view(), name="pwa_manifest"),
+    path("service-worker.js", core_views.ServiceWorkerView.as_view(), name="pwa_service_worker"),
+    path("pwa/offline/", core_views.PWAOfflineView.as_view(), name="pwa_offline"),
+    path("pwa/install/", core_views.PWAInstallView.as_view(), name="pwa_install"),
     # Admin
     path("admin/administration/", include("administration.urls")),
     path("admin/", admin.site.urls),
