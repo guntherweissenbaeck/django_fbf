@@ -103,67 +103,36 @@ class WildvogelhilfeMap {
     }
 
     async loadStations() {
+        const endpoint = MAP_CONFIG.dataUrl;
         try {
-            const endpoint = MAP_CONFIG.dataUrl || 'data/wildvogelhilfen.json';
-            console.log(`🔄 Lade Stationen aus ${endpoint}...`);
             const response = await fetch(endpoint, {
                 credentials: 'same-origin',
+                cache: 'no-cache',
                 headers: { 'Accept': 'application/json' }
             });
+
+            if (response.status === 304) {
+                console.log('ℹ️ Unveränderte Stationsdaten (304) – bestehende Marker werden weiterverwendet.');
+                return; // vorhandene this.stations beibehalten
+            }
+
             if (!response.ok) {
                 throw new Error(`HTTP ${response.status}: ${response.statusText}`);
             }
-            this.stations = await response.json();
-            console.log(`✅ ${this.stations.length} Stationen erfolgreich geladen`);
-            
-            // Validierung der Daten
-            if (!Array.isArray(this.stations) || this.stations.length === 0) {
-                throw new Error('Keine gültigen Stationsdaten gefunden');
+
+            const data = await response.json();
+            if (!Array.isArray(data)) {
+                throw new Error('Ungültiges Antwortformat (kein Array)');
             }
+            this.stations = data;
+            console.log(`✅ ${this.stations.length} Stationen geladen`);
         } catch (error) {
             console.error('❌ Fehler beim Laden der Stationen:', error);
-            this.showError(`Fehler beim Laden: ${error.message}`);
-            // Fallback: Demo-Daten verwenden
-            console.log('🔄 Verwende Demo-Daten als Fallback');
-            this.loadDemoData();
+            this.showError('Stationsdaten konnten nicht geladen werden. Bitte später erneut versuchen.');
         }
     }
 
-    loadDemoData() {
-        // Demo-Daten basierend auf dem Beispiel aus der Anfrage
-        this.stations = [
-            {
-                name: "Greifvogelhilfe Sachsen e. V.",
-                specialization: "Spezialisiert auf Greifvögel",
-                address: "Nordstraße 4, 01689 Weinböhla",
-                phone: "0171/26 45 180",
-                email: "info@greifvogelhilfe-sachsen.de",
-                latitude: 51.3167,
-                longitude: 13.5833,
-                plz: "01689"
-            },
-            {
-                name: "Wildvogelhilfe Berlin",
-                specialization: "Alle Wildvogelarten",
-                address: "Musterstraße 10, 10115 Berlin",
-                phone: "030/12345678",
-                email: "info@wildvogelhilfe-berlin.de",
-                latitude: 52.5200,
-                longitude: 13.4050,
-                plz: "10115"
-            },
-            {
-                name: "Vogelschutz München",
-                specialization: "Singvögel und Wasservögel",
-                address: "Beispielweg 5, 80331 München",
-                phone: "089/987654321",
-                email: "kontakt@vogelschutz-muenchen.de",
-                latitude: 48.1351,
-                longitude: 11.5820,
-                plz: "80331"
-            }
-        ];
-    }
+    // Removed demo data fallback to avoid confusing partial dataset scenarios
 
     addMarkersToMap() {
     // Entferne vorhandene Marker (bei Re-Render nach Filter)

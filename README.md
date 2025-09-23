@@ -88,6 +88,22 @@ Die neue App `stations` (Route `/stationen`) ist vollständig mit Doxygen-kompat
 - Im selben Admin-Bereich kann optional eine Benachrichtigungsadresse gepflegt werden, die bei neuen Vorschlägen automatisch informiert wird.
 - Koordinaten lassen sich pro Station oder gesammelt über die Admin-Aktion **„Koordinaten automatisch ermitteln“** sowie via Management Command `python manage.py geocode_stations` bestimmen.
 
+### Cache-Busting / Aktuelle Stationsdaten
+
+Im September 2025 trat das Problem auf, dass die JSON-Daten unter `/stationen/daten/` (Route-Name `stations:data`) nur nach Hard-Reload (CMD+Shift+R) aktualisiert wurden. Ursache waren Browser- bzw. Proxy-Caches.
+
+Die View `StationDataView` sendet jetzt strikte Header:
+
+```
+Cache-Control: no-store, no-cache, must-revalidate, max-age=0
+Pragma: no-cache
+Expires: 0
+ETag: "<hash>"
+Last-Modified: <timestamp>
+```
+
+Damit werden veraltete Marker ausgeschlossen; gleichzeitg können Clients bei unverändertem Datenstand per `If-None-Match` einen 304 erhalten. Für späteres, moderates Caching (z. B. 300 Sekunden) kann `Cache-Control` angepasst werden, solange `ETag`/`Last-Modified` bestehen bleiben.
+
 ## Troubleshooting
 - **Docker-Container starten nicht:** Prüfen, ob Ports 8000, 8008 und 8081 frei sind. Bei Konflikten Ports in `docker-compose.yaml` anpassen.
 - **`start_project.sh` bricht ab:** Stellen Sie sicher, dass OpenSSL verfügbar ist (für die Secret-Key-Erzeugung) und Docker Desktop läuft.

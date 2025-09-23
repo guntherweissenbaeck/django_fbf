@@ -5,7 +5,15 @@ from __future__ import annotations
 from typing import Any
 
 from django.contrib import messages
-from django.http import HttpRequest, HttpResponseRedirect, JsonResponse
+from django.http import (
+    HttpRequest,
+    HttpResponseRedirect,
+    JsonResponse,
+    HttpResponse,
+)
+from django.utils.http import http_date
+import hashlib
+from django.db.models import Max
 from django.urls import reverse, reverse_lazy
 from django.utils.translation import gettext_lazy as _
 from django.views.generic import TemplateView, View
@@ -39,20 +47,44 @@ class StationMapView(TemplateView):
 
 
 class StationDataView(View):
-    """! @brief Return the station dataset as JSON for the front-end map."""
+    """! @brief Liefert Stationsdaten mit Conditional GET Unterstützung.
 
-    def get(self, request: HttpRequest, *args: Any, **kwargs: Any) -> JsonResponse:
-        """! @brief Serialize approved stations and expose them as JSON.
+    Strategie:
+    - ETag basiert auf (max(updated_at), Anzahl) für schnelle Ungleichheitsprüfung.
+    - Cache-Control erlaubt Revalidation (kein Blind-Caching alter Daten).
+    - 304 Responses enthalten konsistente Header.
+    """
 
-        :returns: JSON response containing all map marker payloads.
-        """
-
-        stations = (
+    def get(self, request: HttpRequest, *args: Any, **kwargs: Any) -> HttpResponse:
+        qs = (
             WildbirdHelpStation.objects.filter(approved_for_publication=True)
             .order_by("country", "state", "name")
         )
-        payload = [station.to_map_payload() for station in stations]
-        return JsonResponse(payload, safe=False)
+
+        agg = qs.aggregate(last=Max("updated_at"))
+        last_modified = agg.get("last")
+        etag_source = f"{last_modified.isoformat() if last_modified else 'no-ts'}:{qs.count()}".encode("utf-8")
+        try:
+            etag = hashlib.md5(etag_source, usedforsecurity=False).hexdigest()  # type: ignore[arg-type]
+        except TypeError:
+            etag = hashlib.md5(etag_source).hexdigest()
+
+        inm = request.headers.get("If-None-Match")
+        if inm and inm.strip('"') == etag:
+            resp_304 = HttpResponse(status=304)
+            resp_304["ETag"] = f'"{etag}"'
+            resp_304["Cache-Control"] = "public, max-age=0, must-revalidate"
+            if last_modified:
+                resp_304["Last-Modified"] = http_date(last_modified.timestamp())
+            return resp_304
+
+        payload = [obj.to_map_payload() for obj in qs]
+        resp = JsonResponse(payload, safe=False)
+        resp["Cache-Control"] = "public, max-age=0, must-revalidate"
+        resp["ETag"] = f'"{etag}"'
+        if last_modified:
+            resp["Last-Modified"] = http_date(last_modified.timestamp())
+        return resp
 
 
 class StationReportView(CreateView):

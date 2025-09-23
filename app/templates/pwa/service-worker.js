@@ -30,6 +30,22 @@ self.addEventListener('fetch', (event) => {
     return;
   }
 
+  // Network-first Strategie für Stationsdaten um veraltete 3-Datensatz-Version zu vermeiden
+  if (event.request.url.includes('/stationen/daten/')) {
+    event.respondWith(
+      fetch(event.request, { cache: 'no-store' })
+        .then(resp => {
+          if (resp && resp.ok) {
+            return resp; // nicht im Cache speichern
+          }
+          // Fallback: vorhandene Cache-Version nur wenn wirklich keine Netzwerkantwort
+          return caches.match(event.request).then(c => c || resp);
+        })
+        .catch(() => caches.match(event.request) || new Response('[]', { headers: { 'Content-Type': 'application/json' } }))
+    );
+    return;
+  }
+
   if (event.request.mode === 'navigate') {
     event.respondWith(
       fetch(event.request)
