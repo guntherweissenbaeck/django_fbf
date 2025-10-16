@@ -70,3 +70,13 @@ class PWAOfflineView(TemplateView):
     """Fallback page displayed when the application is offline."""
 
     template_name = "pwa/offline.html"
+
+
+class PingView(TemplateView):
+    """Lightweight connectivity probe returning 200 and JSON body.
+
+    Service Worker kann diesen Endpoint regelmäßig abrufen um echte Offline-Situationen
+    von Cache- oder Netzwerkfehlern zu unterscheiden.
+    """
+    def get(self, request, *args, **kwargs):  # pragma: no cover - trivial
+        return HttpResponse('{"ok": true}', content_type='application/json')

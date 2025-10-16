@@ -78,6 +78,9 @@ class BirdExportService:
             
         if self.column_config.get('include_location', False):
             headers.append('Fundort')
+            # Region folgt direkt nach Fundort falls gewünscht
+            if self.column_config.get('include_region', False):
+                headers.append('Region')
             
         if self.column_config.get('include_circumstances', False):
             headers.append('Fundumstände')
@@ -132,6 +135,8 @@ class BirdExportService:
             
         if self.column_config.get('include_location', False):
             row.append(bird.place or '')
+            if self.column_config.get('include_region', False):
+                row.append(bird.region.name if bird.region else '')
             
         if self.column_config.get('include_circumstances', False):
             row.append(bird.find_circumstances.description if bird.find_circumstances else '')

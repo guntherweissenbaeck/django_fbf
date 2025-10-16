@@ -111,6 +111,50 @@ Damit werden veraltete Marker ausgeschlossen; gleichzeitg können Clients bei un
 - **E-Mails werden nicht verschickt:** In der Entwicklung kommt der Konsolen-Backend zum Einsatz. Für reale SMTP-Verbindungen die entsprechenden Variablen (`EMAIL_HOST`, `EMAIL_HOST_USER`, `EMAIL_HOST_PASSWORD`, `DEFAULT_FROM_EMAIL`) in `.env` pflegen.
 - **Statische Dateien fehlen im Testlauf:** Das Startskript führt `collectstatic` aus. Bei manueller Ausführung `docker compose exec web python manage.py collectstatic` starten.
 
+## Geokodierung & Regionen
+Beim Anlegen eines gefundenen Vogels wird der Freitext-Fundort über den Endpunkt `/bird/geocode-found-location/` gegen den öffentlichen Nominatim Dienst (OpenStreetMap) aufgelöst. Die Logik arbeitet mehrstufig, um robuste Treffer zu erzielen:
+
+1. Originale Nutzereingabe (z. B. `Lutherstraße3, Jena` oder `Kirche Kahla`).
+2. Falls kein Komma enthalten ist, wird `, Deutschland` angehängt für bessere Kontextierung.
+3. Zusammengezogene Straßennamen + Nummer werden getrennt (`Lutherstraße3` → `Lutherstraße 3`).
+4. Spezielle Heuristik für das Muster `Kirche <Ort>` dreht die Reihenfolge (`<Ort> Kirche`).
+
+Pro Query werden seit Oktober 2025 mehrere Kandidaten (`limit=7`) mit Adressdetails abgefragt. Ist im Admin ein zentraler Wildvogelhilfe-Standort hinterlegt, wird der räumlich nächste geeignete Kandidat (Stadt / Landkreis / Bundesland vorhanden) per Haversine-Distanz gewählt. Ohne Standort fällt die Auswahl auf den ersten Treffer. Sobald ein nutzbarer Kandidat vorhanden ist, werden folgende Felder extrahiert:
+- Stadt: `city` / `town` / `village`
+- Landkreis / Bezirk: `county` / `district`
+- Bundesland: `state`
+
+Die anzuzeigende Region folgt der Priorität: Stadt > Landkreis > Bundesland. Diese Region wird (falls noch nicht vorhanden) automatisch als `BirdRegion` angelegt, wodurch nachträgliche Umbenennungen zentral möglich sind. Schlägt jede Stufe fehl, liefert der Service HTTP 404 mit einer Fehlermeldung. Bei Ratenbegrenzung (HTTP 429) oder Netzwerkproblemen wird entsprechend ein Fehlerobjekt mit Status 429 bzw. 502 zurückgegeben.
+
+Debug-Informationen können über `?debug=1` abgefragt werden und enthalten sämtliche Query-Versuche sowie Rohadressfelder.
+
+Grenzen & Hinweise:
+- Nominatim ist ein Community-Dienst mit Rate Limits; exzessive Nutzung vermeiden.
+- Inkonsistente oder unvollständige Adressen (Schreibfehler, fehlende Leerzeichen) können zu Ausfällen führen – die oben genannten Normalisierungen decken häufige Fälle ab.
+- Für komplexere Mehrdeutigkeiten wäre eine nachgeschaltete Auswahl (Liste aller Treffer) denkbar; aktuell wird entweder der nächste Kandidat zum gepflegten Standort oder – falls keiner gesetzt – der erste Treffer verwendet. Bei `?debug=1` wird zusätzlich die Distanz (`chosen_distance_km`) ausgegeben.
+
+### Caching & Backoff
+Erfolgreiche Antworten werden für 30 Minuten im Django-Cache gehalten (Key `geocode:<eingabe>`), um wiederholte identische Anfragen zu entlasten. Bei HTTP 429 versucht der Service bis zu 3 Wiederholungen mit exponentiellem Backoff (0.5s, 1.0s, 2.0s) bevor endgültig ein Rate-Limit-Fehler zurückgegeben wird.
+
+### Monitoring Admin
+Alle erfolgreichen und fehlgeschlagenen Versuche werden als `GeocodeAttempt` persistiert (Originaleingabe, alle versuchten Query-Varianten, Ergebnisfelder). Im Admin lassen sich diese filtern und durchsuchen, um Auffälligkeiten (häufige Fehler, systematische Lücken) schnell zu erkennen.
+
+### Regionen nachtragen (Admin-Aktion)
+Im Patienten-Admin steht eine Aktion **„Regionen nachtragen (Geocoding)“** zur Verfügung. Sie versucht für alle ausgewählten Patienten ohne gesetzte Region anhand des Feldes *Fundort* eine Region zu ermitteln und setzt diese automatisch. Erfolgs- und Fehlermeldungen (inkl. kurzer Fehlerursache) werden aggregiert ausgegeben. Diese Aktion sollte sparsam verwendet und nur auf eine begrenzte Auswahl angewandt werden, um externe Geocoding-Dienste nicht übermäßig zu belasten.
+
+#### Hintergrund-Nachtrag mit Fortschrittsbalken
+Zusätzlich kann über die Regionen-Adminliste ein Hintergrundprozess gestartet werden, der sämtliche Patienten ohne Region in Batches à 50 Stück nachträgt. Während der Laufzeit zeigt ein Fortschrittsbalken (Polling) den aktuellen Stand auch bei wiederholtem Seitenaufruf. Nach Abschluss wird eine Zusammenfassung (Erfolgs-/Fehleranzahl) angezeigt. Der Prozess nutzt vereinfachte Heuristiken und keinen Rate-Limit-Backoff – für sehr große Datenmengen ggf. zeitlich staffeln.
+
+### Live-Tests
+Optionale Live-Integrations-Tests gegen den echten Dienst liegen in `bird/tests_live_geocode.py`. Standardmäßig werden sie übersprungen. Aktivierung nur lokal:
+
+```bash
+export RUN_LIVE_GEOCODE=1
+docker compose exec web python manage.py test bird.tests_live_geocode.LiveNominatimGeocodeTests
+```
+
+In CI sollte diese Variable nicht gesetzt sein, um Rate Limits und Flakiness zu vermeiden.
+
 ## Progressive Web App
 Die Fallen Birdy Form kann als Progressive Web App (PWA) installiert und offline verwendet werden. Seiten wie das Dashboard, die Login-Maske und die Offline-Hinweisseite werden vom Service Worker vorgehalten.
 

@@ -9,6 +9,13 @@
     <form method="post" enctype="multipart/form-data">
       {% csrf_token %}
       {{ form|crispy }}
+      <div class="mb-3" id="region-select-wrapper" style="display:none;">
+        <label for="id_region_dynamic" class="form-label">Region</label>
+        <select id="id_region_dynamic" class="form-select">
+          <option value="">-- bitte wählen --</option>
+        </select>
+        <small class="form-text text-muted">Wird automatisch vorgeschlagen. Neue Regionen werden angelegt und stehen künftig zur Auswahl.</small>
+      </div>
       <a href="{% url 'bird_all' %}" class="btn btn-success">Abbrechen</a>
       <button class="btn btn-primary" type="submit">Speichern</button>
       <div class="mt-3"><small>* Pflichtfeld</small></div>
@@ -58,6 +65,11 @@ document.addEventListener('DOMContentLoaded', function() {
     const anzahlField = document.querySelector('#id_anzahl_patienten');
     const identifierField = document.querySelector('#id_bird_identifier');
     const identifierLabel = document.querySelector('label[for="id_bird_identifier"]');
+  const placeField = document.querySelector('#id_place');
+  const regionSelectWrapper = document.getElementById('region-select-wrapper');
+  const regionSelect = document.getElementById('id_region_dynamic');
+  const hiddenRegionField = document.querySelector('#id_region');
+  let box, display;
     
     function updateIdentifierLabel() {
         const anzahl = parseInt(anzahlField.value) || 1;
@@ -95,6 +107,95 @@ document.addEventListener('DOMContentLoaded', function() {
         identifierField.addEventListener('input', updateIdentifierLabel);
         updateIdentifierLabel(); // Initial call
     }
+
+  function showRegionSelect() {
+    if (regionSelectWrapper) {
+      regionSelectWrapper.style.display = 'block';
+    }
+  }
+  function hideRegionSelect() {
+    if (regionSelectWrapper) {
+      regionSelectWrapper.style.display = 'none';
+    }
+  }
+
+  async function geocodePlace() {
+    if (!placeField) return;
+    if (!box) {
+      // Dynamisch Box anlegen direkt unter dem Fundort Feld
+      box = document.createElement('div');
+      box.id = 'found-location-geocode';
+      box.className = 'mt-2';
+      box.style.display = 'none';
+      box.innerHTML = '<label class="form-label">Erkannte Region / Stadt</label><div class="form-control bg-light" id="found-location-display" readonly><small class="text-muted">Wird nach Eingabe des Fundorts ermittelt…</small></div>';
+      placeField.parentNode.appendChild(box);
+      display = box.querySelector('#found-location-display');
+    }
+    if (!placeField.value.trim()) {
+      box.style.display = 'none';
+      return;
+    }
+    box.style.display = 'block';
+    display.innerHTML = '<small class="text-muted">Suche…</small>';
+    try {
+      const resp = await fetch(`/bird/geocode-found-location/?q=${encodeURIComponent(placeField.value)}`);
+      if (!resp.ok) {
+        if (resp.status === 429) {
+          display.innerHTML = '<small class="text-warning">Geocoding momentan nicht verfügbar (Rate Limit). Fundort bleibt manuell editierbar.</small>';
+        } else {
+          display.innerHTML = '<small class="text-danger">Keine Ergebnisse</small>';
+        }
+        // Kein Treffer -> Auswahl ermöglichen
+        hiddenRegionField.value = '';
+        showRegionSelect();
+        return;
+      }
+  const data = await resp.json();
+      if (!data.success) {
+        if (data.rate_limited) {
+          display.innerHTML = '<small class="text-warning">Geocoding momentan nicht verfügbar (Rate Limit). Fundort später erneut versuchen.</small>';
+        } else {
+          display.innerHTML = `<small class="text-danger">${data.error || 'Fehler'}</small>`;
+        }
+        hiddenRegionField.value = '';
+        showRegionSelect();
+        return;
+      }
+      const parts = [];
+      if (data.city) parts.push(data.city);
+      if (data.county && data.county !== data.city) parts.push(data.county);
+      if (data.state && !parts.includes(data.state)) parts.push(data.state);
+      display.textContent = parts.join(' • ') || data.display || '—';
+
+      if (data.region_name) {
+        // Dropdown ausblenden – automatische Region verwendet
+        hideRegionSelect();
+        hiddenRegionField.value = data.region_id || '';
+      } else {
+        // Keine Region erkannt -> manuelle Auswahl anbieten
+        showRegionSelect();
+      }
+    } catch (err) {
+      display.innerHTML = '<small class="text-danger">Netzwerkfehler</small>';
+      hiddenRegionField.value = '';
+      showRegionSelect();
+    }
+  }
+
+  if (placeField) {
+    placeField.addEventListener('blur', geocodePlace);
+    // Initial Versuch beim Laden wenn bereits Wert vorliegt
+    if (placeField.value.trim()) {
+      geocodePlace();
+    }
+  }
+
+  // Auswahl Änderung -> verborgene Region ID setzen
+  if (regionSelect && hiddenRegionField) {
+    regionSelect.addEventListener('change', function(){
+      hiddenRegionField.value = regionSelect.value || '';
+    });
+  }
 });
 </script>
 

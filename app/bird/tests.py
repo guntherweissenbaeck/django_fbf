@@ -10,6 +10,10 @@ from sendemail.models import Emailadress
 
 from .models import Bird, BirdStatus, Circumstance, FallenBird
 from .views import _collect_notification_recipients
+from django.urls import reverse
+from unittest import mock
+
+import json
 
 
 class BirdTestCase(TestCase):
@@ -169,3 +173,131 @@ class BirdCreateViewTests(TestCase):
         self.assertIsNotNone(form)
         self.assertFalse(form.is_valid())
         self.assertEqual(FallenBird.objects.count(), 0)
+
+
+class GeocodeFoundLocationTests(TestCase):
+    """Tests for the geocode_found_location endpoint.
+
+    We mock the Nominatim response to avoid rate limits / network flakiness.
+    The view performs a single pass currently; these tests capture expected
+    extraction logic for city/county/state and region auto-creation.
+    """
+
+    def setUp(self):
+        self.user = User.objects.create_user(
+            username="geo-user", email="geo@example.com", password="pw"
+        )
+        self.client.force_login(self.user)
+
+    def _mock_nominatim(self, payload_list, status=200):
+        """Helper to patch requests.get returning provided JSON list."""
+        class DummyResp:
+            def __init__(self, data, status_code):
+                self._data = data
+                self.status_code = status_code
+                self.headers = {"Content-Type": "application/json"}
+
+            def json(self):
+                return self._data
+
+        return mock.patch("bird.views.requests.get", return_value=DummyResp(payload_list, status))
+
+    def test_city_extraction_prefers_city_field(self):
+        query = "Erfurt, Alte Synagoge"
+        mocked = [
+            {
+                "address": {
+                    "city": "Erfurt",
+                    "county": "Erfurt",
+                    "state": "Thüringen",
+                    "country": "Deutschland",
+                }
+            }
+        ]
+        with self._mock_nominatim(mocked):
+            resp = self.client.get(reverse("bird_geocode_found_location"), {"q": query})
+        self.assertEqual(resp.status_code, 200)
+        data = resp.json()
+        self.assertTrue(data["success"])  # success flag
+        self.assertEqual(data["city"], "Erfurt")
+        self.assertEqual(data["region_name"], "Erfurt")  # region uses city
+        self.assertTrue(data["region_id"])  # created
+
+    def test_fallback_to_county_when_no_city(self):
+        query = "Kirche Kahla"
+        mocked = [
+            {
+                "address": {
+                    # no city/town/village fields, only county/state
+                    "county": "Saale-Holzland-Kreis",
+                    "state": "Thüringen",
+                    "country": "Deutschland",
+                }
+            }
+        ]
+        with self._mock_nominatim(mocked):
+            resp = self.client.get(reverse("bird_geocode_found_location"), {"q": query})
+        self.assertEqual(resp.status_code, 200)
+        data = resp.json()
+        self.assertEqual(data["city"], "")
+        self.assertEqual(data["county"], "Saale-Holzland-Kreis")
+        self.assertEqual(data["region_name"], "Saale-Holzland-Kreis")
+
+    def test_fallback_to_state_when_no_city_or_county(self):
+        query = "Lutherstraße 3, Jena"
+        mocked = [
+            {
+                "address": {
+                    # Simulate odd response missing city & county
+                    "state": "Thüringen",
+                    "country": "Deutschland",
+                }
+            }
+        ]
+        with self._mock_nominatim(mocked):
+            resp = self.client.get(reverse("bird_geocode_found_location"), {"q": query})
+        self.assertEqual(resp.status_code, 200)
+        data = resp.json()
+        self.assertEqual(data["city"], "")
+        self.assertEqual(data["county"], "")
+        self.assertEqual(data["state"], "Thüringen")
+        self.assertEqual(data["region_name"], "Thüringen")
+
+    def test_error_when_no_results(self):
+        query = "Universitätsklinikum Jena"
+        mocked = []  # empty list -> no results
+        with self._mock_nominatim(mocked):
+            resp = self.client.get(reverse("bird_geocode_found_location"), {"q": query})
+        self.assertEqual(resp.status_code, 404)
+        data = resp.json()
+        self.assertFalse(data["success"])  # failure
+        self.assertIn("Keine Geocoding-Ergebnisse", data["error"])
+
+    def test_institution_word_stripping_fallback(self):
+        """Simuliert, dass Haupt-Query fehlschlägt und erst die letzte Token-Heuristik greift."""
+        query = "Universitätsklinikum Jena"
+        # Sequence of responses for attempts: 1-5 empty, 6 returns city Jena
+        # We patch requests.get to return empty list until attempt_no==6 based on called params['q'] pattern.
+        class DummyResp:
+            def __init__(self, data):
+                self._data = data
+                self.status_code = 200
+                self.headers = {"Content-Type": "application/json"}
+            def json(self):
+                return self._data
+
+        def side_effect(url, params, headers, timeout):
+            q = params.get('q')
+            if q == 'Jena, Deutschland':  # last token heuristic (attempt 6)
+                return DummyResp([
+                    {"address": {"city": "Jena", "state": "Thüringen", "country": "Deutschland"}}
+                ])
+            return DummyResp([])
+
+        with mock.patch('bird.views.requests.get', side_effect=side_effect):
+            resp = self.client.get(reverse("bird_geocode_found_location"), {"q": query})
+        self.assertEqual(resp.status_code, 200)
+        data = resp.json()
+        self.assertTrue(data["success"])
+        self.assertEqual(data["city"], "Jena")
+        self.assertEqual(data["region_name"], "Jena")

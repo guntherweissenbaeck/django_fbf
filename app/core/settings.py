@@ -44,6 +44,9 @@ SECURE_HSTS_PRELOAD = True
 # Allowed Hosts
 # -----------------------------------
 ALLOWED_HOSTS = env("ALLOWED_HOSTS").split(",") if env("ALLOWED_HOSTS") else []
+# Ensure test client host allowed during development/debug to avoid DisallowedHost for 'testserver'
+if DEBUG and 'testserver' not in ALLOWED_HOSTS:
+    ALLOWED_HOSTS.append('testserver')
 
 # -----------------------------------
 # Application definition

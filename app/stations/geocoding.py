@@ -58,6 +58,9 @@ def _request(params: dict[str, Any]) -> dict[str, Any] | None:
             headers={"User-Agent": DEFAULT_USER_AGENT},
             timeout=15,
         )
+        if response.status_code == 429:  # Rate Limit
+            logger.warning("Geocoding rate limit hit (429) for query params: %s", params)
+            return {"_rate_limited": True}
         response.raise_for_status()
     except requests.RequestException as exc:  # pragma: no cover - network interaction
         logger.warning("Geocoding request failed: %s", exc)

@@ -1,0 +1,144 @@
+{% extends "admin/base_site.html" %}
+{% load i18n %}
+{% block content %}
+<h1>{{ title }}</h1>
+<p>{% trans "Hier können Sie Regionen manuell korrigieren. Leeres Feld entfernt die Region. Änderungen werden zeilenweise sofort gespeichert." %}</p>
+
+<div class="region-toolbar">
+  <div class="filter-group">
+    <strong>Filter:</strong>
+    <a href="?filter=all&page=1&page_size={{ page_obj.paginator.per_page }}" class="filter-link{% if filter_mode == 'all' %} active{% endif %}">Alle</a>
+    <a href="?filter=no_region&page=1&page_size={{ page_obj.paginator.per_page }}" class="filter-link{% if filter_mode == 'no_region' %} active{% endif %}">Ohne Region</a>
+    <a href="?filter=short_place&page=1&page_size={{ page_obj.paginator.per_page }}" class="filter-link{% if filter_mode == 'short_place' %} active{% endif %}">Kurzer Fundort (&lt;15)</a>
+  </div>
+  <div class="pagination-group">
+    <label>Einträge/Seite:
+      <select id="page-size" class="vSmallTextField">
+        {% for size in page_sizes %}
+          <option value="{{ size }}"{% if page_obj.paginator.per_page == size %} selected{% endif %}>{{ size }}</option>
+        {% endfor %}
+      </select>
+    </label>
+    <label style="margin-left:12px;">Seite:
+      <input type="number" id="page-jump" min="1" max="{{ paginator.num_pages }}" value="{{ page_obj.number }}" style="width:70px;" /> / {{ paginator.num_pages }}
+    </label>
+    <div class="page-buttons">
+      {% if page_obj.has_previous %}<a href="?filter={{ filter_mode }}&page={{ page_obj.previous_page_number }}&page_size={{ page_obj.paginator.per_page }}" class="button page-nav">«</a>{% endif %}
+      {% if page_obj.has_next %}<a href="?filter={{ filter_mode }}&page={{ page_obj.next_page_number }}&page_size={{ page_obj.paginator.per_page }}" class="button page-nav">»</a>{% endif %}
+    </div>
+  </div>
+</div>
+
+<table class="adminlist" style="width:100%;border-collapse:collapse;" id="region-table" data-region-list='[{% for name in existing_regions %}"{{ name|escapejs }}"{% if not forloop.last %}, {% endif %}{% endfor %}]'>
+  <thead>
+    <tr>
+      <th>{% trans "Patient" %}</th>
+      <th>{% trans "Vogel" %}</th>
+      <th>{% trans "Fundort" %}</th>
+      <th>{% trans "Region" %}</th>
+      <th style="width:110px;">Aktion</th>
+    </tr>
+  </thead>
+  <tbody id="region-correction-body">
+    {% for r in rows %}
+    <tr data-patient="{{ r.id }}">
+      <td>{{ r.identifier|default:r.id }}</td>
+      <td>{{ r.bird }}</td>
+      <td>{{ r.place }}</td>
+      <td>
+        <input type="text" value="{{ r.region }}" class="vTextField region-input" style="min-width:160px;" />
+        <div class="region-warning" style="display:none;color:#b45309;font-size:11px;">Existiert bereits</div>
+      </td>
+      <td>
+        <button type="button" class="button save-row" style="background:#198754;color:#fff;">Speichern</button>
+      </td>
+    </tr>
+    {% endfor %}
+  </tbody>
+</table>
+
+<div style="margin-top:16px;">
+  <a href="../" class="button">Zurück</a>
+</div>
+
+<script>
+window.REGION_NAMES = (function(){
+  try {
+    const raw = document.getElementById('region-table').getAttribute('data-region-list');
+    const arr = JSON.parse(raw);
+    return new Set(arr);
+  } catch(e) { return new Set(); }
+})();
+
+function markChanged(tr){
+  tr.classList.add('region-updated');
+}
+
+function showExistsWarning(input){
+  const warn = input.closest('td').querySelector('.region-warning');
+  const val = input.value.trim();
+  if(val && window.REGION_NAMES.has(val)){
+    warn.style.display='block';
+  } else {
+    warn.style.display='none';
+  }
+}
+
+document.querySelectorAll('.region-input').forEach(inp => {
+  inp.addEventListener('input', () => showExistsWarning(inp));
+});
+
+document.querySelectorAll('.save-row').forEach(btn => {
+  btn.addEventListener('click', async () => {
+    const tr = btn.closest('tr');
+    const patientId = tr.dataset.patient;
+    const regionVal = tr.querySelector('.region-input').value.trim();
+    const formData = new FormData();
+    formData.append('patient_id', patientId);
+    formData.append('region', regionVal);
+    try {
+      const resp = await fetch('save/', {method:'POST', headers:{'X-CSRFToken': getCsrfToken()}, body: formData});
+      const data = await resp.json();
+      if(resp.ok && data.changed){
+        markChanged(tr);
+        if(data.created){ window.REGION_NAMES.add(data.region); }
+        if(regionVal === ''){ tr.querySelector('.region-input').value=''; }
+      } else if(!resp.ok){ alert('Fehler: '+(data.error||resp.status)); }
+    } catch(e){ alert('Netzwerkfehler'); }
+  });
+});
+
+function getCsrfToken(){
+  const m = document.cookie.match(/csrftoken=([^;]+)/); return m?m[1]:'';
+}
+</script>
+<style>
+  tr.region-updated { background:#fff3cd; transition: background 0.7s; }
+  .filter-link { padding:4px 10px; border-radius:4px; text-decoration:none; background:#f0f4f8; color:#0d6efd !important; }
+  /* Erhöhe Spezifität und sichere weißen Text für aktiven Filter in allen Zuständen */
+  .filter-link.active, .filter-link.active:link, .filter-link.active:visited, .filter-link.active:hover, .filter-link.active:active {
+    background:#0d6efd; color:#fff !important;
+  }
+  .region-toolbar { display:flex; flex-wrap:wrap; gap:16px; align-items:center; margin-bottom:12px; }
+  .filter-group { display:flex; gap:8px; align-items:center; }
+  .pagination-group { display:flex; gap:12px; align-items:center; }
+  .page-buttons a { margin-left:8px; }
+</style>
+<script>
+document.getElementById('page-size').addEventListener('change', function(){
+  const size = this.value;
+  const url = new URL(window.location.href);
+  url.searchParams.set('page_size', size);
+  url.searchParams.set('page', '1');
+  window.location = url.toString();
+});
+document.getElementById('page-jump').addEventListener('change', function(){
+  let page = parseInt(this.value,10);
+  const max = parseInt(this.getAttribute('max'),10);
+  if(page < 1) page = 1; if(page > max) page = max;
+  const url = new URL(window.location.href);
+  url.searchParams.set('page', page);
+  window.location = url.toString();
+});
+</script>
+{% endblock %}

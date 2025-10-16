@@ -73,6 +73,13 @@ class CustomExportForm(forms.Form):
         required=False,
         help_text=_("Ort des Funds")
     )
+
+    include_region = forms.BooleanField(
+        label=_("Region"),
+        initial=False,
+        required=False,
+        help_text=_("Automatisch ermittelte Region / Stadt")
+    )
     
     include_circumstances = forms.BooleanField(
         label=_("Fundumstände"),
@@ -161,7 +168,7 @@ class CustomExportForm(forms.Form):
         # Mindestens eine Spalte muss ausgewählt sein
         column_fields = [
             'include_date_found', 'include_bird_species', 'include_bird_details',
-            'include_bird_status', 'include_location', 'include_circumstances',
+            'include_bird_status', 'include_location', 'include_region', 'include_circumstances',
             'include_diagnosis', 'include_finder_info', 'include_aviary',
             'include_sent_to', 'include_release_location', 'include_close_date',
             'include_notes', 'include_timestamps', 'include_user_info'

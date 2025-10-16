@@ -21,6 +21,7 @@ urlpatterns = [
     path("service-worker.js", core_views.ServiceWorkerView.as_view(), name="pwa_service_worker"),
     path("pwa/offline/", core_views.PWAOfflineView.as_view(), name="pwa_offline"),
     path("pwa/install/", core_views.PWAInstallView.as_view(), name="pwa_install"),
+    path("ping/", core_views.PingView.as_view(), name="ping"),
     # Admin
     path("admin/administration/", include("administration.urls")),
     path("admin/", admin.site.urls),

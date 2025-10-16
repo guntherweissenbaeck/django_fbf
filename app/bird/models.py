@@ -4,6 +4,7 @@ from uuid import uuid4
 from django.conf import settings
 from django.db import models
 from django.utils.translation import gettext_lazy as _
+from django.utils.text import slugify
 
 from django_ckeditor_5.fields import CKEditor5Field
 
@@ -46,6 +47,15 @@ class FallenBird(models.Model):
     )
     date_found = models.DateField(blank=True, null=True, verbose_name=_("Datum des Fundes"))
     place = models.CharField(max_length=256, blank=True, null=True, verbose_name=_("Ort des Fundes"))
+    region = models.ForeignKey(
+        'BirdRegion',
+        on_delete=models.SET_NULL,
+        blank=True,
+        null=True,
+        verbose_name=_("Region"),
+        help_text=_("Automatisch erkannte oder manuell gewählte Region / Stadt."),
+        related_name='fallen_birds'
+    )
     # Fields expected by tests for deceased birds
     death_date = models.DateField(blank=True, null=True, verbose_name=_("Todesdatum"))
     cause_of_death = models.CharField(
@@ -149,6 +159,120 @@ class FallenBird(models.Model):
     def __str__(self):
         bird_name = str(self.bird) if self.bird else "Unbekannt"
         return f"Patient: {bird_name}"
+
+
+class BirdRegion(models.Model):
+    """Sammlung verfügbarer Regionen/Städte für Fundorte.
+
+    Änderungen am Namen sollen alle referenzierten Patienten widerspiegeln. Da wir einen ForeignKey nutzen,
+    reicht das Speichern des neuen Namens; keine manuelle Propagation nötig.
+    """
+
+    name = models.CharField(max_length=128, unique=True, verbose_name=_("Name"))
+    slug = models.SlugField(
+        max_length=160,
+        unique=True,
+        blank=True,
+        editable=False,
+        verbose_name=_("URL-Kürzel"),
+        help_text=_("Wird automatisch aus dem Namen erzeugt.")
+    )
+    created_at = models.DateTimeField(auto_now_add=True, verbose_name=_("Erstellt"))
+    updated_at = models.DateTimeField(auto_now=True, verbose_name=_("Aktualisiert"))
+
+    class Meta:
+        verbose_name = _("Region")
+        verbose_name_plural = _("Regionen")
+        ordering = ("name",)
+
+    def __str__(self):  # pragma: no cover - trivial
+        return self.name
+
+    def save(self, *args, **kwargs):  # pragma: no cover - straightforward
+        if not self.slug:
+            self.slug = slugify(self.name)[:160]
+        else:
+            # Slug ggf. bei Namensänderung aktualisieren
+            if slugify(self.name) != self.slug:
+                self.slug = slugify(self.name)[:160]
+        super().save(*args, **kwargs)
+
+
+class GeocodeAttempt(models.Model):
+    """Persistiert einzelne Geocoding-Versuche zur Nachverfolgung und Analyse.
+
+    Ein Eintrag entspricht der gesamten Verarbeitung eines Benutzer-Fundort-Strings inklusive
+    aller internen Normalisierungs-/Fallback-Abfragen.
+    """
+
+    query = models.CharField(max_length=256, verbose_name=_("Originaleingabe"))
+    attempted_queries = models.JSONField(verbose_name=_("Versuchs-Queries"))
+    success = models.BooleanField(default=False, verbose_name=_("Erfolg"))
+    status_code = models.PositiveIntegerField(blank=True, null=True, verbose_name=_("HTTP Status"))
+    city = models.CharField(max_length=128, blank=True, verbose_name=_("Stadt"))
+    county = models.CharField(max_length=128, blank=True, verbose_name=_("Landkreis"))
+    state = models.CharField(max_length=128, blank=True, verbose_name=_("Bundesland"))
+    error = models.CharField(max_length=256, blank=True, verbose_name=_("Fehlertext"))
+    created_at = models.DateTimeField(auto_now_add=True, verbose_name=_("Zeitpunkt"))
+
+    class Meta:
+        verbose_name = _("Geocoding-Versuch")
+        verbose_name_plural = _("Geocoding-Versuche")
+        ordering = ("-created_at",)
+
+    def __str__(self):  # pragma: no cover - trivial
+        status = "OK" if self.success else "FAIL"
+        return f"Geocode {status}: {self.query} ({self.created_at:%Y-%m-%d %H:%M})"
+
+
+class RegionBackfillTask(models.Model):
+    """Persistiert den Fortschritt eines Hintergrundlaufs zur Region-Nachtragung.
+
+    Batching (je 50 Patienten) und Fehler-/Erfolgszählung werden fortlaufend aktualisiert.
+    """
+
+    created_at = models.DateTimeField(auto_now_add=True)
+    started_at = models.DateTimeField(blank=True, null=True)
+    finished_at = models.DateTimeField(blank=True, null=True)
+    total_patients = models.PositiveIntegerField(default=0)
+    processed_patients = models.PositiveIntegerField(default=0)
+    success_count = models.PositiveIntegerField(default=0)
+    error_count = models.PositiveIntegerField(default=0)
+    errors = models.JSONField(default=list, blank=True)
+    is_running = models.BooleanField(default=False)
+    batch_size = models.PositiveIntegerField(default=50)
+
+    def progress_percent(self):  # pragma: no cover trivial
+        if self.total_patients == 0:
+            return 0
+        return int((self.processed_patients / self.total_patients) * 100)
+
+    def __str__(self):  # pragma: no cover
+        return f"RegionBackfillTask {self.id} ({self.progress_percent()}%)"
+
+
+class WildvogelhilfeCenter(models.Model):
+    """Speichert den zentralen Standort der Wildvogelhilfe für Distanz-basierte Regionsermittlung.
+
+    Erwartet genau einen Eintrag (verwaltbar über Admin). Falls mehrere existieren wird der
+    erste (älteste) genutzt.
+    """
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
+    address = models.CharField(max_length=256, blank=True, verbose_name=_("Adresse Beschreibung"))
+    latitude = models.FloatField(verbose_name=_("Breitengrad"))
+    longitude = models.FloatField(verbose_name=_("Längengrad"))
+
+    class Meta:
+        verbose_name = _("Wildvogelhilfe Standort")
+        verbose_name_plural = _("Wildvogelhilfe Standorte")
+
+    def __str__(self):  # pragma: no cover
+        return f"Center ({self.latitude},{self.longitude})"
+
+    @staticmethod
+    def get_active():
+        return WildvogelhilfeCenter.objects.order_by('created_at').first()
 
 
 class Bird(models.Model):

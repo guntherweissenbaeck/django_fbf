@@ -1,0 +1,43 @@
+{% extends "admin/change_list.html" %}
+{% load static %}
+{% block content %}
+<div class="module" style="margin-bottom:1em;">
+  <h2>Standort der Wildvogelhilfe</h2>
+  <form method="post" style="margin-bottom:1em;display:flex;flex-wrap:wrap;gap:8px;align-items:flex-end;">
+    {% csrf_token %}
+    <div>
+      <label for="center_address" style="font-weight:600;">Adresse/Beschreibung</label>
+      <input type="text" name="center_address" id="center_address" class="vTextField" value="{{ wildvogelhilfe_center.address|default:'' }}" style="min-width:280px;" />
+    </div>
+    <div>
+      <label for="center_latitude" style="font-weight:600;">Breitengrad</label>
+      <input type="text" name="center_latitude" id="center_latitude" class="vTextField" value="{{ wildvogelhilfe_center.latitude|default:'' }}" />
+    </div>
+    <div>
+      <label for="center_longitude" style="font-weight:600;">Längengrad</label>
+      <input type="text" name="center_longitude" id="center_longitude" class="vTextField" value="{{ wildvogelhilfe_center.longitude|default:'' }}" />
+    </div>
+    <div>
+      <button type="submit" class="btn btn-success" style="margin-top:18px;">Standort speichern</button>
+    </div>
+    {% if wildvogelhilfe_center %}
+      <div style="flex-basis:100%;font-size:12px;color:#555;">Aktiver Standort: {{ wildvogelhilfe_center.latitude }}, {{ wildvogelhilfe_center.longitude }} ({{ wildvogelhilfe_center.address }})</div>
+    {% endif %}
+  </form>
+  <h2>Regionen-Nachtrag (Hintergrundprozess)</h2>
+  <div id="region-backfill-status" class="inline">
+    <div class="progress" style="width:300px;display:inline-block;vertical-align:middle;">
+      <div id="region-backfill-bar" class="progress-bar bg-success" role="progressbar" style="width:0%;" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100"></div>
+    </div>
+    <span id="region-backfill-label" style="margin-left:8px;">Kein aktiver Task</span>
+  <button type="button" id="region-backfill-start" class="btn btn-warning" style="margin-left:12px;">Nachtrag starten</button>
+  <button type="button" id="region-backfill-abort" class="btn btn-outline-danger" style="margin-left:8px;display:none;">Abbrechen</button>
+  </div>
+  <div id="region-backfill-report" style="margin-top:8px;font-size:12px;color:#555;"></div>
+  <div style="margin-top:16px;">
+    <a href="korrektur/" class="button" style="background:#0d6efd;color:#fff;">Regionen korrigieren</a>
+  </div>
+</div>
+{{ block.super }}
+<script src="{% static 'js/region_backfill_progress.js' %}"></script>
+{% endblock %}
