@@ -257,3 +257,51 @@ class StationReportSettings(models.Model):
         """! @brief Show the configured notification address in admin lists."""
 
         return self.notification_email or _("Keine E-Mail hinterlegt")
+
+
+class StationMapSettings(models.Model):
+    """! @brief Konfiguration für Hinweisblöcke der öffentlichen Stationskarte.
+
+    Ermöglicht das (De-)Aktivieren sowie die freie Textpflege zweier Hinweisbereiche:
+    1. Kopfbereich unterhalb des Seitentitels
+    2. Informationspanel unterhalb der Karte
+
+    Die Felder sind optional; leere Texte werden bei aktivierten Flags nicht angezeigt.
+    """
+
+    show_header_note = models.BooleanField(
+        _("Hinweis im Kopf anzeigen"),
+        default=True,
+        help_text=_("Schaltet den gelben Hinweisblock direkt unter der Überschrift ein."),
+    )
+    header_note_text = models.TextField(
+        _("Text Kopf-Hinweis"),
+        blank=True,
+        help_text=_("Inhalt für den oberen Hinweisblock. Unterstützt einfachen Text/HTML."),
+    )
+    show_info_note = models.BooleanField(
+        _("Hinweis im Infopanel anzeigen"),
+        default=True,
+        help_text=_("Steuert den Hinweisblock im Informationsbereich unter der Karte."),
+    )
+    info_note_text = models.TextField(
+        _("Text Infopanel-Hinweis"),
+        blank=True,
+        help_text=_("Inhalt für den Hinweisblock im Infopanel. Unterstützt einfachen Text/HTML."),
+    )
+    page_title = models.CharField(
+        _("Seitentitel"),
+        max_length=120,
+        blank=True,
+        help_text=_("Überschrift der Karten-Seite. Leer = Standard '🦅 Wildvogelhilfen – Interaktive Karte'."),
+    )
+    updated_at = models.DateTimeField(_("Aktualisiert am"), auto_now=True)
+
+    class Meta:
+        verbose_name = _("Stations Einstellungen")
+        verbose_name_plural = _("Stations Einstellungen")
+
+    def __str__(self) -> str:  # pragma: no cover - trivial
+        # Rückgabe muss ein echter String sein, nicht der Lazy Proxy
+        return str(_("Stations Karten Einstellungen"))
+

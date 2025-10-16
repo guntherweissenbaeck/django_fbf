@@ -25,10 +25,12 @@
 <body>
     <header>
         <div class="container">
-            <h1>🦅 Wildvogelhilfen – Interaktive Karte</h1>
+            <h1>{{ map_settings.page_title|default:"🦅 Wildvogelhilfen – Interaktive Karte" }}</h1>
+            {% if map_settings.show_header_note and map_settings.header_note_text %}
             <div class="note">
-                <p><small><strong>Hinweis:</strong> Die Daten werden redaktionell gepflegt und können unvollständig sein.</small></p>
+                <p><small>{{ map_settings.header_note_text|safe }}</small></p>
             </div>
+            {% endif %}
         </div>
     </header>
 
@@ -48,9 +50,11 @@
                    Österreich, der Schweiz und angrenzenden Regionen. Klicken Sie auf einen Marker, um
                    Kontaktinformationen und Details zu erhalten.</p>
 
+                {% if map_settings.show_info_note and map_settings.info_note_text %}
                 <div class="note">
-                    <p><small><strong>Hinweis:</strong> Viele Stationen arbeiten ehrenamtlich. Bitte vorab telefonisch die Verfügbarkeit klären.</small></p>
+                    <p><small>{{ map_settings.info_note_text|safe }}</small></p>
                 </div>
+                {% endif %}
 
                 <div class="download-section">
                     <div class="action-buttons">

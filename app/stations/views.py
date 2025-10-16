@@ -21,7 +21,7 @@ from django.views.generic.edit import CreateView
 
 from .forms import StationReportForm
 from .models import WildbirdHelpStation
-from .services import notify_new_station_report
+from .services import notify_new_station_report, get_map_settings
 
 
 class StationMapView(TemplateView):
@@ -41,6 +41,7 @@ class StationMapView(TemplateView):
             {
                 "station_count": queryset.count(),
                 "data_url": reverse("stations:data"),
+                "map_settings": get_map_settings(),
             }
         )
         return context

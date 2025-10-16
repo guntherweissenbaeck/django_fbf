@@ -16,7 +16,7 @@ from django.utils import timezone
 from django.utils.translation import gettext_lazy as _
 
 from .forms import StationCSVImportForm, StationReportSettingsForm
-from .models import StationReport, WildbirdHelpStation
+from .models import StationReport, WildbirdHelpStation, StationMapSettings
 from .services import (
     StationCSVImporter,
     batch_update_coordinates,
@@ -356,3 +356,39 @@ class StationReportAdmin(admin.ModelAdmin):
 
         mark_reports(list(queryset), status=StationReport.Status.PENDING)
         messages.success(request, _("Vorschläge wurden erneut auf offen gesetzt."))
+
+
+@admin.register(StationMapSettings)
+class StationMapSettingsAdmin(admin.ModelAdmin):
+    """! @brief Admin Oberfläche für Karten-Hinweis Einstellungen.
+
+    Beschränkt auf einen Datensatz (Singleton). Wenn keiner existiert, wird er erstellt.
+    """
+
+    list_display = ("show_header_note", "show_info_note", "updated_at")
+    readonly_fields = ("updated_at",)
+
+    fieldsets = (
+        (_("Kopfbereich"), {
+            "fields": ("page_title", "show_header_note", "header_note_text"),
+            "description": _("Seitentitel und Hinweisblock direkt unter der Überschrift."),
+        }),
+        (_("Infopanel Hinweis"), {
+            "fields": ("show_info_note", "info_note_text"),
+            "description": _("Steuert den Hinweis im Informationspanel unterhalb der Karte."),
+        }),
+        (_("Metadaten"), {"fields": ("updated_at",)}),
+    )
+
+    def has_add_permission(self, request: HttpRequest) -> bool:  # pragma: no cover - UI Guard
+        if StationMapSettings.objects.exists():
+            return False
+        return super().has_add_permission(request)
+
+    def changelist_view(self, request: HttpRequest, extra_context=None):
+        # Wenn ein Datensatz existiert, direkt zur Detailseite leiten für schnelleren Zugriff.
+        obj = StationMapSettings.objects.first()
+        if obj:
+            url = reverse("admin:stations_stationmapsettings_change", args=[obj.pk])
+            return redirect(url)
+        return super().changelist_view(request, extra_context=extra_context)

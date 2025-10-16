@@ -20,6 +20,7 @@ from .geocoding import geocode_station
 from .models import (
     StationReport,
     StationReportSettings,
+    StationMapSettings,
     WildbirdHelpStation,
 )
 
@@ -219,6 +220,16 @@ def get_report_settings() -> StationReportSettings:
 
     settings_obj, _ = StationReportSettings.objects.get_or_create(pk=1)
     return settings_obj
+
+
+def get_map_settings() -> StationMapSettings:
+    """! @brief Ensure a map settings row exists and return it.
+
+    Verwendet eine fixe Primärschlüssel-ID, um nur einen Datensatz zuzulassen.
+    """
+
+    obj, _ = StationMapSettings.objects.get_or_create(pk=1)
+    return obj
 
 
 def notify_new_station_report(report: StationReport) -> None:
