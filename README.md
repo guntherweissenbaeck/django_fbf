@@ -1,3 +1,6 @@
+> [!CAUTION]
+> Dieses Repo wird nicht weitergepflegt. Das Projekt befindet sich nun unter https://codeberg.org/nabu-jena/FallenBirdyForm
+
 # Fallen Birdy Form
 
 ## Inhaltsverzeichnis
